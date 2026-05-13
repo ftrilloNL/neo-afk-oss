@@ -1,6 +1,42 @@
 {% extends 'setup/layout.twig' %}
 
 {% block content %}
+{% if provider == 'google' %}
+<h1 class="text-2xl font-bold mb-2">E-Mail-Versand (Gmail API)</h1>
+<p class="text-gray-600 mb-6 leading-relaxed">
+    Mit Google Workspace nutzen wir den bereits konfigurierten Service-Account
+    auch fuer Mail-Versand via Gmail API — keine zusaetzlichen Credentials noetig.
+    Bitte FROM-Adresse + Anzeigename setzen.
+</p>
+
+<form method="post" action="/setup/smtp/google" class="space-y-5">
+    <div>
+        <label class="label"><span class="label-text">From-Email (z.B. noreply@eure-firma.de)</span></label>
+        <input type="email" name="smtp_from_email" required class="input input-bordered w-full"
+               placeholder="noreply@eure-firma.de"
+               value="{{ env.SMTP_FROM_EMAIL ?? '' }}">
+        <p class="text-xs text-gray-500 mt-1">
+            Der Service-Account muss dieses Postfach via Domain-Wide-Delegation
+            impersonieren duerfen. Anleitung in
+            <a href="https://github.com/ftrilloNL/neo-afk-oss/blob/main/docs/google-workspace-setup.md"
+               target="_blank" class="underline">docs/google-workspace-setup.md</a>.
+        </p>
+    </div>
+
+    <div>
+        <label class="label"><span class="label-text">From-Name (Anzeigename)</span></label>
+        <input type="text" name="smtp_from_name" required class="input input-bordered w-full"
+               placeholder="afk"
+               value="{{ env.SMTP_FROM_NAME ?? env.ORG_NAME ?? '' }}">
+    </div>
+
+    <div class="flex justify-between pt-3">
+        <a href="/setup/oauth" class="btn btn-ghost">← Zurück</a>
+        <button type="submit" class="btn btn-primary">Weiter →</button>
+    </div>
+</form>
+
+{% else %}
 <h1 class="text-2xl font-bold mb-2">E-Mail-Versand</h1>
 <p class="text-gray-600 mb-6 leading-relaxed">
     SMTP via XOAUTH2 gegen das „noreply"-Postfach. Wir holen einen
@@ -93,6 +129,7 @@
             <button type="submit" class="btn btn-outline">Neuen Code holen</button>
         </form>
     </div>
+{% endif %}
 {% endif %}
 {% endblock %}
 

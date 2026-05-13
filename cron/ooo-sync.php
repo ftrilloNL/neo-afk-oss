@@ -23,12 +23,12 @@
 require_once __DIR__ . '/bootstrap.php';
 
 use App\Models\AbsenceRepository;
-use App\Services\GraphClient;
+use App\Providers\Contracts\OooProvider;
 
 $script = 'ooo-sync';
 $container = $GLOBALS['cron_container'];
 $absences = $container->get(AbsenceRepository::class);
-$graph = $container->get(GraphClient::class);
+$ooo = $container->get(OooProvider::class);
 
 $today = (new DateTimeImmutable())->format('Y-m-d');
 $candidates = $absences->listUrlaubeStartingOn($today);
@@ -57,7 +57,7 @@ foreach ($candidates as $a) {
     $external = !empty($a['ooo_external']) ? $renderOoo((string) $a['ooo_external']) : $fallback;
 
     try {
-        $graph->setAutoReply($email, $start, $end, $internal, $external);
+        $ooo->setAutoReply($email, $start, $end, $internal, $external);
         $set++;
     } catch (\Throwable $e) {
         cron_log($script, sprintf(

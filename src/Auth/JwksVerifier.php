@@ -2,27 +2,33 @@
 
 namespace App\Auth;
 
-use App\Config;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 
 /**
- * Verifiziert RS256-signierte JWTs (id_token) gegen die Microsoft-JWKS-Endpunkt
- * des Tenants. Setzt bewusst kein firebase/php-jwt ein (siehe HANDOFF.md):
- * minimaler eigener ASN.1-Encoder fuer JWK->PEM-Konvertierung, openssl_verify
- * fuer die eigentliche Signatur-Pruefung.
+ * Generischer RS256-JWT-Verifier gegen einen JWKS-Endpoint. Provider-agnostisch:
+ * JWKS-URL, akzeptierte Issuer und erwartete Audience werden beim Konstruktor
+ * mitgegeben. Nutzt openssl_verify + einen minimalen ASN.1-DER-Encoder
+ * (JWK -> PEM), um eine harte firebase/php-jwt-Dependency zu vermeiden.
  *
- * JWKS wird in-memory pro Request gecached. Cross-Request-Caching koennte spaeter
- * via APCu nachgezogen werden — fuer einen Login alle paar Sekunden ist der
- * extra Roundtrip akzeptabel.
+ * JWKS wird in-memory pro Request gecached. Cross-Request-Caching koennte via
+ * APCu nachgezogen werden — fuer wenige Logins pro Minute ist der extra
+ * Roundtrip akzeptabel.
  */
 final class JwksVerifier
 {
     /** @var array<string, mixed>|null */
     private ?array $cachedJwks = null;
 
+    /**
+     * @param list<string> $acceptedIssuers Mehrere erlaubt fuer Provider wie
+     *   Google, die sowohl `accounts.google.com` als auch `https://accounts.google.com`
+     *   als gueltigen iss-Claim zurueckgeben.
+     */
     public function __construct(
-        private readonly Config $config,
+        private readonly string $jwksUrl,
+        private readonly array $acceptedIssuers,
+        private readonly string $expectedAudience,
         private readonly ClientInterface $http = new Client(['timeout' => 5]),
     ) {
     }
@@ -72,14 +78,11 @@ final class JwksVerifier
      */
     private function assertClaims(array $claims): void
     {
-        $tenant = $this->config->get('OAUTH_TENANT_ID');
-        $clientId = $this->config->get('OAUTH_CLIENT_ID');
-
-        $expectedIss = "https://login.microsoftonline.com/{$tenant}/v2.0";
-        if (($claims['iss'] ?? '') !== $expectedIss) {
+        $iss = (string) ($claims['iss'] ?? '');
+        if (!in_array($iss, $this->acceptedIssuers, true)) {
             throw new \RuntimeException('id_token: iss-Claim stimmt nicht');
         }
-        if (($claims['aud'] ?? '') !== $clientId) {
+        if (($claims['aud'] ?? '') !== $this->expectedAudience) {
             throw new \RuntimeException('id_token: aud-Claim stimmt nicht');
         }
         $now = time();
@@ -103,7 +106,7 @@ final class JwksVerifier
                 return $key;
             }
         }
-        // Kid nicht gefunden — eventuell Key-Rotation auf Microsoft-Seite, JWKS neu holen.
+        // Key-Rotation auf Provider-Seite, JWKS neu holen.
         $this->cachedJwks = null;
         $jwks = $this->fetchJwks();
         foreach ($jwks['keys'] ?? [] as $key) {
@@ -122,9 +125,7 @@ final class JwksVerifier
         if ($this->cachedJwks !== null) {
             return $this->cachedJwks;
         }
-        $tenant = $this->config->get('OAUTH_TENANT_ID');
-        $url = "https://login.microsoftonline.com/{$tenant}/discovery/v2.0/keys";
-        $response = $this->http->request('GET', $url);
+        $response = $this->http->request('GET', $this->jwksUrl);
         $data = json_decode((string) $response->getBody(), true);
         if (!is_array($data) || !isset($data['keys']) || !is_array($data['keys'])) {
             throw new \RuntimeException('JWKS-Response: unerwartetes Format');
@@ -149,25 +150,17 @@ final class JwksVerifier
             throw new \RuntimeException('JWK ohne n oder e');
         }
 
-        // ASN.1 INTEGER: fuehrendes 0-Byte einfuegen falls High-Bit gesetzt,
-        // sonst interpretiert ASN.1 die Zahl als negativ (Two's Complement).
         $modulus = $this->asn1Integer($n);
         $publicExponent = $this->asn1Integer($e);
-
-        // RSAPublicKey ::= SEQUENCE { modulus INTEGER, publicExponent INTEGER }
         $rsaPublicKey = $this->asn1Sequence($modulus . $publicExponent);
 
-        // AlgorithmIdentifier: SEQUENCE { OID rsaEncryption, NULL }
         // rsaEncryption OID = 1.2.840.113549.1.1.1, DER-encoded
         $algId = $this->asn1Sequence(
             "\x06\x09\x2a\x86\x48\x86\xf7\x0d\x01\x01\x01"
             . "\x05\x00",
         );
 
-        // SubjectPublicKey: BIT STRING wrapping RSAPublicKey
         $bitString = "\x03" . $this->asn1Length(strlen($rsaPublicKey) + 1) . "\x00" . $rsaPublicKey;
-
-        // SubjectPublicKeyInfo ::= SEQUENCE { algorithm, subjectPublicKey }
         $spki = $this->asn1Sequence($algId . $bitString);
 
         return "-----BEGIN PUBLIC KEY-----\n"

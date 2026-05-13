@@ -6,7 +6,8 @@ use App\Database\Connection;
 use App\Models\AbsenceRepository;
 use App\Models\AuditLogRepository;
 use App\Models\UserRepository;
-use App\Services\GraphClient;
+use App\Providers\Contracts\CalendarProvider;
+use App\Providers\Contracts\OooProvider;
 use App\Services\MailService;
 use App\Services\ResturlaubService;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -18,7 +19,8 @@ final class StornoController
         private readonly UserRepository $users,
         private readonly AbsenceRepository $absences,
         private readonly ResturlaubService $resturlaub,
-        private readonly GraphClient $graph,
+        private readonly CalendarProvider $calendar,
+        private readonly OooProvider $ooo,
         private readonly MailService $mail,
         private readonly AuditLogRepository $audit,
         private readonly Connection $db,
@@ -77,12 +79,12 @@ final class StornoController
             throw $e;
         }
 
-        // 2. Graph-Delete — best-effort. DB-State ist schon korrekt; ein verwaister
-        //    Calendar-Event ist ok (HR kann manuell loeschen). 404 wird ohnehin
-        //    vom GraphClient als idempotent behandelt.
+        // 2. Calendar-Delete — best-effort. DB-State ist schon korrekt; ein verwaister
+        //    Calendar-Event ist ok (HR kann manuell loeschen). 404 wird idempotent
+        //    vom Provider behandelt.
         if ($eventIdToDelete !== null) {
             try {
-                $this->graph->deleteCalendarEvent($eventIdToDelete);
+                $this->calendar->deleteEvent($eventIdToDelete);
             } catch (\Throwable $e) {
                 error_log(sprintf(
                     'StornoController: Calendar-Event %s konnte nicht geloescht werden (Antrag %d): %s',
@@ -105,7 +107,7 @@ final class StornoController
         $isOooActive = $today >= $start && $today <= $end;
         if ($applicant !== null && $absence['status'] === 'aktiv' && $isOooActive) {
             try {
-                $this->graph->clearAutoReplyIfOurs((string) $applicant['email']);
+                $this->ooo->clearAutoReplyIfOurs((string) $applicant['email']);
             } catch (\Throwable $e) {
                 error_log(sprintf(
                     'StornoController: Auto-OOO-Clear fuer %s fehlgeschlagen: %s',

@@ -18,10 +18,12 @@ SET time_zone = '+00:00';
 
 CREATE TABLE users (
     id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    -- NULL erlaubt Pre-Create durch HR vor erstem SSO-Login.
-    -- Beim ersten Login matched AuthController::upsertUser via Email
-    -- und ergaenzt die entra_oid. UNIQUE erlaubt mehrere NULLs.
-    entra_oid VARCHAR(64) NULL,
+    -- Provider-agnostischer User-Identifier vom IdP. Bei Microsoft Entra ID = oid-Claim,
+    -- bei Google Identity = sub-Claim. NULL erlaubt Pre-Create durch HR vor erstem
+    -- SSO-Login. Beim ersten Login matched AuthController::upsertUser via Email
+    -- und ergaenzt external_oid + external_provider.
+    external_oid VARCHAR(64) NULL,
+    external_provider ENUM('microsoft','google') NULL,
     email VARCHAR(255) NOT NULL,
     display_name VARCHAR(255) NOT NULL,
     -- Operativ + team-sichtbar (Anzeige auf /team).
@@ -36,7 +38,9 @@ CREATE TABLE users (
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
-    UNIQUE KEY uk_entra_oid (entra_oid),
+    -- Composite unique: same external_oid darf bei zwei Providern auftauchen (rein
+    -- defensiv — unwahrscheinlich, aber sauber modelliert).
+    UNIQUE KEY uk_external_identity (external_provider, external_oid),
     UNIQUE KEY uk_email (email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

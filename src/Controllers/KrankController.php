@@ -6,7 +6,8 @@ use App\Config;
 use App\Models\AbsenceRepository;
 use App\Models\AuditLogRepository;
 use App\Models\UserRepository;
-use App\Services\GraphClient;
+use App\Providers\Contracts\CalendarProvider;
+use App\Providers\Contracts\OooProvider;
 use App\Services\MailService;
 use App\Services\WerktageService;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -19,7 +20,8 @@ final class KrankController
         private readonly UserRepository $users,
         private readonly AbsenceRepository $absences,
         private readonly WerktageService $werktage,
-        private readonly GraphClient $graph,
+        private readonly CalendarProvider $calendar,
+        private readonly OooProvider $ooo,
         private readonly MailService $mail,
         private readonly AuditLogRepository $audit,
         private readonly Config $config,
@@ -89,7 +91,7 @@ final class KrankController
         $eventStart = $start;
         $eventEnd = $end->modify('+1 day');
         $subject = sprintf('Abwesend – %s', $user['display_name']);
-        $eventId = $this->graph->createCalendarEvent($subject, $eventStart, $eventEnd, true);
+        $eventId = $this->calendar->createEvent($subject, $eventStart, $eventEnd, true);
 
         $absenceId = $this->absences->insert([
             'user_id' => $userId,
@@ -123,7 +125,7 @@ final class KrankController
             $renderOoo = fn (string $plain): string =>
                 '<p>' . nl2br(htmlspecialchars($plain, ENT_QUOTES | ENT_HTML5, 'UTF-8')) . '</p>';
             try {
-                $this->graph->setAutoReply(
+                $this->ooo->setAutoReply(
                     (string) $user['email'],
                     $start,
                     $end,

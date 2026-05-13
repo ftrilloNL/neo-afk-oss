@@ -8,6 +8,8 @@ use App\Models\AbsenceRepository;
 use App\Models\ApprovalTokenRepository;
 use App\Models\AuditLogRepository;
 use App\Models\UserRepository;
+use App\Providers\Contracts\CalendarProvider;
+use App\Providers\Contracts\OooProvider;
 
 final class ApprovalService
 {
@@ -16,7 +18,8 @@ final class ApprovalService
         private readonly ApprovalTokenRepository $tokens,
         private readonly UserRepository $users,
         private readonly ResturlaubService $resturlaub,
-        private readonly GraphClient $graph,
+        private readonly CalendarProvider $calendar,
+        private readonly OooProvider $ooo,
         private readonly MailService $mail,
         private readonly AuditLogRepository $audit,
         private readonly Config $config,
@@ -155,7 +158,7 @@ final class ApprovalService
             $eventStart = new \DateTimeImmutable($absence['startdatum']);
             $eventEnd = (new \DateTimeImmutable($absence['enddatum']))->modify('+1 day');
             $subject = sprintf('[URLAUB] %s', $applicant['display_name']);
-            $eventId = $this->graph->createCalendarEvent($subject, $eventStart, $eventEnd, true);
+            $eventId = $this->calendar->createEvent($subject, $eventStart, $eventEnd, true);
 
             // 2. DB-Transaction — atomic Resturlaub + Status + Audit.
             $dbal = $this->db->dbal();
@@ -180,7 +183,7 @@ final class ApprovalService
                 // sonst dangling. Best-effort — wenn auch dieser Delete scheitert,
                 // dann hat HR halt einen verwaisten Event, ist im Vergleich harmlos.
                 try {
-                    $this->graph->deleteCalendarEvent($eventId);
+                    $this->calendar->deleteEvent($eventId);
                 } catch (\Throwable $cleanupErr) {
                     error_log(sprintf(
                         'ApprovalService: rollback-compensating delete of event %s fehlgeschlagen: %s',
@@ -213,7 +216,7 @@ final class ApprovalService
                         ? $this->renderOooText((string) $absence['ooo_external'])
                         : $fallback;
 
-                    $this->graph->setAutoReply(
+                    $this->ooo->setAutoReply(
                         (string) $applicant['email'],
                         $startDate,
                         new \DateTimeImmutable($absence['enddatum']),

@@ -25,13 +25,14 @@ use Slim\Views\Twig;
 final class SetupController
 {
     private const STEPS = [
-        'intro'  => ['nr' => 1, 'label' => 'Voraussetzungen'],
-        'db'     => ['nr' => 2, 'label' => 'Datenbank'],
-        'org'    => ['nr' => 3, 'label' => 'Organisation'],
-        'oauth'  => ['nr' => 4, 'label' => 'Microsoft 365'],
-        'smtp'   => ['nr' => 5, 'label' => 'E-Mail-Versand'],
-        'admin'  => ['nr' => 6, 'label' => 'Admin-Konto'],
-        'finish' => ['nr' => 7, 'label' => 'Fertig'],
+        'intro'    => ['nr' => 1, 'label' => 'Voraussetzungen'],
+        'provider' => ['nr' => 2, 'label' => 'Provider'],
+        'db'       => ['nr' => 3, 'label' => 'Datenbank'],
+        'org'      => ['nr' => 4, 'label' => 'Organisation'],
+        'oauth'    => ['nr' => 5, 'label' => 'SSO + Integration'],
+        'smtp'     => ['nr' => 6, 'label' => 'E-Mail-Versand'],
+        'admin'    => ['nr' => 7, 'label' => 'Admin-Konto'],
+        'finish'   => ['nr' => 8, 'label' => 'Fertig'],
     ];
 
     public function __construct(
@@ -62,6 +63,41 @@ final class SetupController
             return $gate;
         }
         return $this->render($response, 'intro', []);
+    }
+
+    public function provider(Request $request, Response $response): Response
+    {
+        if ($gate = $this->gate($response)) {
+            return $gate;
+        }
+        return $this->render($response, 'provider', [
+            'env' => $this->env->readAll(),
+            'error' => $_SESSION['setup_error'] ?? null,
+        ]);
+    }
+
+    public function providerSubmit(Request $request, Response $response): Response
+    {
+        if ($gate = $this->gate($response)) {
+            return $gate;
+        }
+        $choice = (string) (($request->getParsedBody() ?? [])['identity_provider'] ?? '');
+        if (!in_array($choice, ['microsoft', 'google'], true)) {
+            $_SESSION['setup_error'] = 'Bitte einen Provider waehlen.';
+            return $response->withHeader('Location', '/setup/provider')->withStatus(302);
+        }
+        $this->env->update(['IDENTITY_PROVIDER' => $choice]);
+        // Sofort in $_ENV propagieren, damit der naechste Step die Auswahl sieht.
+        $_ENV['IDENTITY_PROVIDER'] = $choice;
+        unset($_SESSION['setup_error']);
+        return $response->withHeader('Location', '/setup/db')->withStatus(302);
+    }
+
+    private function selectedProvider(): string
+    {
+        $env = $this->env->readAll();
+        $value = $env['IDENTITY_PROVIDER'] ?? ($_ENV['IDENTITY_PROVIDER'] ?? 'microsoft');
+        return in_array($value, ['microsoft', 'google'], true) ? $value : 'microsoft';
     }
 
     public function db(Request $request, Response $response): Response
@@ -171,6 +207,8 @@ final class SetupController
         return $this->render($response, 'oauth', [
             'env' => $this->env->readAll(),
             'error' => $_SESSION['setup_error'] ?? null,
+            'provider' => $this->selectedProvider(),
+            'service_account_present' => is_file($this->rootPath . '/var/secrets/google-service-account.json'),
         ]);
     }
 
@@ -179,43 +217,98 @@ final class SetupController
         if ($gate = $this->gate($response)) {
             return $gate;
         }
+        $provider = $this->selectedProvider();
         $data = (array) $request->getParsedBody();
-        $tenant = trim((string) ($data['oauth_tenant_id'] ?? ''));
+        $hrMail = trim((string) ($data['hr_notification_email'] ?? ''));
         $clientId = trim((string) ($data['oauth_client_id'] ?? ''));
         $clientSecret = trim((string) ($data['oauth_client_secret'] ?? ''));
-        $graphUser = trim((string) ($data['graph_calendar_user'] ?? ''));
-        $hrMail = trim((string) ($data['hr_notification_email'] ?? ''));
 
         $errors = [];
-        if (!preg_match('/^[0-9a-f-]{36}$/i', $tenant)) {
-            $errors[] = 'Tenant-ID muss eine GUID sein.';
-        }
-        if (!preg_match('/^[0-9a-f-]{36}$/i', $clientId)) {
-            $errors[] = 'Client-ID muss eine GUID sein.';
+        if ($clientId === '') {
+            $errors[] = 'OAuth Client-ID darf nicht leer sein.';
         }
         if ($clientSecret === '') {
-            $errors[] = 'Client-Secret darf nicht leer sein.';
-        }
-        if (!filter_var($graphUser, FILTER_VALIDATE_EMAIL)) {
-            $errors[] = 'Shared-Mailbox-Email ungueltig.';
+            $errors[] = 'OAuth Client-Secret darf nicht leer sein.';
         }
         if ($hrMail === '') {
             $errors[] = 'HR-Verteiler-Mail darf nicht leer sein.';
         }
+
+        $updates = [
+            'OAUTH_CLIENT_ID' => $clientId,
+            'OAUTH_CLIENT_SECRET' => $clientSecret,
+            'HR_NOTIFICATION_EMAIL' => $hrMail,
+        ];
+
+        if ($provider === 'microsoft') {
+            $tenant = trim((string) ($data['oauth_tenant_id'] ?? ''));
+            $graphUser = trim((string) ($data['graph_calendar_user'] ?? ''));
+            if (!preg_match('/^[0-9a-f-]{36}$/i', $tenant)) {
+                $errors[] = 'Tenant-ID muss eine GUID sein.';
+            }
+            if (!preg_match('/^[0-9a-f-]{36}$/i', $clientId)) {
+                $errors[] = 'Client-ID muss eine GUID sein.';
+            }
+            if (!filter_var($graphUser, FILTER_VALIDATE_EMAIL)) {
+                $errors[] = 'Shared-Mailbox-Email ungueltig.';
+            }
+            $updates['OAUTH_TENANT_ID'] = $tenant;
+            $updates['GRAPH_CALENDAR_USER'] = $graphUser;
+        } else {
+            $workspaceDomain = trim((string) ($data['google_workspace_domain'] ?? ''));
+            $calendarId = trim((string) ($data['google_calendar_id'] ?? ''));
+            $calendarOwner = trim((string) ($data['google_calendar_owner'] ?? ''));
+            if ($workspaceDomain === '') {
+                $errors[] = 'Workspace-Domain darf nicht leer sein.';
+            }
+            if ($calendarId === '') {
+                $errors[] = 'Kalender-ID darf nicht leer sein.';
+            }
+            if (!filter_var($calendarOwner, FILTER_VALIDATE_EMAIL)) {
+                $errors[] = 'Kalender-Owner-Email ungueltig.';
+            }
+
+            // Service-Account-JSON-Upload entgegennehmen und persistieren.
+            $files = $request->getUploadedFiles();
+            $keyFile = $files['service_account_json'] ?? null;
+            if ($keyFile !== null && $keyFile->getError() === UPLOAD_ERR_OK) {
+                $contents = (string) $keyFile->getStream()->getContents();
+                $decoded = json_decode($contents, true);
+                if (!is_array($decoded) || !isset($decoded['client_email'], $decoded['private_key'])) {
+                    $errors[] = 'Service-Account-JSON ungueltig (client_email + private_key erwartet).';
+                } else {
+                    $this->saveServiceAccountKey($contents);
+                }
+            } elseif (!is_file($this->rootPath . '/var/secrets/google-service-account.json')) {
+                $errors[] = 'Service-Account-JSON-Datei fehlt — bitte hochladen.';
+            }
+
+            $updates['GOOGLE_WORKSPACE_DOMAIN'] = $workspaceDomain;
+            $updates['GOOGLE_CALENDAR_ID'] = $calendarId;
+            $updates['GOOGLE_CALENDAR_OWNER'] = $calendarOwner;
+        }
+
         if ($errors) {
             $_SESSION['setup_error'] = implode(' ', $errors);
             return $response->withHeader('Location', '/setup/oauth')->withStatus(302);
         }
 
-        $this->env->update([
-            'OAUTH_TENANT_ID' => $tenant,
-            'OAUTH_CLIENT_ID' => $clientId,
-            'OAUTH_CLIENT_SECRET' => $clientSecret,
-            'GRAPH_CALENDAR_USER' => $graphUser,
-            'HR_NOTIFICATION_EMAIL' => $hrMail,
-        ]);
+        $this->env->update($updates);
         unset($_SESSION['setup_error']);
         return $response->withHeader('Location', '/setup/smtp')->withStatus(302);
+    }
+
+    private function saveServiceAccountKey(string $json): void
+    {
+        $secretsDir = $this->rootPath . '/var/secrets';
+        if (!is_dir($secretsDir)) {
+            mkdir($secretsDir, 0700, true);
+        }
+        $path = $secretsDir . '/google-service-account.json';
+        $tmp = $path . '.tmp';
+        file_put_contents($tmp, $json);
+        chmod($tmp, 0600);
+        rename($tmp, $path);
     }
 
     public function smtp(Request $request, Response $response): Response
@@ -227,7 +320,33 @@ final class SetupController
             'env' => $this->env->readAll(),
             'error' => $_SESSION['setup_error'] ?? null,
             'device_flow' => $_SESSION['setup_device_flow'] ?? null,
+            'provider' => $this->selectedProvider(),
         ]);
+    }
+
+    /**
+     * Google nutzt den Service-Account fuer Mail-Send — keine separaten SMTP-
+     * Credentials noetig. Endpoint sammelt nur FROM-Email + FROM-Name und
+     * leitet direkt zum Admin-Step weiter.
+     */
+    public function smtpSkipGoogle(Request $request, Response $response): Response
+    {
+        if ($gate = $this->gate($response)) {
+            return $gate;
+        }
+        $data = (array) $request->getParsedBody();
+        $from = trim((string) ($data['smtp_from_email'] ?? ''));
+        $name = trim((string) ($data['smtp_from_name'] ?? ''));
+        if (!filter_var($from, FILTER_VALIDATE_EMAIL)) {
+            $_SESSION['setup_error'] = 'From-Email ungueltig.';
+            return $response->withHeader('Location', '/setup/smtp')->withStatus(302);
+        }
+        $this->env->update([
+            'SMTP_FROM_EMAIL' => $from,
+            'SMTP_FROM_NAME' => $name !== '' ? $name : 'afk',
+        ]);
+        unset($_SESSION['setup_error']);
+        return $response->withHeader('Location', '/setup/admin')->withStatus(302);
     }
 
     public function smtpStart(Request $request, Response $response): Response
@@ -391,8 +510,9 @@ final class SetupController
             }
             $jahresanspruch = (int) ($envValues['ORG_DEFAULT_JAHRESANSPRUCH'] ?? 30);
             $stmt = $pdo->prepare(
-                'INSERT INTO users (entra_oid, email, display_name, job_title, jahresanspruch,
-                 ist_aktiv, ist_genehmiger, ist_hr) VALUES (NULL, ?, ?, ?, ?, 1, 1, 1)'
+                'INSERT INTO users (external_oid, external_provider, email, display_name,
+                 job_title, jahresanspruch, ist_aktiv, ist_genehmiger, ist_hr)
+                 VALUES (NULL, NULL, ?, ?, ?, ?, 1, 1, 1)'
             );
             $stmt->execute([$email, $displayName, $jobTitle ?: null, $jahresanspruch]);
             unset($_SESSION['setup_error']);

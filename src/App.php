@@ -2,8 +2,6 @@
 
 namespace App;
 
-use App\Auth\JwksVerifier;
-use App\Auth\MicrosoftOAuth;
 use App\Controllers\AntragController;
 use App\Controllers\ApprovalController;
 use App\Controllers\AuditController;
@@ -27,15 +25,29 @@ use App\Models\ApprovalTokenRepository;
 use App\Models\AuditLogRepository;
 use App\Models\FeiertagRepository;
 use App\Models\UserRepository;
+use App\Providers\Contracts\CalendarProvider;
+use App\Providers\Contracts\IdentityProvider;
+use App\Providers\Contracts\MailTransport;
+use App\Providers\Contracts\OooProvider;
+use App\Providers\Google\GoogleCalendarProvider;
+use App\Providers\Google\GoogleIdentityProvider;
+use App\Providers\Google\GoogleMailTransport;
+use App\Providers\Google\GoogleOooProvider;
+use App\Providers\Google\GoogleServiceAccountAuth;
+use App\Providers\Microsoft\MicrosoftCalendarProvider;
+use App\Providers\Microsoft\MicrosoftGraphHttp;
+use App\Providers\Microsoft\MicrosoftIdentityProvider;
+use App\Providers\Microsoft\MicrosoftMailTransport;
+use App\Providers\Microsoft\MicrosoftOooProvider;
 use App\Services\ApprovalService;
 use App\Services\AvatarService;
 use App\Services\Csrf;
 use App\Services\EnvWriter;
-use App\Services\GraphClient;
 use App\Services\MailService;
 use App\Services\ResturlaubService;
 use App\Services\SmtpOAuthTokenProvider;
 use App\Services\WerktageService;
+use App\Support\DevModeLog;
 use DI\Container;
 use Dotenv\Dotenv;
 use Slim\App as SlimApp;
@@ -80,21 +92,24 @@ final class App
         $app->get('/login', [AuthController::class, 'login']);
 
         // Setup-Wizard (gated via SETUP_MODE + var/secrets/setup-completed)
-        $app->get('/setup',          [SetupController::class, 'intro']);
-        $app->get('/setup/db',       [SetupController::class, 'db']);
-        $app->post('/setup/db',      [SetupController::class, 'dbSubmit']);
-        $app->get('/setup/org',      [SetupController::class, 'org']);
-        $app->post('/setup/org',     [SetupController::class, 'orgSubmit']);
-        $app->get('/setup/oauth',    [SetupController::class, 'oauth']);
-        $app->post('/setup/oauth',   [SetupController::class, 'oauthSubmit']);
-        $app->get('/setup/smtp',     [SetupController::class, 'smtp']);
-        $app->post('/setup/smtp',    [SetupController::class, 'smtpStart']);
-        $app->get('/setup/smtp/poll',[SetupController::class, 'smtpPoll']);
+        $app->get('/setup',                [SetupController::class, 'intro']);
+        $app->get('/setup/provider',       [SetupController::class, 'provider']);
+        $app->post('/setup/provider',      [SetupController::class, 'providerSubmit']);
+        $app->get('/setup/db',             [SetupController::class, 'db']);
+        $app->post('/setup/db',            [SetupController::class, 'dbSubmit']);
+        $app->get('/setup/org',            [SetupController::class, 'org']);
+        $app->post('/setup/org',           [SetupController::class, 'orgSubmit']);
+        $app->get('/setup/oauth',          [SetupController::class, 'oauth']);
+        $app->post('/setup/oauth',         [SetupController::class, 'oauthSubmit']);
+        $app->get('/setup/smtp',           [SetupController::class, 'smtp']);
+        $app->post('/setup/smtp',          [SetupController::class, 'smtpStart']);
+        $app->post('/setup/smtp/google',   [SetupController::class, 'smtpSkipGoogle']);
+        $app->get('/setup/smtp/poll',      [SetupController::class, 'smtpPoll']);
         $app->post('/setup/smtp/continue', [SetupController::class, 'smtpContinue']);
-        $app->get('/setup/admin',    [SetupController::class, 'admin']);
-        $app->post('/setup/admin',   [SetupController::class, 'adminSubmit']);
-        $app->get('/setup/finish',   [SetupController::class, 'finish']);
-        $app->post('/setup/finish',  [SetupController::class, 'finishConfirm']);
+        $app->get('/setup/admin',          [SetupController::class, 'admin']);
+        $app->post('/setup/admin',         [SetupController::class, 'adminSubmit']);
+        $app->get('/setup/finish',         [SetupController::class, 'finish']);
+        $app->post('/setup/finish',        [SetupController::class, 'finishConfirm']);
 
         // PWA-Manifest dynamisch aus Org-Settings.
         $app->get('/manifest.json', function ($req, $res) use ($container) {
@@ -183,7 +198,8 @@ final class App
         $existing = $conn->fetchAssociative('SELECT id FROM users WHERE email = ?', [$email]);
         if ($existing === false) {
             $conn->insert('users', [
-                'entra_oid' => 'dev-' . bin2hex(random_bytes(8)),
+                'external_oid' => 'dev-' . bin2hex(random_bytes(8)),
+                'external_provider' => 'microsoft',
                 'email' => $email,
                 'display_name' => $displayName,
                 'jahresanspruch' => 30,
@@ -208,12 +224,8 @@ final class App
         // Core
         $c->set(Config::class, fn () => new Config());
         $c->set(Connection::class, fn (Container $c) => new Connection($c->get(Config::class)));
-        $c->set(JwksVerifier::class, fn (Container $c) => new JwksVerifier($c->get(Config::class)));
-        $c->set(MicrosoftOAuth::class, fn (Container $c) => new MicrosoftOAuth(
-            $c->get(Config::class),
-            $c->get(JwksVerifier::class),
-        ));
         $c->set(Csrf::class, fn () => new Csrf());
+        $c->set(DevModeLog::class, fn () => new DevModeLog($rootPath . '/var/logs'));
         $c->set(Twig::class, function (Container $c) use ($rootPath) {
             $twig = Twig::create(
                 $rootPath . '/src/Templates',
@@ -256,24 +268,84 @@ final class App
             $c->get(Config::class),
         ));
         $c->set(ResturlaubService::class, fn (Container $c) => new ResturlaubService($c->get(UserRepository::class)));
-        $c->set(GraphClient::class, fn (Container $c) => new GraphClient($c->get(Config::class)));
         $c->set(AvatarService::class, fn () => new AvatarService($rootPath . '/var/avatars'));
+
+        // Provider-Factory: IDENTITY_PROVIDER waehlt Microsoft- oder Google-Adapter
+        // fuer IdentityProvider, CalendarProvider, OooProvider, MailTransport.
+        // SetupController nutzt die Provider nicht (Wizard laeuft vor dem Provider-
+        // Setup), deshalb darf der Container den Provider-Constructor erst lazy
+        // beim ersten Get aufrufen — wir registrieren beide Familien defensiv und
+        // routen ueber IDENTITY_PROVIDER.
+        $provider = $_ENV['IDENTITY_PROVIDER'] ?? 'microsoft';
+
+        // Microsoft-Stack
+        $c->set(MicrosoftGraphHttp::class, fn (Container $c) => new MicrosoftGraphHttp($c->get(Config::class)));
         $c->set(SmtpOAuthTokenProvider::class, fn (Container $c) => new SmtpOAuthTokenProvider(
             $c->get(Config::class),
             $rootPath . '/var/secrets/smtp-refresh-token',
             $c->get(Config::class)->get('SMTP_FROM_EMAIL', 'noreply@example.com'),
         ));
+        $c->set(MicrosoftIdentityProvider::class, fn (Container $c) => new MicrosoftIdentityProvider($c->get(Config::class)));
+        $c->set(MicrosoftCalendarProvider::class, fn (Container $c) => new MicrosoftCalendarProvider(
+            $c->get(Config::class),
+            $c->get(MicrosoftGraphHttp::class),
+            $c->get(DevModeLog::class),
+        ));
+        $c->set(MicrosoftOooProvider::class, fn (Container $c) => new MicrosoftOooProvider(
+            $c->get(Config::class),
+            $c->get(MicrosoftGraphHttp::class),
+            $c->get(DevModeLog::class),
+        ));
+        $c->set(MicrosoftMailTransport::class, fn (Container $c) => new MicrosoftMailTransport(
+            $c->get(Config::class),
+            $c->get(SmtpOAuthTokenProvider::class),
+        ));
+
+        // Google-Stack
+        $c->set(GoogleServiceAccountAuth::class, fn (Container $c) => new GoogleServiceAccountAuth(
+            $c->get(Config::class),
+            $rootPath . '/var/secrets/google-service-account.json',
+        ));
+        $c->set(GoogleIdentityProvider::class, fn (Container $c) => new GoogleIdentityProvider($c->get(Config::class)));
+        $c->set(GoogleCalendarProvider::class, fn (Container $c) => new GoogleCalendarProvider(
+            $c->get(Config::class),
+            $c->get(GoogleServiceAccountAuth::class),
+            $c->get(DevModeLog::class),
+        ));
+        $c->set(GoogleOooProvider::class, fn (Container $c) => new GoogleOooProvider(
+            $c->get(Config::class),
+            $c->get(GoogleServiceAccountAuth::class),
+            $c->get(DevModeLog::class),
+        ));
+        $c->set(GoogleMailTransport::class, fn (Container $c) => new GoogleMailTransport(
+            $c->get(GoogleServiceAccountAuth::class),
+        ));
+
+        // Provider-Interface-Routing
+        if ($provider === 'google') {
+            $c->set(IdentityProvider::class, fn (Container $c) => $c->get(GoogleIdentityProvider::class));
+            $c->set(CalendarProvider::class, fn (Container $c) => $c->get(GoogleCalendarProvider::class));
+            $c->set(OooProvider::class, fn (Container $c) => $c->get(GoogleOooProvider::class));
+            $c->set(MailTransport::class, fn (Container $c) => $c->get(GoogleMailTransport::class));
+        } else {
+            $c->set(IdentityProvider::class, fn (Container $c) => $c->get(MicrosoftIdentityProvider::class));
+            $c->set(CalendarProvider::class, fn (Container $c) => $c->get(MicrosoftCalendarProvider::class));
+            $c->set(OooProvider::class, fn (Container $c) => $c->get(MicrosoftOooProvider::class));
+            $c->set(MailTransport::class, fn (Container $c) => $c->get(MicrosoftMailTransport::class));
+        }
+
         $c->set(MailService::class, fn (Container $c) => new MailService(
             $c->get(Twig::class),
             $c->get(Config::class),
-            $c->get(SmtpOAuthTokenProvider::class),
+            $c->get(MailTransport::class),
         ));
         $c->set(ApprovalService::class, fn (Container $c) => new ApprovalService(
             $c->get(AbsenceRepository::class),
             $c->get(ApprovalTokenRepository::class),
             $c->get(UserRepository::class),
             $c->get(ResturlaubService::class),
-            $c->get(GraphClient::class),
+            $c->get(CalendarProvider::class),
+            $c->get(OooProvider::class),
             $c->get(MailService::class),
             $c->get(AuditLogRepository::class),
             $c->get(Config::class),

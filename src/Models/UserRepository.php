@@ -78,7 +78,7 @@ final class UserRepository
 
     /**
      * Update der HR-pflegbaren Stammdaten. Felder hardcoded — keine generic
-     * Pass-through, damit kein Caller versehentlich entra_oid oder email
+     * Pass-through, damit kein Caller versehentlich external_oid oder email
      * ueberschreibt.
      *
      * @param array{
@@ -166,8 +166,9 @@ final class UserRepository
     }
 
     /**
-     * Vorab-Anlage eines Mitarbeiters durch HR. entra_oid bleibt NULL bis zum
-     * ersten SSO-Login — siehe AuthController::upsertUser (Pre-Created-Branch).
+     * Vorab-Anlage eines Mitarbeiters durch HR. external_oid + external_provider
+     * bleiben NULL bis zum ersten SSO-Login — siehe AuthController::upsertUser
+     * (Pre-Created-Branch).
      *
      * @param array{
      *     display_name: string,
@@ -185,7 +186,8 @@ final class UserRepository
     public function createPreUser(array $data): int
     {
         $this->db->insert('users', [
-            'entra_oid' => null,
+            'external_oid' => null,
+            'external_provider' => null,
             'email' => $data['email'],
             'display_name' => $data['display_name'],
             'job_title' => $data['job_title'] ?? null,

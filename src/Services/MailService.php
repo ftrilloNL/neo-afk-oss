@@ -3,33 +3,29 @@
 namespace App\Services;
 
 use App\Config;
-use PHPMailer\PHPMailer\PHPMailer;
+use App\Providers\Contracts\MailTransport;
 use Slim\Views\Twig;
 
 /**
- * Versendet HTML-Mails per SMTP mit OAuth2/XOAUTH2-Auth gegen Office365.
+ * Versendet Twig-gerenderte HTML-Mails. Provider-Auswahl (Microsoft SMTP-XOAUTH2
+ * oder Google Gmail-API) erfolgt im DI-Container ueber das MailTransport-Interface.
  *
- * Im Dev-Modus (APP_ENV != production) werden Mails als HTML-Files in
- * `var/mails/` geschrieben statt versendet — Magic-Links lassen sich daraus
- * im Browser oeffnen, ohne SMTP-Setup zu brauchen.
- *
- * Production-Auth laeuft via SmtpOAuthTokenProvider: kein Passwort in .env,
- * sondern persistierter Refresh-Token unter var/secrets/. Erstmaliges Setup
- * via bin/setup-smtp-oauth.php (siehe docs/smtp-setup.md).
+ * Im Dev-Modus (APP_ENV != production) werden Mails als HTML-Files in `var/mails/`
+ * geschrieben — Magic-Links lassen sich daraus im Browser oeffnen, ohne dass ein
+ * echter Mail-Versand stattfindet.
  */
 final class MailService
 {
     public function __construct(
         private readonly Twig $view,
         private readonly Config $config,
-        private readonly SmtpOAuthTokenProvider $tokenProvider,
+        private readonly MailTransport $transport,
     ) {
     }
 
     /**
      * @param array<string, mixed> $context
-     * @param string $to Eine Adresse, oder komma-/semikolon-separierte Liste mehrerer
-     *                   Adressen. Beispiel: "hr@firma.de, geschaeftsfuehrung@firma.de".
+     * @param string $to Eine Adresse, oder komma-/semikolon-separierte Liste.
      */
     public function send(string $to, string $subject, string $template, array $context = []): void
     {
@@ -45,32 +41,16 @@ final class MailService
             return;
         }
 
-        $mail = new PHPMailer(true);
-        $mail->isSMTP();
-        $mail->Host = $this->config->get('SMTP_HOST');
-        $mail->Port = (int) $this->config->get('SMTP_PORT', '587');
-        $mail->SMTPAuth = true;
-        $mail->AuthType = 'XOAUTH2';
-        $mail->setOAuth($this->tokenProvider);
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->CharSet = 'UTF-8';
-        $mail->setFrom(
+        $this->transport->send(
+            $recipients,
+            $subject,
+            $body,
             $this->config->get('SMTP_FROM_EMAIL'),
-            $this->config->get('SMTP_FROM_NAME', 'neo:afk'),
+            $this->config->get('SMTP_FROM_NAME', 'neo-afk'),
         );
-        foreach ($recipients as $addr) {
-            $mail->addAddress($addr);
-        }
-        $mail->isHTML(true);
-        $mail->Subject = $subject;
-        $mail->Body = $body;
-        $mail->send();
     }
 
     /**
-     * Akzeptiert Komma oder Semikolon als Trenner — beide Konventionen sind
-     * in Outlook/M365 verbreitet. Doppelte und leere Eintraege werden gefiltert.
-     *
      * @return list<string>
      */
     private function parseRecipients(string $to): array

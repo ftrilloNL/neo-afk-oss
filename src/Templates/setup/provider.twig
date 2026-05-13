@@ -1,0 +1,49 @@
+{% extends 'setup/layout.twig' %}
+
+{% block content %}
+<h1 class="text-2xl font-bold mb-2">Identity-Provider</h1>
+<p class="text-gray-600 mb-6 leading-relaxed">
+    Welcher SSO + welche Cloud-Suite nutzt eure Org? Die Entscheidung steuert
+    Login, geteilten Kalender, Auto-OOO und Mail-Versand.
+</p>
+
+<form method="post" action="/setup/provider" class="space-y-4">
+    <label class="block border border-gray-300 rounded-lg p-5 cursor-pointer hover:border-primary has-[:checked]:border-primary has-[:checked]:bg-primary/5">
+        <div class="flex items-start gap-3">
+            <input type="radio" name="identity_provider" value="microsoft" class="mt-1"
+                   {% if env.IDENTITY_PROVIDER == 'microsoft' or env.IDENTITY_PROVIDER is empty %}checked{% endif %}>
+            <div>
+                <strong class="block text-base">Microsoft 365 / Entra ID</strong>
+                <span class="text-sm text-gray-600 leading-relaxed">
+                    SSO via Entra ID OAuth, Shared-Mailbox-Kalender via Microsoft Graph,
+                    Out-of-Office via MailboxSettings, Mail-Versand via Office365 SMTP
+                    mit XOAUTH2. Refresh-Token wird im naechsten Schritt via
+                    Device-Code-Flow geholt.
+                </span>
+            </div>
+        </div>
+    </label>
+
+    <label class="block border border-gray-300 rounded-lg p-5 cursor-pointer hover:border-primary has-[:checked]:border-primary has-[:checked]:bg-primary/5">
+        <div class="flex items-start gap-3">
+            <input type="radio" name="identity_provider" value="google" class="mt-1"
+                   {% if env.IDENTITY_PROVIDER == 'google' %}checked{% endif %}>
+            <div>
+                <strong class="block text-base">Google Workspace</strong>
+                <span class="text-sm text-gray-600 leading-relaxed">
+                    SSO via Google Identity, geteilter Workspace-Kalender via
+                    Calendar API, Out-of-Office via Gmail Vacation Settings,
+                    Mail-Versand via Gmail API. Setup laeuft ueber einen Service
+                    Account mit Domain-Wide Delegation (du laedst die JSON-Key-
+                    Datei im naechsten Schritt hoch).
+                </span>
+            </div>
+        </div>
+    </label>
+
+    <div class="flex justify-between pt-3">
+        <a href="/setup" class="btn btn-ghost">← Zurück</a>
+        <button type="submit" class="btn btn-primary">Weiter →</button>
+    </div>
+</form>
+{% endblock %}

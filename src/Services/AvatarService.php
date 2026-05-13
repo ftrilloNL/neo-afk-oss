@@ -2,27 +2,18 @@
 
 namespace App\Services;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Exception\GuzzleException;
-
 /**
- * Holt User-Profilbilder aus Microsoft Graph (eigenes Bild via Delegated User.Read)
- * und cached sie unter var/avatars/{user-id}.jpg.
+ * Speichert User-Profilbilder unter var/avatars/{user-id}.jpg. Die Photo-Bytes
+ * werden vom IdentityProvider beim SSO-Callback geholt (provider-spezifisch)
+ * und hier nur persistiert — kein HTTP-Code in dieser Klasse.
  *
- * Wird beim SSO-Callback aufgerufen mit dem User-Access-Token. App-only-Fetch fuer
- * andere User waere ein groesserer Setup (User.Read.All Application Permission) und
- * ist aktuell nicht implementiert.
- *
- * Best-effort: jeder Fehler wird stillschweigend geschluckt — der Login soll nicht
- * scheitern wenn Graph mal hakt oder kein Photo gesetzt ist.
+ * Best-effort: jeder Caller darf storeBytes() ohne try/catch nutzen, der
+ * Login soll nicht scheitern wenn das Schreiben hakt.
  */
 final class AvatarService
 {
-    public function __construct(
-        private readonly string $storagePath,
-        private readonly ClientInterface $http = new Client(['timeout' => 10]),
-    ) {
+    public function __construct(private readonly string $storagePath)
+    {
     }
 
     public function avatarPath(int $userId): string
@@ -37,34 +28,12 @@ final class AvatarService
     }
 
     /**
-     * Fetch /me/photo/$value mit User-Access-Token, speichere unter
-     * var/avatars/{user-id}.jpg. Bei 404 (kein Photo in M365 gesetzt) wird
-     * eine vorhandene alte Datei geloescht, damit das UI dann Initials zeigt.
+     * Speichert die Photo-Bytes atomar (tmp + rename) unter var/avatars/{user-id}.jpg.
+     * Leere Bytes loeschen eine ggf. vorhandene alte Datei (User hat Photo entfernt).
      */
-    public function fetchAndStore(int $userId, string $userAccessToken): void
+    public function storeBytes(int $userId, string $bytes): void
     {
-        try {
-            $response = $this->http->request(
-                'GET',
-                'https://graph.microsoft.com/v1.0/me/photo/$value',
-                [
-                    'headers' => [
-                        'Authorization' => 'Bearer ' . $userAccessToken,
-                        'Accept' => 'image/jpeg',
-                    ],
-                ],
-            );
-        } catch (GuzzleException $e) {
-            if (str_contains($e->getMessage(), '404')) {
-                // Kein Photo in M365 — alte Datei wegraeumen.
-                $this->delete($userId);
-            }
-            // Andere Fehler silent — Login soll nicht scheitern.
-            return;
-        }
-
-        $body = (string) $response->getBody();
-        if (strlen($body) === 0) {
+        if ($bytes === '') {
             $this->delete($userId);
             return;
         }
@@ -75,12 +44,12 @@ final class AvatarService
             mkdir($dir, 0755, true);
         }
         $tmp = $path . '.tmp';
-        file_put_contents($tmp, $body);
+        file_put_contents($tmp, $bytes);
         chmod($tmp, 0644);
         rename($tmp, $path);
     }
 
-    private function delete(int $userId): void
+    public function delete(int $userId): void
     {
         $path = $this->avatarPath($userId);
         if (is_file($path)) {
