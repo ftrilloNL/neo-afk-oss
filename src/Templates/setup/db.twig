@@ -1,0 +1,65 @@
+{% extends 'setup/layout.twig' %}
+
+{% block content %}
+<h1 class="text-2xl font-bold mb-2">Datenbank</h1>
+<p class="text-gray-600 mb-6 leading-relaxed">
+    Wir testen die Verbindung, spielen <code>schema.sql</code> ein und laden
+    Feiertage für euer Bundesland.
+</p>
+
+<form method="post" action="/setup/db" class="space-y-5">
+    <div class="grid grid-cols-3 gap-3">
+        <div class="col-span-2">
+            <label class="label"><span class="label-text">DB-Host</span></label>
+            <input type="text" name="db_host" required class="input input-bordered w-full"
+                   value="{{ env.DB_HOST ?? 'localhost' }}">
+        </div>
+        <div>
+            <label class="label"><span class="label-text">Port</span></label>
+            <input type="text" name="db_port" class="input input-bordered w-full"
+                   value="{{ env.DB_PORT ?? '3306' }}">
+        </div>
+    </div>
+
+    <div>
+        <label class="label"><span class="label-text">Datenbank-Name</span></label>
+        <input type="text" name="db_name" required class="input input-bordered w-full"
+               value="{{ env.DB_NAME ?? '' }}">
+    </div>
+
+    <div class="grid grid-cols-2 gap-3">
+        <div>
+            <label class="label"><span class="label-text">DB-User</span></label>
+            <input type="text" name="db_user" required class="input input-bordered w-full"
+                   value="{{ env.DB_USER ?? '' }}">
+        </div>
+        <div>
+            <label class="label"><span class="label-text">DB-Passwort</span></label>
+            <input type="password" name="db_pass" class="input input-bordered w-full"
+                   value="{{ env.DB_PASS ?? '' }}">
+        </div>
+    </div>
+
+    <div>
+        <label class="label"><span class="label-text">Bundesland für Feiertage</span></label>
+        <select name="feiertage_bundesland" required class="select select-bordered w-full">
+            <option value="">— bitte wählen —</option>
+            {% for s in available_seeds %}
+                <option value="{{ s.code }}"
+                    {% if env.ORG_FEIERTAGE_BUNDESLAND == s.code %}selected{% endif %}>
+                    {{ s.code }} ({{ s.filename }})
+                </option>
+            {% endfor %}
+        </select>
+        <p class="text-xs text-gray-500 mt-1">
+            Liste basiert auf vorhandenen <code>migrations/seeds/feiertage-*.sql</code>.
+            Fehlt eures? Datei nach gleichem Pattern anlegen und Seite neu laden.
+        </p>
+    </div>
+
+    <div class="flex justify-between pt-3">
+        <a href="/setup" class="btn btn-ghost">← Zurück</a>
+        <button type="submit" class="btn btn-primary">Schema einspielen + weiter →</button>
+    </div>
+</form>
+{% endblock %}

@@ -1,0 +1,96 @@
+{% extends 'layout.twig' %}
+{% set active_nav = 'profil' %}
+{% block title %}Mein Profil – {{ org.short_name }}{% endblock %}
+{% block content %}
+
+<div class="mb-8">
+    <h1 class="text-2xl font-bold tracking-tight">Mein Profil</h1>
+    <p class="text-sm text-gray-500 mt-1">Änderungen an diesen Daten werden durch HR gepflegt.</p>
+</div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl">
+
+    {# Account #}
+    <div class="bg-white border border-card-border rounded-xl p-6 sm:col-span-2">
+        <div class="text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-4">Account</div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 text-sm">
+            <div>
+                <div class="text-xs text-gray-500">Name</div>
+                <div class="font-medium">{{ user.display_name }}</div>
+            </div>
+            <div>
+                <div class="text-xs text-gray-500">E-Mail</div>
+                <div class="font-medium">{{ user.email }}</div>
+            </div>
+            <div>
+                <div class="text-xs text-gray-500">Job-Titel</div>
+                <div class="font-medium">{% if user.job_title %}{{ user.job_title }}{% else %}<span class="text-gray-400">—</span>{% endif %}</div>
+            </div>
+            <div>
+                <div class="text-xs text-gray-500">Eintrittsdatum</div>
+                <div class="font-medium">{% if user.eintrittsdatum %}{{ user.eintrittsdatum|date('d.m.Y') }}{% else %}<span class="text-gray-400">—</span>{% endif %}</div>
+            </div>
+            <div>
+                <div class="text-xs text-gray-500">Rollen</div>
+                <div class="flex flex-wrap gap-1.5 mt-0.5">
+                    {% if user.ist_hr %}<span class="pill bg-sage-100 text-sage-800 text-[10px] px-2 py-0.5">HR</span>{% endif %}
+                    {% if user.ist_genehmiger %}<span class="pill bg-gray-100 text-gray-800 text-[10px] px-2 py-0.5">Genehmiger:in</span>{% endif %}
+                    {% if not user.ist_hr and not user.ist_genehmiger %}<span class="text-xs text-gray-400">Mitarbeiter:in</span>{% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Urlaub #}
+    <div class="bg-white border border-card-border rounded-xl p-6">
+        <div class="text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-4">Urlaub</div>
+        <div class="space-y-3 text-sm">
+            <div class="flex justify-between">
+                <span class="text-gray-500">Jahresanspruch</span>
+                <span class="font-medium tabular">{{ user.jahresanspruch }} Tage</span>
+            </div>
+            <div class="flex justify-between">
+                <span class="text-gray-500">Resturlaub aktuell</span>
+                <span class="font-medium tabular">{{ user.resturlaub_aktuell|number_format(1, ',', '.') }} Tage</span>
+            </div>
+            <div class="flex justify-between">
+                <span class="text-gray-500">Resturlaub Vorjahr</span>
+                <span class="font-medium tabular">{{ user.resturlaub_vorjahr|number_format(1, ',', '.') }} Tage</span>
+            </div>
+        </div>
+    </div>
+
+    {# Persönliche Daten #}
+    <div class="bg-white border border-card-border rounded-xl p-6">
+        <div class="text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-4">Persönliche Daten</div>
+        {% if master.geburtsdatum or master.telefon or master.strasse or master.plz or master.ort %}
+        <div class="space-y-3 text-sm">
+            <div class="flex justify-between">
+                <span class="text-gray-500">Geburtsdatum</span>
+                <span class="font-medium">{% if master.geburtsdatum %}{{ master.geburtsdatum|date('d.m.Y') }}{% else %}<span class="text-gray-400">—</span>{% endif %}</span>
+            </div>
+            <div class="flex justify-between">
+                <span class="text-gray-500">Telefon</span>
+                <span class="font-medium">{% if master.telefon %}{{ master.telefon }}{% else %}<span class="text-gray-400">—</span>{% endif %}</span>
+            </div>
+            <div>
+                <div class="text-gray-500 mb-1">Anschrift</div>
+                {% if master.strasse or master.plz or master.ort %}
+                <div class="font-medium leading-relaxed">
+                    {% if master.strasse %}{{ master.strasse }}<br>{% endif %}
+                    {% if master.plz %}{{ master.plz }} {% endif %}{% if master.ort %}{{ master.ort }}{% endif %}
+                </div>
+                {% else %}
+                <span class="text-gray-400">—</span>
+                {% endif %}
+            </div>
+        </div>
+        {% else %}
+        <div class="text-sm text-gray-500">
+            Noch keine persönlichen Daten hinterlegt. HR pflegt diese auf Anfrage.
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

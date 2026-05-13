@@ -1,0 +1,217 @@
+{% extends 'layout.twig' %}
+{% set active_nav = 'hr-audit' %}
+{% block title %}Audit-Log – {{ org.short_name }}{% endblock %}
+
+{# Action-Label-Map: technische Strings → menschlich lesbar. Fallback auf den raw-String. #}
+{% set action_labels = {
+    'absence.approval_requested': 'Genehmigung angefragt',
+    'absence.approved': 'Antrag genehmigt',
+    'absence.rejected': 'Antrag abgelehnt',
+    'absence.cancelled': 'Antrag storniert',
+    'user.pre_created': 'Mitarbeiter:in angelegt',
+    'user.stammdaten_updated': 'Stammdaten geändert',
+    'user.annual_rollover': 'Jahres-Rollover (User)',
+    'system.annual_rollover': 'Jahres-Rollover (System)',
+} %}
+
+{# Feld-Label-Map fuer Payload-Keys → menschlich lesbar. #}
+{% set field_labels = {
+    'job_title': 'Job-Titel',
+    'eintrittsdatum': 'Eintrittsdatum',
+    'jahresanspruch': 'Jahresanspruch',
+    'resturlaub_aktuell': 'Resturlaub aktuell',
+    'resturlaub_vorjahr': 'Resturlaub Vorjahr',
+    'ist_aktiv': 'Aktiv',
+    'ist_genehmiger': 'Genehmiger:in',
+    'ist_hr': 'HR',
+    'display_name': 'Anzeigename',
+    'email': 'E-Mail',
+    'geburtsdatum': 'Geburtsdatum',
+    'telefon': 'Telefon',
+    'strasse': 'Straße',
+    'plz': 'PLZ',
+    'ort': 'Ort',
+    'vorjahr_used': 'Aus Vorjahr abgebucht',
+    'aktuell_used': 'Aus Aktuell abgebucht',
+    'comment': 'Begründung',
+    'previous_status': 'Vorheriger Status',
+    'genehmiger_id': 'Genehmiger:in (ID)',
+    'old_aktuell': 'Resturlaub aktuell vorher',
+    'old_vorjahr': 'Resturlaub Vorjahr vorher',
+    'new_aktuell': 'Resturlaub aktuell nachher',
+    'new_vorjahr': 'Resturlaub Vorjahr nachher',
+    'users_updated': 'User aktualisiert',
+    'anteilig_berechnet': 'Anteilig berechnet',
+} %}
+
+{# Formatiert einen Payload-Wert menschlich: true/false → Ja/Nein, NULL → —, ISO-Datum → dd.mm.yyyy. #}
+{# Reihenfolge: Bools zuerst, weil PHP-loose-compare false == '' ergibt true. #}
+{% macro fmt(value) %}
+    {%- if value is same as(true) -%}
+        <span class="text-sage-700">Ja</span>
+    {%- elseif value is same as(false) -%}
+        <span class="text-gray-500">Nein</span>
+    {%- elseif value is null or value is same as('') -%}
+        <span class="text-gray-400">—</span>
+    {%- elseif value is iterable -%}
+        <code class="text-[10px] text-gray-600">{{ value|json_encode }}</code>
+    {%- elseif value matches '/^\\d{4}-\\d{2}-\\d{2}$/' -%}
+        {{ value|date('d.m.Y') }}
+    {%- else -%}
+        {{ value }}
+    {%- endif -%}
+{% endmacro %}
+
+{% block content %}
+
+<div class="mb-8">
+    <h1 class="text-2xl font-bold tracking-tight">Audit-Log</h1>
+    <p class="text-sm text-gray-500 mt-1">Schreib-Operationen auf User und Anträge · {{ entries|length }} Einträge angezeigt (max. 200)</p>
+</div>
+
+{# Filter-Bar #}
+<form method="get" action="/hr/audit" class="bg-white border border-card-border rounded-xl p-5 mb-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 items-end">
+        <div>
+            <label class="block text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-1.5">Aktion</label>
+            <select name="action" class="w-full px-3 py-2 text-sm border border-card-border rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500 bg-white">
+                <option value="">Alle</option>
+                {% for a in all_actions %}
+                <option value="{{ a }}" {{ filters.action == a ? 'selected' : '' }}>{{ action_labels[a] ?? a }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label class="block text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-1.5">Akteur</label>
+            <select name="user_id" class="w-full px-3 py-2 text-sm border border-card-border rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500 bg-white">
+                <option value="">Alle</option>
+                {% for u in all_users %}
+                <option value="{{ u.id }}" {{ filters.user_id == u.id ? 'selected' : '' }}>{{ u.display_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label class="block text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-1.5">Von</label>
+            <input type="date" name="from" value="{{ filters.from }}"
+                class="w-full px-3 py-2 text-sm border border-card-border rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500">
+        </div>
+        <div>
+            <label class="block text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-1.5">Bis</label>
+            <input type="date" name="to" value="{{ filters.to }}"
+                class="w-full px-3 py-2 text-sm border border-card-border rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500">
+        </div>
+    </div>
+    <div class="flex items-center justify-end gap-2 mt-4">
+        <a href="/hr/audit" class="text-xs px-3 py-1.5 border border-card-border rounded-full hover:bg-gray-50">Filter zurücksetzen</a>
+        <button type="submit" class="text-xs px-4 py-1.5 bg-sage-500 text-white rounded-full hover:bg-sage-600">Anwenden</button>
+    </div>
+</form>
+
+{# Tabelle #}
+<div class="bg-white border border-card-border rounded-xl overflow-hidden">
+    {% if entries|length == 0 %}
+    <div class="p-12 text-center text-sm text-gray-500">
+        Keine Einträge mit diesen Filtern.
+    </div>
+    {% else %}
+    <div class="overflow-x-auto"><table class="w-full text-sm">
+        <thead>
+            <tr class="text-[10px] font-semibold uppercase tracking-wider text-gray-500 border-b border-card-border">
+                <th class="text-left px-5 py-3">Zeitpunkt</th>
+                <th class="text-left px-5 py-3">Akteur</th>
+                <th class="text-left px-5 py-3">Aktion</th>
+                <th class="text-left px-5 py-3">Ziel</th>
+                <th class="text-left px-5 py-3">Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for e in entries %}
+            <tr class="border-b border-card-border last:border-0 hover:bg-gray-50 align-top">
+                <td class="px-5 py-3 tabular text-xs whitespace-nowrap">
+                    {{ e.created_at|date('d.m.Y') }}<br>
+                    <span class="text-gray-500">{{ e.created_at|date('H:i:s') }}</span>
+                </td>
+                <td class="px-5 py-3 text-xs">
+                    {% if e.actor_display_name %}
+                        {{ e.actor_display_name }}
+                    {% else %}
+                        <span class="text-gray-400 italic">System</span>
+                    {% endif %}
+                </td>
+                <td class="px-5 py-3">
+                    <span class="text-sm">{{ action_labels[e.action] ?? e.action }}</span>
+                </td>
+                <td class="px-5 py-3 text-xs tabular">
+                    {% if e.entity_type == 'user' %}
+                        <a href="/hr/users/{{ e.entity_id }}/edit" class="hover:underline">User #{{ e.entity_id }}</a>
+                    {% else %}
+                        {{ e.entity_type }} #{{ e.entity_id }}
+                    {% endif %}
+                </td>
+                <td class="px-5 py-3">
+                    {% import _self as m %}
+                    {% if e.payload_decoded is null %}
+                        <span class="text-gray-400 text-xs">—</span>
+                    {% elseif e.payload_decoded.before is defined and e.payload_decoded.after is defined %}
+                        {# Diff-Tabelle: vorher/nachher, geänderte Felder hervorgehoben #}
+                        <details class="text-xs">
+                            <summary class="cursor-pointer text-gray-500 hover:text-black select-none">Vorher / Nachher anzeigen</summary>
+                            <table class="mt-2 w-full max-w-lg border border-card-border rounded overflow-hidden">
+                                <thead>
+                                    <tr class="text-[10px] uppercase tracking-wider text-gray-500 bg-gray-50 border-b border-card-border">
+                                        <th class="text-left px-3 py-1.5">Feld</th>
+                                        <th class="text-left px-3 py-1.5">Vorher</th>
+                                        <th class="text-left px-3 py-1.5">Nachher</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for key, before_val in e.payload_decoded.before %}
+                                        {% set after_val = e.payload_decoded.after[key] ?? null %}
+                                        {% set changed = before_val != after_val %}
+                                        <tr class="border-b border-card-border last:border-0 {{ changed ? 'bg-amber-50' : '' }}">
+                                            <td class="px-3 py-1.5 font-medium text-[11px]">{{ field_labels[key] ?? key }}</td>
+                                            <td class="px-3 py-1.5 text-[11px] {{ changed ? 'text-gray-500 line-through' : 'text-gray-400' }}">{{ m.fmt(before_val) }}</td>
+                                            <td class="px-3 py-1.5 text-[11px] {{ changed ? 'font-medium text-sage-800' : 'text-gray-400' }}">{{ m.fmt(after_val) }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% if e.payload_decoded.master_data is defined %}
+                            <div class="mt-3 text-[10px] uppercase tracking-wider text-gray-500">Stammdaten neu gesetzt</div>
+                            <table class="mt-1 w-full max-w-lg border border-card-border rounded overflow-hidden">
+                                <tbody>
+                                    {% for key, val in e.payload_decoded.master_data %}
+                                    <tr class="border-b border-card-border last:border-0">
+                                        <td class="px-3 py-1.5 font-medium text-[11px]">{{ field_labels[key] ?? key }}</td>
+                                        <td class="px-3 py-1.5 text-[11px]">{{ m.fmt(val) }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% endif %}
+                        </details>
+                    {% else %}
+                        {# Flache Key/Value-Liste für Payloads ohne before/after-Struktur #}
+                        <details class="text-xs">
+                            <summary class="cursor-pointer text-gray-500 hover:text-black select-none">Details anzeigen</summary>
+                            <table class="mt-2 w-full max-w-md border border-card-border rounded overflow-hidden">
+                                <tbody>
+                                    {% for key, val in e.payload_decoded %}
+                                    <tr class="border-b border-card-border last:border-0">
+                                        <td class="px-3 py-1.5 font-medium text-[11px]">{{ field_labels[key] ?? key }}</td>
+                                        <td class="px-3 py-1.5 text-[11px]">{{ m.fmt(val) }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </details>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table></div>
+    {% endif %}
+</div>
+
+{% endblock %}

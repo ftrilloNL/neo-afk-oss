@@ -1,0 +1,19 @@
+{#
+    Status-Pill-Macro fuer Abwesenheiten.
+    DB-Status 'aktiv' wird je nach Art unterschiedlich angezeigt:
+    - art=urlaub + status=aktiv  -> "Genehmigt" (gruene Pill)
+    - art=krank  + status=aktiv  -> "Aktiv" (sage Pill)
+    Andere Status (beantragt, abgelehnt, storniert) werden capitalized angezeigt.
+
+    Aufruf:
+        {% import 'macros/status.twig' as status %}
+        {{ status.pill(a.art, a.status) }}
+#}
+
+{% macro pill(art, status) %}
+    {%- if status == 'aktiv' and art == 'urlaub' -%}
+        <span class="pill pill-genehmigt">Genehmigt</span>
+    {%- else -%}
+        <span class="pill pill-{{ status }}">{{ status|capitalize }}</span>
+    {%- endif -%}
+{% endmacro %}

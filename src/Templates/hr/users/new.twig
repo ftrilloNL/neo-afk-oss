@@ -1,0 +1,170 @@
+{% extends 'layout.twig' %}
+{% set active_nav = 'hr-users' %}
+{% block title %}Neuen Mitarbeiter anlegen – {{ org.short_name }}{% endblock %}
+{% block content %}
+
+<div class="mb-6">
+    <a href="/hr/users" class="text-xs text-gray-500 hover:text-black inline-flex items-center gap-1">
+        <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+        Zurück zur Übersicht
+    </a>
+    <h1 class="text-2xl font-bold tracking-tight mt-2">Neuen Mitarbeiter anlegen</h1>
+    <p class="text-sm text-gray-500 mt-1">Der Mitarbeiter wird mit „Pending Login"-Status angelegt und beim ersten M365-SSO-Login automatisch verlinkt.</p>
+</div>
+
+{% if errors|length > 0 %}
+<div class="bg-red-50 border border-red-200 text-red-800 rounded-xl px-5 py-3 mb-6 text-sm">
+    Bitte korrigiere die markierten Felder.
+</div>
+{% endif %}
+
+{% if similar_users|length > 0 %}
+<div class="bg-amber-50 border border-amber-300 text-amber-900 rounded-xl px-5 py-4 mb-6 text-sm max-w-2xl">
+    <div class="font-semibold mb-2">Möglicher doppelter Mitarbeiter erkannt</div>
+    <p class="mb-3">Es gibt bereits Datensätze mit ähnlicher E-Mail-Adresse:</p>
+    <ul class="space-y-1 mb-3 pl-1">
+        {% for s in similar_users %}
+        <li class="flex gap-2 items-center">
+            <span class="font-medium">{{ s.display_name }}</span>
+            <span class="text-amber-700">·</span>
+            <span class="font-mono text-xs">{{ s.email }}</span>
+            {% if s.entra_oid is null %}<span class="pill bg-amber-200 text-amber-900 text-[9px] px-1.5 py-0.5">Pending</span>{% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+    <p class="text-xs">Falls das wirklich ein anderer Mensch ist (z.B. Namensgleichheit), unten in der Form das Häkchen „Trotzdem als neuen Mitarbeiter anlegen" setzen und erneut speichern.</p>
+</div>
+{% endif %}
+
+<form method="post" action="/hr/users" class="bg-white border border-card-border rounded-xl p-6 max-w-2xl">
+    {{ csrf_field() }}
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-6">
+        <div>
+            <label class="block text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-1.5">Anzeigename</label>
+            <input type="text" name="display_name" required
+                value="{{ form.display_name ?? '' }}"
+                class="w-full px-3 py-2 text-sm border {{ errors.display_name is defined ? 'border-red-300' : 'border-card-border' }} rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500">
+            <div class="text-xs text-gray-500 mt-1">Vorname Nachname — wird beim ersten SSO ggf. mit Microsoft-Wert überschrieben</div>
+            {% if errors.display_name is defined %}<div class="text-xs text-red-600 mt-1">{{ errors.display_name }}</div>{% endif %}
+        </div>
+        <div>
+            <label class="block text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-1.5">E-Mail (M365-Login)</label>
+            <input type="email" name="email" required
+                value="{{ form.email ?? '' }}"
+                class="w-full px-3 py-2 text-sm border {{ errors.email is defined ? 'border-red-300' : 'border-card-border' }} rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500">
+            <div class="text-xs text-gray-500 mt-1">Muss exakt der M365-Login-Adresse entsprechen</div>
+            {% if errors.email is defined %}<div class="text-xs text-red-600 mt-1">{{ errors.email }}</div>{% endif %}
+        </div>
+    </div>
+
+    <div class="mb-5">
+        <label class="block text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-1.5">Job-Titel</label>
+        <input type="text" name="job_title" maxlength="100"
+            value="{{ form.job_title ?? '' }}"
+            placeholder="z.B. Senior Software Engineer, Head of Sales"
+            class="w-full px-3 py-2 text-sm border border-card-border rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500">
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-6">
+        <div>
+            <label class="block text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-1.5">Eintrittsdatum</label>
+            <input type="date" name="eintrittsdatum"
+                value="{{ form.eintrittsdatum ?? '' }}"
+                class="w-full px-3 py-2 text-sm border {{ errors.eintrittsdatum is defined ? 'border-red-300' : 'border-card-border' }} rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500">
+            {% if errors.eintrittsdatum is defined %}<div class="text-xs text-red-600 mt-1">{{ errors.eintrittsdatum }}</div>{% endif %}
+        </div>
+        <div>
+            <label class="block text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-1.5">Jahresanspruch (Tage)</label>
+            <input type="number" name="jahresanspruch" min="0" max="99" step="1" required
+                value="{{ form.jahresanspruch ?? 30 }}"
+                class="w-full px-3 py-2 text-sm border {{ errors.jahresanspruch is defined ? 'border-red-300' : 'border-card-border' }} rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500 tabular">
+            {% if errors.jahresanspruch is defined %}<div class="text-xs text-red-600 mt-1">{{ errors.jahresanspruch }}</div>{% endif %}
+        </div>
+    </div>
+
+    <div class="mb-4 bg-sage-50 border border-sage-200 rounded-lg px-4 py-3">
+        <label class="flex items-start gap-2.5 text-sm cursor-pointer">
+            <input type="checkbox" name="anteilig_berechnen" value="1"
+                {{ form is null or form.anteilig_berechnen is defined ? 'checked' : '' }}
+                class="w-4 h-4 mt-0.5 rounded border-card-border text-sage-500 focus:ring-sage-500">
+            <span>
+                <span class="font-medium">Resturlaub aktuell anteilig nach Eintrittsdatum berechnen</span>
+                {% if vorschlag_anteilig is not null %}
+                <span class="block text-xs text-sage-800 mt-0.5">
+                    Vorschlag bei aktueller Eingabe: <span class="font-semibold tabular">{{ vorschlag_anteilig|number_format(1, ',', '.') }} Tage</span> —
+                    überschreibt den Wert im Feld „Resturlaub aktuell" beim Speichern.
+                </span>
+                {% else %}
+                <span class="block text-xs text-gray-500 mt-0.5">
+                    Pro vollendetem Monat 1/12 vom Jahresanspruch. Häkchen entfernen, um den Wert manuell zu setzen.
+                </span>
+                {% endif %}
+            </span>
+        </label>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-6">
+        <div>
+            <label class="block text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-1.5">Resturlaub aktuell</label>
+            <input type="text" name="resturlaub_aktuell" inputmode="decimal"
+                value="{{ form.resturlaub_aktuell ?? '0' }}"
+                class="w-full px-3 py-2 text-sm border {{ errors.resturlaub_aktuell is defined ? 'border-red-300' : 'border-card-border' }} rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500 tabular">
+            <div class="text-xs text-gray-500 mt-1">Wird ignoriert, wenn anteilige Berechnung aktiv ist.</div>
+            {% if errors.resturlaub_aktuell is defined %}<div class="text-xs text-red-600 mt-1">{{ errors.resturlaub_aktuell }}</div>{% endif %}
+        </div>
+        <div>
+            <label class="block text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-1.5">Resturlaub Vorjahr</label>
+            <input type="text" name="resturlaub_vorjahr" inputmode="decimal"
+                value="{{ form.resturlaub_vorjahr ?? '0' }}"
+                class="w-full px-3 py-2 text-sm border {{ errors.resturlaub_vorjahr is defined ? 'border-red-300' : 'border-card-border' }} rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500 tabular">
+            {% if errors.resturlaub_vorjahr is defined %}<div class="text-xs text-red-600 mt-1">{{ errors.resturlaub_vorjahr }}</div>{% endif %}
+        </div>
+    </div>
+
+    <div class="border-t border-card-border pt-5 mb-6">
+        <div class="text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-3">Rollen & Status</div>
+        <div class="space-y-2.5">
+            <label class="flex items-center gap-2.5 text-sm cursor-pointer">
+                <input type="checkbox" name="ist_aktiv" value="1"
+                    {{ (form is null or form.ist_aktiv is defined) ? 'checked' : '' }}
+                    class="w-4 h-4 rounded border-card-border text-sage-500 focus:ring-sage-500">
+                <span>Aktiv — kann sich einloggen, taucht in Listen auf</span>
+            </label>
+            <label class="flex items-center gap-2.5 text-sm cursor-pointer">
+                <input type="checkbox" name="ist_genehmiger" value="1"
+                    {{ form is defined and form.ist_genehmiger is defined ? 'checked' : '' }}
+                    class="w-4 h-4 rounded border-card-border text-sage-500 focus:ring-sage-500">
+                <span>Genehmiger:in — kann Urlaubsanträge anderer freigeben</span>
+            </label>
+            <label class="flex items-center gap-2.5 text-sm cursor-pointer">
+                <input type="checkbox" name="ist_hr" value="1"
+                    {{ form is defined and form.ist_hr is defined ? 'checked' : '' }}
+                    class="w-4 h-4 rounded border-card-border text-sage-500 focus:ring-sage-500">
+                <span>HR — sieht alle Abwesenheiten, kann Stammdaten editieren</span>
+            </label>
+        </div>
+    </div>
+
+    {% if similar_users|length > 0 %}
+    <div class="mb-4 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3">
+        <label class="flex items-start gap-2.5 text-sm cursor-pointer">
+            <input type="checkbox" name="override_similarity" value="1"
+                class="w-4 h-4 mt-0.5 rounded border-card-border text-amber-600 focus:ring-amber-500">
+            <span>
+                <span class="font-medium">Trotzdem als neuen Mitarbeiter anlegen</span>
+                <span class="block text-xs text-amber-800 mt-0.5">
+                    Ich habe die oben angezeigten Datensätze geprüft — es handelt sich um eine andere Person.
+                </span>
+            </span>
+        </label>
+    </div>
+    {% endif %}
+
+    <div class="flex items-center justify-end gap-2">
+        <a href="/hr/users" class="text-sm px-4 py-2 border border-card-border rounded-full hover:bg-gray-50">Abbrechen</a>
+        <button type="submit" class="text-sm px-5 py-2 bg-sage-500 text-white rounded-full hover:bg-sage-600">Anlegen</button>
+    </div>
+</form>
+
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'layout.twig' %}
+{% set active_nav = 'team' %}
+{% block title %}Team – {{ org.short_name }}{% endblock %}
+{% block content %}
+
+<div class="mb-8">
+    <h1 class="text-2xl font-bold tracking-tight">Team</h1>
+    <p class="text-sm text-gray-500 mt-1">{{ team|length }} aktive Mitarbeiter:innen</p>
+</div>
+
+{% if team|length == 0 %}
+<div class="bg-white border border-card-border rounded-xl p-12 text-center text-sm text-gray-500">
+    Noch keine aktiven Mitarbeiter:innen.
+</div>
+{% else %}
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl">
+    {% for m in team %}
+    <div class="bg-white border border-card-border rounded-xl p-5 flex gap-4 items-start">
+        {% if m.has_avatar %}
+        <img src="/avatar/{{ m.id }}" alt="{{ m.display_name }}" class="w-14 h-14 shrink-0 rounded-full object-cover">
+        {% else %}
+        <div class="w-14 h-14 shrink-0 rounded-full bg-sage-500 text-white flex items-center justify-center text-base font-semibold">
+            {{ m.display_name|split(' ')|map(p => p|first|upper)|join('')|slice(0, 2) }}
+        </div>
+        {% endif %}
+        <div class="flex-1 min-w-0">
+            <div class="font-semibold truncate">{{ m.display_name }}</div>
+            {% if m.job_title %}
+            <div class="text-xs text-gray-600 truncate">{{ m.job_title }}</div>
+            {% endif %}
+            <a href="mailto:{{ m.email }}" class="block text-xs text-gray-500 truncate hover:text-black mt-1">{{ m.email }}</a>
+            {% if m.telefon %}
+            <a href="tel:{{ m.telefon }}" class="block text-xs text-gray-500 truncate hover:text-black mt-0.5 tabular">{{ m.telefon }}</a>
+            {% endif %}
+            <div class="flex flex-wrap gap-1 mt-2">
+                {% if m.ist_hr %}<span class="pill bg-sage-100 text-sage-800 text-[10px] px-2 py-0.5">HR</span>{% endif %}
+                {% if m.ist_genehmiger %}<span class="pill bg-gray-100 text-gray-800 text-[10px] px-2 py-0.5">Genehmiger:in</span>{% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% endblock %}

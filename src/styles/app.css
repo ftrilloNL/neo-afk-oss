@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    body {
+        font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+        -webkit-font-smoothing: antialiased;
+    }
+
+    /* tabular figures for Resturlaub-Zahlen + Tage-Spalten */
+    .tabular {
+        font-variant-numeric: tabular-nums;
+    }
+}
+
+@layer components {
+    /* Sidebar nav-Item-Zustände */
+    .nav-item {
+        @apply flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors;
+    }
+    .nav-item-active {
+        @apply flex items-center gap-3 px-3 py-2 rounded-md text-sm font-semibold text-black bg-sage-100 border-l-[3px] border-sage-500 -ml-[3px] pl-[calc(0.75rem-3px+3px)];
+    }
+
+    /* Status-Pills für Abwesenheits-Tabelle */
+    .pill {
+        @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium;
+    }
+    .pill-beantragt { @apply bg-amber-50 text-amber-800; }
+    .pill-aktiv     { @apply bg-sage-100 text-sage-800; }
+    .pill-genehmigt { @apply bg-emerald-50 text-emerald-800; }
+    .pill-abgelehnt { @apply bg-red-50 text-red-800; }
+    .pill-storniert { @apply bg-gray-100 text-gray-700; }
+}

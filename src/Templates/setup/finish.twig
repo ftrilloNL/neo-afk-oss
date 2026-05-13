@@ -1,0 +1,41 @@
+{% extends 'setup/layout.twig' %}
+
+{% block content %}
+<h1 class="text-2xl font-bold mb-2">Fast fertig 🎉</h1>
+<p class="text-gray-600 mb-6 leading-relaxed">
+    Datenbank, Konfiguration, Mail-Versand und Admin-Konto stehen. Zwei Sachen
+    musst du noch außerhalb des Browsers erledigen, danach kannst du den Setup
+    abschließen.
+</p>
+
+<h2 class="text-base font-semibold mb-2 mt-6">Cron-Jobs eintragen</h2>
+<p class="text-sm text-gray-600 mb-3 leading-relaxed">
+    In der Cron-Konfiguration eures Hosters (KonsoleH, crontab, Plesk, …):
+</p>
+<pre class="bg-gray-50 border border-gray-200 rounded-md px-4 py-3 text-xs font-mono overflow-x-auto"><code>0 2 * * *   php /pfad/zur/app/cron/cleanup-tokens.php
+0 6 * * *   php /pfad/zur/app/cron/ooo-sync.php
+0 9 * * *   php /pfad/zur/app/cron/reminders.php
+0 2 1 1 *   php /pfad/zur/app/cron/jahreswechsel.php
+0 2 1 4 *   php /pfad/zur/app/cron/verfall.php</code></pre>
+
+<h2 class="text-base font-semibold mb-2 mt-6">Logo ersetzen (optional)</h2>
+<p class="text-sm text-gray-600 mb-3 leading-relaxed">
+    <code>public/assets/logo.svg</code> ist ein Platzhalter (4 schwarze Quadrate).
+    Mit eigenem SVG überschreiben und PNG-Icons (180/192/512 px) regenerieren —
+    Befehl in der
+    <a href="https://github.com/ftrilloNL/neo-afk-oss#readme" target="_blank" class="underline">README</a>.
+</p>
+
+<h2 class="text-base font-semibold mb-2 mt-6">Setup abschließen</h2>
+<p class="text-sm text-gray-600 mb-4 leading-relaxed">
+    Setzt <code>SETUP_MODE=false</code> in der <code>.env</code> und legt
+    eine Lock-Datei unter <code>var/secrets/setup-completed</code> an. Danach
+    ist <code>/setup</code> dicht.
+</p>
+
+<form method="post" action="/setup/finish">
+    <div class="flex justify-end gap-3">
+        <button type="submit" class="btn btn-primary">Setup abschließen + zum Login →</button>
+    </div>
+</form>
+{% endblock %}

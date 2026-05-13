@@ -1,0 +1,28 @@
+{# Wird via HTMX bei jedem Datums-/Halbtag-Change geladen. Erwartet:
+   state ∈ {incomplete, invalid, invalid_range, ok}, tage, verfuegbar (nullable), ueberzogen (bool), art #}
+{% if state == 'ok' %}
+    <div class="flex items-baseline flex-wrap gap-x-3 gap-y-1">
+        <div class="text-sm">
+            <span class="font-bold tabular text-base">{{ tage|number_format(1, ',', '.') }}</span>
+            {{ tage == 1.0 ? 'Werktag' : 'Werktage' }}
+        </div>
+        {% if art == 'urlaub' and verfuegbar is not null %}
+            {% if ueberzogen %}
+                <div class="text-sm text-red-700">
+                    überschreitet Resturlaub
+                    (<span class="tabular">{{ verfuegbar|number_format(1, ',', '.') }}</span> verfügbar)
+                </div>
+            {% else %}
+                <div class="text-sm text-gray-500">
+                    von <span class="tabular">{{ verfuegbar|number_format(1, ',', '.') }}</span> verfügbar
+                </div>
+            {% endif %}
+        {% endif %}
+    </div>
+{% elseif state == 'invalid_range' %}
+    <div class="text-sm text-red-700">Enddatum liegt vor Startdatum</div>
+{% elseif state == 'invalid' %}
+    <div class="text-sm text-gray-500">Ungültiges Datum</div>
+{% else %}
+    <div class="text-sm text-gray-400">Werktage werden nach Eingabe beider Daten angezeigt</div>
+{% endif %}

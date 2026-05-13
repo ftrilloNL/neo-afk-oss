@@ -1,0 +1,14 @@
+/vendor/
+/node_modules/
+/.env
+/var/logs/*.log
+/var/secrets/
+/var/mails/
+/var/avatars/
+/.phpunit.cache/
+/.php-cs-fixer.cache
+/.phpstan.cache/
+.DS_Store
+.idea/
+.vscode/
+*.log

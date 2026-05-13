@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="de">
+<head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background:#FAFAF9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;color:#1A1A1A;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#FAFAF9;padding:32px 16px;">
+<tr><td align="center">
+    <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="background:#FFFFFF;border:1px solid #E5E5E0;border-radius:12px;overflow:hidden;">
+        <tr><td style="padding:32px;">
+            <h1 style="margin:0 0 16px 0;font-size:20px;font-weight:700;color:#000000;">
+                {% if decision == 'approved' %}
+                Dein Urlaub wurde genehmigt 🎉
+                {% else %}
+                Dein Urlaubsantrag wurde abgelehnt
+                {% endif %}
+            </h1>
+            <p style="margin:0 0 16px 0;font-size:15px;line-height:1.6;">Hallo {{ applicant.display_name|split(' ')|first }},</p>
+
+            {% if decision == 'approved' %}
+            <p style="margin:0 0 24px 0;font-size:15px;line-height:1.6;">
+                Dein Urlaubsantrag von <strong>{{ absence.startdatum|date('d.m.Y') }}</strong> bis <strong>{{ absence.enddatum|date('d.m.Y') }}</strong> ({{ absence.tage_gezaehlt|number_format(1, ',', '.') }} Tage) wurde genehmigt. Der Eintrag erscheint im Gruppenkalender, dein Resturlaub wurde abgebucht.
+            </p>
+            <p style="margin:0 0 24px 0;font-size:15px;line-height:1.6;">Schöne Zeit!</p>
+            {% else %}
+            <p style="margin:0 0 16px 0;font-size:15px;line-height:1.6;">
+                Dein Urlaubsantrag von <strong>{{ absence.startdatum|date('d.m.Y') }}</strong> bis <strong>{{ absence.enddatum|date('d.m.Y') }}</strong> ({{ absence.tage_gezaehlt|number_format(1, ',', '.') }} Tage) wurde leider abgelehnt.
+            </p>
+            {% if comment %}
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#FAFAF9;border-left:3px solid #7B9468;margin-bottom:24px;">
+                <tr><td style="padding:14px 18px;">
+                    <div style="font-size:12px;color:#6B6B6B;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">Begründung</div>
+                    <div style="font-size:14px;color:#1A1A1A;line-height:1.5;white-space:pre-line;">{{ comment }}</div>
+                </td></tr>
+            </table>
+            {% endif %}
+            <p style="margin:0 0 24px 0;font-size:15px;line-height:1.6;">
+                Bei Rückfragen wende dich direkt an deine:n Genehmiger:in.
+            </p>
+            {% endif %}
+        </td></tr>
+
+        <tr><td style="padding:16px 32px;background:#FAFAF9;border-top:1px solid #E5E5E0;font-size:11px;color:#6B6B6B;line-height:1.5;text-align:center;">
+            {{ org.short_name }} · {{ org.legal_name }}
+        </td></tr>
+    </table>
+</td></tr>
+</table>
+</body>
+</html>

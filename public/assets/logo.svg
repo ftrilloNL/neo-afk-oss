@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Platzhalter-Logo. 2x2-Raster als generisches Abwesenheits-/Kalender-Symbol.
+     Ersetze diese Datei mit dem Logo deiner Org, oder setze ORG_LOGO_URL in der
+     .env auf einen anderen Pfad (z.B. /assets/my-company.svg). -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <rect x="14" y="14" width="32" height="32" rx="4" fill="#000"/>
+  <rect x="54" y="14" width="32" height="32" rx="4" fill="#000"/>
+  <rect x="14" y="54" width="32" height="32" rx="4" fill="#000"/>
+  <rect x="54" y="54" width="32" height="32" rx="4" fill="#000"/>
+</svg>

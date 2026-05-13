@@ -1,0 +1,60 @@
+{% extends 'layout-auth.twig' %}
+{% block title %}Urlaubsantrag {{ action == 'approve' ? 'genehmigen' : 'ablehnen' }} – {{ org.short_name }}{% endblock %}
+{% block content %}
+<div class="w-full max-w-xl">
+    <div class="flex items-center justify-center gap-2.5 mb-8">
+        <img src="{{ org.logo_url }}" alt="{{ org.short_name }}" class="w-8 h-8">
+        <span class="font-bold text-lg tracking-tight">{{ org.short_name }}</span>
+    </div>
+
+    <div class="bg-white border border-card-border rounded-xl p-8">
+        <h1 class="text-2xl font-bold tracking-tight mb-6">
+            Urlaubsantrag {{ action == 'approve' ? 'genehmigen' : 'ablehnen' }}
+        </h1>
+
+        <dl class="grid grid-cols-1 sm:grid-cols-3 gap-y-3 text-sm mb-8">
+            <dt class="text-gray-500">Antragsteller:in</dt>
+            <dd class="col-span-2 font-medium">{{ applicant.display_name }}</dd>
+
+            <dt class="text-gray-500">Zeitraum</dt>
+            <dd class="col-span-2 font-medium tabular">
+                {{ absence.startdatum|date('d.m.Y') }} – {{ absence.enddatum|date('d.m.Y') }}
+            </dd>
+
+            <dt class="text-gray-500">Tage</dt>
+            <dd class="col-span-2 font-medium tabular">{{ absence.tage_gezaehlt|number_format(1, ',', '.') }}</dd>
+
+            {% if absence.notiz %}
+            <dt class="text-gray-500">Notiz</dt>
+            <dd class="col-span-2 whitespace-pre-line">{{ absence.notiz }}</dd>
+            {% endif %}
+        </dl>
+
+        <form method="post" action="/approval/{{ token }}" class="space-y-5">
+            {% if action == 'reject' %}
+            <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">Begründung der Ablehnung</label>
+                <textarea name="begruendung" rows="3" required
+                    class="w-full px-3 py-2 text-sm border border-card-border rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500 resize-none"
+                    placeholder="z.B. Zeitraum kollidiert mit kritischem Projekt-Deadline …"></textarea>
+            </div>
+            {% endif %}
+
+            <div class="flex items-center justify-between">
+                <a href="/" class="text-sm text-gray-500 hover:text-black underline underline-offset-2">Abbrechen</a>
+                {% if action == 'approve' %}
+                <button type="submit" class="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-medium bg-sage-500 text-white rounded-md hover:bg-sage-600 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+                    Genehmigen
+                </button>
+                {% else %}
+                <button type="submit" class="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-medium bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                    Ablehnen
+                </button>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

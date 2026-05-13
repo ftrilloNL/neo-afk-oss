@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="afk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+    <title>{% block title %}{{ org.short_name }}{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="/assets/app.css">
+    <link rel="icon" type="image/svg+xml" href="{{ org.logo_url }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/icon-180.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="{{ org.accent_color }}">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="{{ org.short_name }}">
+</head>
+<body class="font-sans antialiased min-h-screen bg-white text-black">
+
+<div class="min-h-screen flex flex-col">
+    <main class="flex-1 flex items-center justify-center px-4 py-10">
+        {% block content %}{% endblock %}
+    </main>
+    <footer class="py-6 text-center text-xs text-gray-500">
+        © {{ "now"|date("Y") }} {{ org.legal_name }}
+    </footer>
+</div>
+
+</body>
+</html>

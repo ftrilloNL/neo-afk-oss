@@ -1,0 +1,70 @@
+{% extends 'setup/layout.twig' %}
+
+{% block content %}
+<h1 class="text-2xl font-bold mb-2">Microsoft 365</h1>
+<p class="text-gray-600 mb-6 leading-relaxed">
+    Werte aus eurer Entra-ID-App-Registrierung. Falls noch nicht angelegt:
+    <a href="https://github.com/ftrilloNL/neo-afk-oss/blob/main/docs/entra-id-setup.md"
+       target="_blank" class="underline">docs/entra-id-setup.md</a>.
+</p>
+
+<div class="bg-blue-50 border border-blue-200 rounded-md px-4 py-3 mb-6 text-sm">
+    <strong>Eure Redirect-URI für die Web-Plattform:</strong>
+    <code class="block mt-1 break-all">{{ env.APP_URL ?? 'https://afk.eure-firma.de' }}/auth/callback</code>
+</div>
+
+<form method="post" action="/setup/oauth" class="space-y-5">
+    <div>
+        <label class="label"><span class="label-text">Tenant-ID (GUID)</span></label>
+        <input type="text" name="oauth_tenant_id" required class="input input-bordered w-full"
+               placeholder="00000000-0000-0000-0000-000000000000"
+               value="{{ env.OAUTH_TENANT_ID ?? '' }}">
+    </div>
+
+    <div>
+        <label class="label"><span class="label-text">Client-ID (GUID)</span></label>
+        <input type="text" name="oauth_client_id" required class="input input-bordered w-full"
+               placeholder="00000000-0000-0000-0000-000000000000"
+               value="{{ env.OAUTH_CLIENT_ID ?? '' }}">
+    </div>
+
+    <div>
+        <label class="label"><span class="label-text">Client-Secret</span></label>
+        <input type="password" name="oauth_client_secret" required class="input input-bordered w-full"
+               value="{{ env.OAUTH_CLIENT_SECRET ?? '' }}">
+        <p class="text-xs text-gray-500 mt-1">
+            Aus „Zertifikate &amp; Geheimnisse → Wert" (nicht Geheimnis-ID).
+            Wird nicht im Browser angezeigt.
+        </p>
+    </div>
+
+    <hr class="my-2 border-gray-200">
+
+    <div>
+        <label class="label"><span class="label-text">Shared Mailbox für geteilten Kalender</span></label>
+        <input type="email" name="graph_calendar_user" required class="input input-bordered w-full"
+               placeholder="urlaub@eure-firma.de"
+               value="{{ env.GRAPH_CALENDAR_USER ?? '' }}">
+        <p class="text-xs text-gray-500 mt-1">
+            Mailbox mit dem geteilten Abwesenheits-Kalender. Die App schreibt
+            Urlaubs- und Krank-Events in deren Calendar.
+        </p>
+    </div>
+
+    <div>
+        <label class="label"><span class="label-text">HR-Verteiler-Mail (Krankmeldungen)</span></label>
+        <input type="text" name="hr_notification_email" required class="input input-bordered w-full"
+               placeholder="hr@eure-firma.de"
+               value="{{ env.HR_NOTIFICATION_EMAIL ?? '' }}">
+        <p class="text-xs text-gray-500 mt-1">
+            Empfänger der Krankmeldungs-Benachrichtigungen. Mehrere Adressen
+            erlaubt — komma- oder semikolon-separiert.
+        </p>
+    </div>
+
+    <div class="flex justify-between pt-3">
+        <a href="/setup/org" class="btn btn-ghost">← Zurück</a>
+        <button type="submit" class="btn btn-primary">Weiter →</button>
+    </div>
+</form>
+{% endblock %}

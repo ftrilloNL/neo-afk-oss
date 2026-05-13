@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="de">
+<head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background:#FAFAF9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;color:#1A1A1A;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#FAFAF9;padding:32px 16px;">
+<tr><td align="center">
+    <table role="presentation" width="520" cellpadding="0" cellspacing="0" style="background:#FFFFFF;border:1px solid #E5E5E0;border-radius:12px;overflow:hidden;">
+        <tr><td style="padding:28px 32px 24px 32px;">
+            <h1 style="margin:0 0 16px 0;font-size:18px;font-weight:700;color:#000000;">
+                Krankmeldung: {{ user.display_name }}
+            </h1>
+            <p style="margin:0 0 20px 0;font-size:14px;line-height:1.6;color:#6B6B6B;">
+                Eingegangen am {{ "now"|date('d.m.Y H:i') }}
+            </p>
+
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#FAFAF9;border:1px solid #E5E5E0;border-radius:8px;">
+                <tr><td style="padding:16px 20px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td style="font-size:12px;color:#6B6B6B;text-transform:uppercase;letter-spacing:0.05em;padding:6px 0;width:120px;">Mitarbeiter:in</td>
+                            <td style="font-size:14px;color:#1A1A1A;font-weight:500;padding:6px 0;">{{ user.display_name }}<br><span style="color:#6B6B6B;font-weight:400;font-size:13px;">{{ user.email }}</span></td>
+                        </tr>
+                        <tr>
+                            <td style="font-size:12px;color:#6B6B6B;text-transform:uppercase;letter-spacing:0.05em;padding:6px 0;">Zeitraum</td>
+                            <td style="font-size:14px;color:#1A1A1A;font-weight:500;padding:6px 0;">{{ startdatum|date('d.m.Y') }} – {{ enddatum|date('d.m.Y') }}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-size:12px;color:#6B6B6B;text-transform:uppercase;letter-spacing:0.05em;padding:6px 0;">Tage</td>
+                            <td style="font-size:14px;color:#1A1A1A;font-weight:500;padding:6px 0;">{{ tage|number_format(1, ',', '.') }}</td>
+                        </tr>
+                        {% if notiz %}
+                        <tr>
+                            <td style="font-size:12px;color:#6B6B6B;text-transform:uppercase;letter-spacing:0.05em;padding:6px 0;vertical-align:top;">Notiz</td>
+                            <td style="font-size:14px;color:#1A1A1A;padding:6px 0;white-space:pre-line;">{{ notiz }}</td>
+                        </tr>
+                        {% endif %}
+                    </table>
+                </td></tr>
+            </table>
+
+            <p style="margin:20px 0 0 0;font-size:12px;color:#6B6B6B;line-height:1.5;">
+                Im Gruppenkalender wurde ein Eintrag <strong>„Abwesend"</strong> erzeugt (DSGVO-konform, keine „Krank"-Markierung sichtbar).
+            </p>
+        </td></tr>
+
+        <tr><td style="padding:16px 32px;background:#FAFAF9;border-top:1px solid #E5E5E0;font-size:11px;color:#6B6B6B;line-height:1.5;text-align:center;">
+            Automatische Mail aus {{ org.short_name }}
+        </td></tr>
+    </table>
+</td></tr>
+</table>
+</body>
+</html>

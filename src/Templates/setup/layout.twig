@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="afk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+    <title>Setup · {{ org.short_name }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="/assets/app.css">
+    <link rel="icon" type="image/svg+xml" href="{{ org.logo_url }}">
+</head>
+<body class="font-sans antialiased min-h-screen bg-gray-50 text-black">
+
+<div class="min-h-screen flex flex-col">
+    <header class="bg-white border-b border-gray-200">
+        <div class="max-w-3xl mx-auto px-6 py-5 flex items-center gap-3">
+            <img src="{{ org.logo_url }}" alt="" class="w-8 h-8">
+            <span class="font-bold text-lg tracking-tight">Setup-Assistent</span>
+            <span class="ml-auto text-sm text-gray-500">
+                Schritt {{ current.nr }} von {{ steps|length }}: {{ current.label }}
+            </span>
+        </div>
+        <div class="max-w-3xl mx-auto px-6 pb-4">
+            <ol class="flex gap-1">
+                {% for key, s in steps %}
+                    <li class="flex-1 h-1.5 rounded-full {% if s.nr <= current.nr %}bg-primary{% else %}bg-gray-200{% endif %}"></li>
+                {% endfor %}
+            </ol>
+        </div>
+    </header>
+
+    <main class="flex-1 px-4 py-10">
+        <div class="max-w-3xl mx-auto">
+            {% if error is defined and error %}
+                <div class="mb-5 px-4 py-3 rounded-md bg-red-50 border border-red-200 text-sm text-red-800">
+                    <strong>Problem:</strong> {{ error }}
+                </div>
+            {% endif %}
+            <div class="bg-white border border-card-border rounded-xl p-8">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </main>
+
+    <footer class="py-6 text-center text-xs text-gray-500">
+        neo-afk Setup · <a href="https://github.com/ftrilloNL/neo-afk-oss" class="underline">Doku</a>
+    </footer>
+</div>
+
+{% block scripts %}{% endblock %}
+</body>
+</html>
