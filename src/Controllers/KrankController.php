@@ -60,8 +60,16 @@ final class KrankController
         $halbtagStart = (string) ($body['halbtag_start'] ?? 'ganztag');
         $halbtagEnde = (string) ($body['halbtag_ende'] ?? 'ganztag');
         $notiz = trim((string) ($body['notiz'] ?? ''));
-        $oooInternal = trim((string) ($body['ooo_internal'] ?? ''));
-        $oooExternal = trim((string) ($body['ooo_external'] ?? ''));
+        // Google: ein einziges ooo_text-Field, das in beide Spalten gespiegelt wird.
+        // Microsoft: getrennte ooo_internal + ooo_external.
+        $unifiedOoo = trim((string) ($body['ooo_text'] ?? ''));
+        if ($unifiedOoo !== '') {
+            $oooInternal = $unifiedOoo;
+            $oooExternal = $unifiedOoo;
+        } else {
+            $oooInternal = trim((string) ($body['ooo_internal'] ?? ''));
+            $oooExternal = trim((string) ($body['ooo_external'] ?? ''));
+        }
 
         if ($startStr === '' || $endStr === '') {
             $_SESSION['flash_error'] = 'Bitte Datums-Felder ausfüllen.';

@@ -24,6 +24,17 @@ final class Config
     }
 
     /**
+     * Identitaets-Provider: 'microsoft' (Default) oder 'google'. Steuert Backend-
+     * Provider-Auswahl im DI und UI-Verhalten (z.B. ein OOO-Feld bei Google
+     * statt zwei, weil Gmail Vacation API nur einen Body unterstuetzt).
+     */
+    public function identityProvider(): string
+    {
+        $value = $this->get('IDENTITY_PROVIDER', 'microsoft');
+        return in_array($value, ['microsoft', 'google'], true) ? $value : 'microsoft';
+    }
+
+    /**
      * Org-Settings fuer das gehostete Branding. Werden als Twig-Global verfuegbar.
      * Defaults sind generische Beispielwerte — bei der eigenen Instanz via .env ueberschreiben.
      *
@@ -32,9 +43,12 @@ final class Config
      *     short_name: string,
      *     legal_name: string,
      *     logo_url: string,
+     *     support_email: string,
+     *     accent_color: string,
      *     app_url: string,
      *     default_jahresanspruch: int,
      *     feiertage_bundesland: string,
+     *     identity_provider: string,
      * }
      */
     public function org(): array
@@ -51,6 +65,7 @@ final class Config
             // ISO-3166-2:DE-Code (BE, BY, HH, ...). Tabelle feiertage hat
             // diese Codes als Filter-Spalte. Seed-Files in migrations/seeds/.
             'feiertage_bundesland' => $this->get('ORG_FEIERTAGE_BUNDESLAND', 'BE'),
+            'identity_provider' => $this->identityProvider(),
         ];
     }
 }

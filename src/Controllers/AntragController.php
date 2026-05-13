@@ -138,8 +138,16 @@ final class AntragController
             return $this->redirectWithError($response, 'Der Zeitraum enthält keine Werktage.');
         }
 
-        $oooInternal = trim((string) ($body['ooo_internal'] ?? ''));
-        $oooExternal = trim((string) ($body['ooo_external'] ?? ''));
+        // Google: ein einziges ooo_text-Field, das in beide Spalten gespiegelt wird.
+        // Microsoft: getrennte ooo_internal + ooo_external.
+        $unifiedOoo = trim((string) ($body['ooo_text'] ?? ''));
+        if ($unifiedOoo !== '') {
+            $oooInternal = $unifiedOoo;
+            $oooExternal = $unifiedOoo;
+        } else {
+            $oooInternal = trim((string) ($body['ooo_internal'] ?? ''));
+            $oooExternal = trim((string) ($body['ooo_external'] ?? ''));
+        }
 
         $absenceId = $this->absences->insert([
             'user_id' => $userId,
