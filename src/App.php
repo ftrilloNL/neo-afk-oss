@@ -9,7 +9,9 @@ use App\Controllers\AuthController;
 use App\Controllers\AvatarController;
 use App\Controllers\GenehmigungenController;
 use App\Controllers\HomeController;
+use App\Controllers\HrAntragController;
 use App\Controllers\HrController;
+use App\Controllers\HrKrankController;
 use App\Controllers\HrUsersController;
 use App\Controllers\KrankController;
 use App\Controllers\ProfilController;
@@ -168,6 +170,13 @@ final class App
 
         $app->get('/hr', [HrController::class, 'index'])->add(HrMiddleware::class)->add(AuthMiddleware::class);
         $app->get('/hr/audit', [AuditController::class, 'index'])->add(HrMiddleware::class)->add(AuthMiddleware::class);
+
+        $app->get('/hr/antrag/neu', [HrAntragController::class, 'neu'])->add(HrMiddleware::class)->add(AuthMiddleware::class);
+        $app->get('/hr/antrag/preview-tage', [HrAntragController::class, 'previewTage'])->add(HrMiddleware::class)->add(AuthMiddleware::class);
+        $app->post('/hr/antrag', [HrAntragController::class, 'submit'])->add(CsrfMiddleware::class)->add(HrMiddleware::class)->add(AuthMiddleware::class);
+
+        $app->get('/hr/krank/neu', [HrKrankController::class, 'neu'])->add(HrMiddleware::class)->add(AuthMiddleware::class);
+        $app->post('/hr/krank', [HrKrankController::class, 'submit'])->add(CsrfMiddleware::class)->add(HrMiddleware::class)->add(AuthMiddleware::class);
 
         $app->get('/hr/users', [HrUsersController::class, 'index'])->add(HrMiddleware::class)->add(AuthMiddleware::class);
         $app->get('/hr/users/new', [HrUsersController::class, 'newForm'])->add(HrMiddleware::class)->add(AuthMiddleware::class);

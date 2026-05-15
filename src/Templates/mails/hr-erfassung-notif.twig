@@ -1,0 +1,13 @@
+Hallo {{ target.display_name }},
+
+HR hat für dich {% if art == 'urlaub' %}einen Urlaubsantrag{% else %}eine Krankmeldung{% endif %} erfasst:
+
+Zeitraum: {{ startdatum|date('d.m.Y') }} bis {{ enddatum|date('d.m.Y') }}
+Werktage: {{ tage|number_format(1, ',', '.') }}
+{% if notiz %}
+Notiz: {{ notiz }}
+{% endif %}
+
+Bei Fragen wende dich direkt an dein HR-Team.
+
+{{ org.name }}

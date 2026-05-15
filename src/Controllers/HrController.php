@@ -48,6 +48,10 @@ final class HrController
             }
         }
 
+        $flashSuccess = $_SESSION['flash_success'] ?? null;
+        $flashError = $_SESSION['flash_error'] ?? null;
+        unset($_SESSION['flash_success'], $_SESSION['flash_error']);
+
         return $this->view->render($response, 'hr/index.twig', [
             'user' => $user,
             'active_nav' => 'hr',
@@ -58,6 +62,8 @@ final class HrController
             'total_urlaub' => $totalUrlaub,
             'total_krank' => $totalKrank,
             'count' => count($absences),
+            'flash_success' => $flashSuccess,
+            'flash_error' => $flashError,
         ]);
     }
 
