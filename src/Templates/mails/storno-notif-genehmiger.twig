@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="de">
+<head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background:#FAFAF9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;color:#1A1A1A;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#FAFAF9;padding:32px 16px;">
+<tr><td align="center">
+    <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="background:#FFFFFF;border:1px solid #E5E5E0;border-radius:12px;overflow:hidden;">
+        <tr><td style="padding:32px;">
+            <h1 style="margin:0 0 16px 0;font-size:18px;font-weight:700;color:#000000;">Stornierung eines von dir genehmigten Antrags</h1>
+            <p style="margin:0 0 16px 0;font-size:15px;line-height:1.6;">Hallo {{ genehmiger.display_name|split(' ')|first }},</p>
+            <p style="margin:0 0 16px 0;font-size:15px;line-height:1.6;">
+                {% if canceller.id == applicant.id %}
+                <strong>{{ applicant.display_name }}</strong> hat
+                {% else %}
+                <strong>{{ canceller.display_name }}</strong> hat den Antrag von <strong>{{ applicant.display_name }}</strong>
+                {% endif %}
+                {% if canceller.id == applicant.id %}seine{% else %}dessen{% endif %}
+                {{ absence.art == 'urlaub' ? 'Urlaubs-Anfrage' : 'Krankmeldung' }}
+                vom <strong>{{ absence.startdatum|date('d.m.Y') }}</strong>
+                bis <strong>{{ absence.enddatum|date('d.m.Y') }}</strong>
+                ({{ absence.tage_gezaehlt|number_format(1, ',', '.') }} Tage) storniert.
+            </p>
+            <p style="margin:0 0 16px 0;font-size:15px;line-height:1.6;">
+                Der Eintrag im Gruppenkalender wurde entfernt
+                {% if absence.art == 'urlaub' and absence.status == 'aktiv' %}
+                und die Tage wurden auf den aktuellen Resturlaub zurückgebucht
+                {% endif %}.
+            </p>
+            <p style="margin:0 0 16px 0;font-size:13px;line-height:1.6;color:#6B6B6B;">
+                Diese Mail ist nur zur Information — du musst nichts weiter tun.
+            </p>
+        </td></tr>
+
+        <tr><td style="padding:16px 32px;background:#FAFAF9;border-top:1px solid #E5E5E0;font-size:11px;color:#6B6B6B;line-height:1.5;text-align:center;">
+            {{ org.short_name }} · {{ org.legal_name }}
+        </td></tr>
+    </table>
+</td></tr>
+</table>
+</body>
+</html>

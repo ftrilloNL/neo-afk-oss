@@ -135,6 +135,43 @@ final class StornoController
             }
         }
 
+        // 4. Info-Mail an Genehmiger:in — best-effort.
+        //    Skip wenn kein Genehmiger (HR-erfasste Urlaube haben genehmiger_id = NULL),
+        //    Genehmiger:in == Antragsteller:in (Self-Approval-Edge-Case, Applicant
+        //    bekommt eh schon die Bestaetigung) oder Genehmiger:in == storniert
+        //    gerade selbst (kein Self-Notify).
+        $genehmigerId = $absence['genehmiger_id'] !== null ? (int) $absence['genehmiger_id'] : null;
+        if (
+            $applicant !== null
+            && $genehmigerId !== null
+            && $genehmigerId !== (int) $absence['user_id']
+            && $genehmigerId !== $userId
+        ) {
+            $genehmiger = $this->users->findById($genehmigerId);
+            if ($genehmiger !== null) {
+                try {
+                    $this->mail->send(
+                        (string) $genehmiger['email'],
+                        'Stornierung: ' . ($absence['art'] === 'urlaub' ? 'Urlaubsantrag' : 'Krankmeldung')
+                            . ' von ' . $applicant['display_name'],
+                        'mails/storno-notif-genehmiger.twig',
+                        [
+                            'genehmiger' => $genehmiger,
+                            'applicant' => $applicant,
+                            'absence' => $absence,
+                            'canceller' => $currentUser,
+                        ],
+                    );
+                } catch (\Throwable $e) {
+                    error_log(sprintf(
+                        'StornoController: Storno-Info-Mail an Genehmiger:in %s fehlgeschlagen: %s',
+                        $genehmiger['email'],
+                        $e->getMessage(),
+                    ));
+                }
+            }
+        }
+
         $_SESSION['flash_success'] = 'Antrag storniert.';
         return $response->withHeader('Location', '/')->withStatus(302);
     }
