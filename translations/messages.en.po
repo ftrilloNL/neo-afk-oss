@@ -35,6 +35,18 @@ msgstr "or"
 msgid "common.days"
 msgstr "days"
 
+msgid "common.back_to_home"
+msgstr "Back to dashboard"
+
+msgid "common.role.hr"
+msgstr "HR"
+
+msgid "common.role.genehmiger"
+msgstr "Approver"
+
+msgid "common.role.employee"
+msgstr "Employee"
+
 msgid "common.art.urlaub"
 msgstr "Vacation"
 
@@ -184,3 +196,63 @@ msgstr "Trouble signing in? Contact IT"
 
 msgid "login.support_subject"
 msgstr "Login issue %org%"
+
+# ---- Coming-soon placeholder ----
+msgid "coming_soon.heading"
+msgstr "Coming soon"
+
+msgid "coming_soon.body"
+msgstr "This area is being built in the next commit."
+
+# ---- Profile ----
+msgid "profil.subtitle"
+msgstr "Changes to this data are maintained by HR."
+
+msgid "profil.section.account"
+msgstr "Account"
+
+msgid "profil.field.name"
+msgstr "Name"
+
+msgid "profil.field.email"
+msgstr "Email"
+
+msgid "profil.field.job_title"
+msgstr "Job title"
+
+msgid "profil.field.eintrittsdatum"
+msgstr "Start date"
+
+msgid "profil.field.roles"
+msgstr "Roles"
+
+msgid "profil.section.urlaub"
+msgstr "Vacation"
+
+msgid "profil.urlaub.aktuell"
+msgstr "Remaining (current year)"
+
+msgid "profil.urlaub.vorjahr"
+msgstr "Remaining (previous year)"
+
+msgid "profil.section.personal"
+msgstr "Personal details"
+
+msgid "profil.field.geburtsdatum"
+msgstr "Date of birth"
+
+msgid "profil.field.telefon"
+msgstr "Phone"
+
+msgid "profil.field.adresse"
+msgstr "Address"
+
+msgid "profil.personal.empty"
+msgstr "No personal details on file yet. HR maintains these on request."
+
+# ---- Team ----
+msgid "team.member_count"
+msgstr "%count% active employees"
+
+msgid "team.empty"
+msgstr "No active employees yet."
