@@ -1,13 +1,13 @@
 {% extends 'layout.twig' %}
 {% set active_nav = 'genehmigungen' %}
-{% block title %}Meine Genehmigungen – {{ org.short_name }}{% endblock %}
+{% block title %}{{ 'genehmigungen.title'|trans }} – {{ org.short_name }}{% endblock %}
 {% block content %}
 
 <div class="flex items-center justify-between mb-8">
     <h1 class="text-2xl font-bold tracking-tight">
-        Meine Genehmigungen
+        {{ 'genehmigungen.title'|trans }}
         {% if pending|length > 0 %}
-        <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full bg-sage-100 text-sage-800 text-xs font-medium align-middle">{{ pending|length }} offen</span>
+        <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full bg-sage-100 text-sage-800 text-xs font-medium align-middle">{{ 'genehmigungen.pending_count'|trans({'%count%': pending|length}) }}</span>
         {% endif %}
     </h1>
 </div>
@@ -30,8 +30,8 @@
     <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-sage-100 mb-4">
         <svg class="w-6 h-6 text-sage-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
     </div>
-    <h2 class="text-lg font-semibold mb-2">Keine offenen Genehmigungen 🎉</h2>
-    <p class="text-gray-600 max-w-md mx-auto">Du hast aktuell keine wartenden Urlaubsanträge zu bearbeiten.</p>
+    <h2 class="text-lg font-semibold mb-2">{{ 'genehmigungen.empty.heading'|trans }}</h2>
+    <p class="text-gray-600 max-w-md mx-auto">{{ 'genehmigungen.empty.body'|trans }}</p>
 </div>
 {% else %}
 <div class="space-y-4 max-w-3xl">
@@ -39,31 +39,31 @@
     <div class="bg-white border border-card-border rounded-xl p-6">
         <div class="flex items-start justify-between mb-4">
             <div>
-                <div class="text-sm text-gray-500 mb-1">Antragsteller:in</div>
+                <div class="text-sm text-gray-500 mb-1">{{ 'genehmigungen.col.applicant'|trans }}</div>
                 <div class="font-semibold text-base">{{ a.user_display_name }}</div>
                 <div class="text-xs text-gray-500">{{ a.user_email }}</div>
             </div>
             <div class="text-right">
-                <div class="text-xs text-gray-500 uppercase tracking-wider mb-1">Beantragt am</div>
+                <div class="text-xs text-gray-500 uppercase tracking-wider mb-1">{{ 'genehmigungen.col.requested_at'|trans }}</div>
                 <div class="text-sm tabular">{{ a.created_at|date('d.m.Y') }}</div>
             </div>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 py-4 border-t border-card-border">
             <div>
-                <div class="text-[10px] font-semibold uppercase tracking-wider text-gray-500 mb-1">Zeitraum</div>
+                <div class="text-[10px] font-semibold uppercase tracking-wider text-gray-500 mb-1">{{ 'antrag.form.zeitraum'|trans }}</div>
                 <div class="text-sm tabular font-medium">{{ a.startdatum|date('d.m.') }}–{{ a.enddatum|date('d.m.Y') }}</div>
                 <div class="text-xs text-gray-500 mt-0.5">
-                    {% if a.halbtag_start != 'ganztag' %}ab Mittag, {% endif %}
-                    {% if a.halbtag_ende != 'ganztag' %}bis Mittag{% endif %}
+                    {% if a.halbtag_start != 'ganztag' %}{{ 'genehmigungen.halbtag.afternoon_prefix'|trans }} {% endif %}
+                    {% if a.halbtag_ende != 'ganztag' %}{{ 'genehmigungen.halbtag.until_noon'|trans }}{% endif %}
                 </div>
             </div>
             <div>
-                <div class="text-[10px] font-semibold uppercase tracking-wider text-gray-500 mb-1">Tage</div>
+                <div class="text-[10px] font-semibold uppercase tracking-wider text-gray-500 mb-1">{{ 'common.days'|trans }}</div>
                 <div class="text-sm tabular font-medium">{{ a.tage_gezaehlt|number_format(1, ',', '.') }}</div>
             </div>
             <div>
-                <div class="text-[10px] font-semibold uppercase tracking-wider text-gray-500 mb-1">Notiz</div>
+                <div class="text-[10px] font-semibold uppercase tracking-wider text-gray-500 mb-1">{{ 'genehmigungen.col.notiz'|trans }}</div>
                 <div class="text-sm whitespace-pre-line">{{ a.notiz ?: '—' }}</div>
             </div>
         </div>
@@ -73,18 +73,18 @@
                 {{ csrf_field() }}
                 <button type="submit" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-medium bg-sage-500 text-white rounded-md hover:bg-sage-600 transition-colors">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
-                    Genehmigen
+                    {{ 'genehmigungen.action.approve'|trans }}
                 </button>
             </form>
 
             <form method="post" action="/genehmigungen/{{ a.id }}/reject" class="flex-1 flex flex-col sm:flex-row sm:items-stretch gap-2">
                 {{ csrf_field() }}
                 <input type="text" name="begruendung" required maxlength="500"
-                    placeholder="Begründung für Ablehnung (Pflicht)"
+                    placeholder="{{ 'genehmigungen.reject.placeholder'|trans }}"
                     class="flex-1 px-3 py-2 text-sm border border-card-border rounded-md focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500">
                 <button type="submit" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-medium bg-white border border-red-300 text-red-700 rounded-md hover:bg-red-50 transition-colors">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
-                    Ablehnen
+                    {{ 'genehmigungen.action.reject'|trans }}
                 </button>
             </form>
         </div>

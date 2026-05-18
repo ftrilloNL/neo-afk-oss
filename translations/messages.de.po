@@ -420,3 +420,76 @@ msgstr "Hinweis"
 
 msgid "krank.edit.note_body"
 msgstr "HR wird über jede Bearbeitung per Mail informiert. Bei Änderung des Zeitraums werden Kalender-Eintrag und (falls laufend) OOO direkt angepasst."
+
+# ---- Genehmigungen (approvals list) ----
+msgid "genehmigungen.title"
+msgstr "Meine Genehmigungen"
+
+msgid "genehmigungen.pending_count"
+msgstr "%count% offen"
+
+msgid "genehmigungen.empty.heading"
+msgstr "Keine offenen Genehmigungen 🎉"
+
+msgid "genehmigungen.empty.body"
+msgstr "Du hast aktuell keine wartenden Urlaubsanträge zu bearbeiten."
+
+msgid "genehmigungen.col.applicant"
+msgstr "Antragsteller:in"
+
+msgid "genehmigungen.col.requested_at"
+msgstr "Beantragt am"
+
+msgid "genehmigungen.col.notiz"
+msgstr "Notiz"
+
+msgid "genehmigungen.halbtag.afternoon_prefix"
+msgstr "ab Mittag,"
+
+msgid "genehmigungen.halbtag.until_noon"
+msgstr "bis Mittag"
+
+msgid "genehmigungen.action.approve"
+msgstr "Genehmigen"
+
+msgid "genehmigungen.action.reject"
+msgstr "Ablehnen"
+
+msgid "genehmigungen.reject.placeholder"
+msgstr "Begründung für Ablehnung (Pflicht)"
+
+# ---- Approval landing (magic-link) ----
+msgid "approval.title_action"
+msgstr "Urlaubsantrag genehmigen"
+
+msgid "approval.title_action.reject"
+msgstr "Urlaubsantrag ablehnen"
+
+msgid "approval.reject_label"
+msgstr "Begründung der Ablehnung"
+
+msgid "approval.reject_placeholder"
+msgstr "z.B. Zeitraum kollidiert mit kritischem Projekt-Deadline …"
+
+# ---- Approval done ----
+msgid "approval.done.approved.heading"
+msgstr "Antrag genehmigt"
+
+msgid "approval.done.rejected.heading"
+msgstr "Antrag abgelehnt"
+
+msgid "approval.done.approved.body"
+msgstr "%name% wird per Mail informiert. Der Eintrag erscheint im Gruppenkalender und der Resturlaub wurde abgebucht."
+
+msgid "approval.done.rejected.body"
+msgstr "%name% wird per Mail mit deiner Begründung informiert."
+
+# ---- Approval error ----
+msgid "approval.error.title"
+msgstr "Token ungültig"
+
+msgid "approval.error.heading"
+msgstr "Approval-Link ungültig"
+
+msgid "approval.error.advice"
+msgstr "Bitte den/die Antragsteller:in bitten, einen neuen Antrag zu stellen."

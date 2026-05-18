@@ -420,3 +420,76 @@ msgstr "Note"
 
 msgid "krank.edit.note_body"
 msgstr "HR is notified by email about every edit. When the period changes the calendar entry and (if running) the out-of-office message are updated immediately."
+
+# ---- Genehmigungen (approvals list) ----
+msgid "genehmigungen.title"
+msgstr "Approvals"
+
+msgid "genehmigungen.pending_count"
+msgstr "%count% open"
+
+msgid "genehmigungen.empty.heading"
+msgstr "No pending approvals 🎉"
+
+msgid "genehmigungen.empty.body"
+msgstr "You have no waiting vacation requests right now."
+
+msgid "genehmigungen.col.applicant"
+msgstr "Requester"
+
+msgid "genehmigungen.col.requested_at"
+msgstr "Requested on"
+
+msgid "genehmigungen.col.notiz"
+msgstr "Note"
+
+msgid "genehmigungen.halbtag.afternoon_prefix"
+msgstr "from noon,"
+
+msgid "genehmigungen.halbtag.until_noon"
+msgstr "until noon"
+
+msgid "genehmigungen.action.approve"
+msgstr "Approve"
+
+msgid "genehmigungen.action.reject"
+msgstr "Reject"
+
+msgid "genehmigungen.reject.placeholder"
+msgstr "Rejection reason (required)"
+
+# ---- Approval landing (magic-link) ----
+msgid "approval.title_action"
+msgstr "Approve vacation request"
+
+msgid "approval.title_action.reject"
+msgstr "Reject vacation request"
+
+msgid "approval.reject_label"
+msgstr "Rejection reason"
+
+msgid "approval.reject_placeholder"
+msgstr "e.g. period clashes with a critical project deadline …"
+
+# ---- Approval done ----
+msgid "approval.done.approved.heading"
+msgstr "Request approved"
+
+msgid "approval.done.rejected.heading"
+msgstr "Request rejected"
+
+msgid "approval.done.approved.body"
+msgstr "%name% will be notified by email. The entry appears in the shared calendar and the days have been deducted."
+
+msgid "approval.done.rejected.body"
+msgstr "%name% will be notified by email with your reason."
+
+# ---- Approval error ----
+msgid "approval.error.title"
+msgstr "Token invalid"
+
+msgid "approval.error.heading"
+msgstr "Approval link invalid"
+
+msgid "approval.error.advice"
+msgstr "Please ask the requester to submit a new request."
