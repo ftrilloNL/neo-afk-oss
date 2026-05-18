@@ -19,9 +19,11 @@ use App\Controllers\SetupController;
 use App\Controllers\StornoController;
 use App\Controllers\TeamController;
 use App\Database\Connection;
+use App\I18n\LocaleResolver;
 use App\Middleware\AuthMiddleware;
 use App\Middleware\CsrfMiddleware;
 use App\Middleware\HrMiddleware;
+use App\Middleware\LocaleMiddleware;
 use App\Models\AbsenceRepository;
 use App\Models\ApprovalTokenRepository;
 use App\Models\AuditLogRepository;
@@ -92,6 +94,10 @@ final class App
         $app->add(TwigMiddleware::createFromContainer($app, Twig::class));
         $app->addRoutingMiddleware();
         $app->addBodyParsingMiddleware();
+        // LocaleMiddleware wird zuletzt registriert -> aeusserste Schicht in
+        // Slim 4 (LIFO). Setzt fuer jeden eingehenden Request die UI-Locale
+        // bevor Controller, Twig oder MailService Strings ausgeben.
+        $app->add(LocaleMiddleware::class);
 
         // Public routes
         $app->get('/', [HomeController::class, 'index']);
@@ -274,6 +280,13 @@ final class App
             $config = $c->get(Config::class);
             $translator = $c->get(Translator::class);
             $twig->getEnvironment()->addExtension(new TranslationExtension($translator));
+            // current_locale() liest die aktive Locale zur Render-Zeit, nicht
+            // beim Twig-Bau -- so spiegelt es immer den Wert wider, den
+            // LocaleMiddleware fuer den aktuellen Request gesetzt hat.
+            $twig->getEnvironment()->addFunction(new \Twig\TwigFunction(
+                'current_locale',
+                fn (): string => $translator->getLocale(),
+            ));
             $twig->getEnvironment()->addGlobal('org', $config->org());
             $twig->getEnvironment()->addFunction(new \Twig\TwigFunction(
                 'csrf_field',
@@ -410,6 +423,12 @@ final class App
         // Middleware needs DI for repos
         $c->set(HrMiddleware::class, fn (Container $c) => new HrMiddleware($c->get(UserRepository::class)));
         $c->set(CsrfMiddleware::class, fn (Container $c) => new CsrfMiddleware($c->get(Csrf::class)));
+        $c->set(LocaleResolver::class, fn () => new LocaleResolver());
+        $c->set(LocaleMiddleware::class, fn (Container $c) => new LocaleMiddleware(
+            $c->get(Translator::class),
+            $c->get(LocaleResolver::class),
+            $c->get(Config::class),
+        ));
 
         // Setup-Wizard
         $c->set(EnvWriter::class, fn () => new EnvWriter($rootPath . '/.env'));
