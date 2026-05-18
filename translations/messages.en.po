@@ -493,3 +493,410 @@ msgstr "Approval link invalid"
 
 msgid "approval.error.advice"
 msgstr "Please ask the requester to submit a new request."
+
+# ---- HR Auswertung ----
+msgid "hr.title"
+msgstr "HR analytics"
+
+msgid "hr.subtitle"
+msgstr "All absences · %count% entries found"
+
+msgid "hr.filter.art"
+msgstr "Type"
+
+msgid "hr.filter.status"
+msgstr "Status"
+
+msgid "hr.filter.person"
+msgstr "Person"
+
+msgid "hr.filter.all"
+msgstr "All"
+
+msgid "hr.filter.from"
+msgstr "From"
+
+msgid "hr.filter.to"
+msgstr "To"
+
+msgid "hr.filter.reset"
+msgstr "Reset filters"
+
+msgid "hr.filter.apply"
+msgstr "Apply"
+
+msgid "hr.filter.status.aktiv_or_approved"
+msgstr "Active / Approved"
+
+msgid "hr.stats.total_days"
+msgstr "Total days"
+
+msgid "hr.stats.urlaub"
+msgstr "Of which vacation"
+
+msgid "hr.stats.krank"
+msgstr "Of which sick"
+
+msgid "hr.empty"
+msgstr "No entries match these filters."
+
+msgid "hr.col.person"
+msgstr "Person"
+
+msgid "hr.col.art"
+msgstr "Type"
+
+msgid "hr.col.approved_by"
+msgstr "Approved by"
+
+# ---- HR Users ----
+msgid "hr.users.title"
+msgstr "HR master data"
+
+msgid "hr.users.subtitle"
+msgstr "%count% employees · manage allowance, remaining vacation and roles"
+
+msgid "hr.users.add"
+msgstr "Add employee"
+
+msgid "hr.users.empty"
+msgstr "No employees yet — accounts are created automatically on first SSO login."
+
+msgid "hr.users.col.mitarbeiter"
+msgstr "Employee"
+
+msgid "hr.users.col.eintritt"
+msgstr "Start"
+
+msgid "hr.users.col.anspruch"
+msgstr "Allowance"
+
+msgid "hr.users.col.aktuell"
+msgstr "Current"
+
+msgid "hr.users.col.vorjahr"
+msgstr "Carry-over"
+
+msgid "hr.users.pending_login"
+msgstr "Pending login"
+
+msgid "hr.users.status.aktiv"
+msgstr "Active"
+
+msgid "hr.users.status.inaktiv"
+msgstr "Inactive"
+
+# ---- HR Users new ----
+msgid "hr.users.new.title"
+msgstr "Add new employee"
+
+msgid "hr.users.new.subtitle"
+msgstr "The employee is created with \"Pending Login\" status and linked automatically on first M365 SSO login."
+
+msgid "hr.users.errors.summary"
+msgstr "Please correct the marked fields."
+
+msgid "hr.users.similar.heading"
+msgstr "Possible duplicate employee detected"
+
+msgid "hr.users.similar.intro"
+msgstr "Records with similar email addresses already exist:"
+
+msgid "hr.users.similar.pending_pill"
+msgstr "Pending"
+
+msgid "hr.users.similar.advice"
+msgstr "If this is genuinely a different person (e.g. same name), tick \"Add as new employee anyway\" in the form below and save again."
+
+msgid "hr.users.field.display_name"
+msgstr "Display name"
+
+msgid "hr.users.field.display_name.hint"
+msgstr "First Last — may be overwritten with the Microsoft value on first SSO"
+
+msgid "hr.users.field.email"
+msgstr "Email (M365 login)"
+
+msgid "hr.users.field.email.hint"
+msgstr "Must exactly match the M365 login address"
+
+msgid "hr.users.field.job_title.placeholder"
+msgstr "e.g. Senior Software Engineer, Head of Sales"
+
+msgid "hr.users.field.jahresanspruch"
+msgstr "Yearly allowance (days)"
+
+msgid "hr.users.field.anteilig.label"
+msgstr "Calculate current remaining vacation pro-rated by start date"
+
+msgid "hr.users.field.anteilig.suggestion"
+msgstr "Suggested for the current input: <strong>%days% days</strong> — overrides the \"Remaining (current year)\" field on save."
+
+msgid "hr.users.field.anteilig.hint"
+msgstr "1/12 of the yearly allowance per completed month. Untick to set the value manually."
+
+msgid "hr.users.field.resturlaub_aktuell.hint"
+msgstr "Ignored when pro-rated calculation is active."
+
+msgid "hr.users.roles_status.heading"
+msgstr "Roles & status"
+
+msgid "hr.users.role.aktiv.label"
+msgstr "Active — can log in, appears in lists"
+
+msgid "hr.users.role.genehmiger.label"
+msgstr "Approver — can approve other people's vacation requests"
+
+msgid "hr.users.role.hr.label"
+msgstr "HR — sees all absences, can edit master data"
+
+msgid "hr.users.override_similarity.label"
+msgstr "Add as new employee anyway"
+
+msgid "hr.users.override_similarity.hint"
+msgstr "I have reviewed the records shown above — this is a different person."
+
+msgid "hr.users.submit.create"
+msgstr "Create"
+
+# ---- HR Users edit ----
+msgid "hr.users.edit.field.resturlaub.hint"
+msgstr "Half-day values allowed, e.g. 21.5"
+
+msgid "hr.users.edit.section.personal"
+msgstr "Personal details"
+
+msgid "hr.users.field.strasse"
+msgstr "Street + number"
+
+msgid "hr.users.field.plz"
+msgstr "ZIP"
+
+msgid "hr.users.field.ort"
+msgstr "City"
+
+# ---- HR audit log ----
+msgid "audit.title"
+msgstr "Audit log"
+
+msgid "audit.subtitle"
+msgstr "Write operations on users and requests · %count% entries shown (max 200)"
+
+msgid "audit.filter.action"
+msgstr "Action"
+
+msgid "audit.filter.actor"
+msgstr "Actor"
+
+msgid "audit.empty"
+msgstr "No entries match these filters."
+
+msgid "audit.col.timestamp"
+msgstr "Timestamp"
+
+msgid "audit.col.actor"
+msgstr "Actor"
+
+msgid "audit.col.action"
+msgstr "Action"
+
+msgid "audit.col.target"
+msgstr "Target"
+
+msgid "audit.col.details"
+msgstr "Details"
+
+msgid "audit.system_actor"
+msgstr "System"
+
+msgid "audit.show_diff"
+msgstr "Show before / after"
+
+msgid "audit.show_details"
+msgstr "Show details"
+
+msgid "audit.diff.col.field"
+msgstr "Field"
+
+msgid "audit.diff.col.before"
+msgstr "Before"
+
+msgid "audit.diff.col.after"
+msgstr "After"
+
+msgid "audit.master_data.heading"
+msgstr "Master data newly set"
+
+msgid "audit.fmt.yes"
+msgstr "Yes"
+
+msgid "audit.fmt.no"
+msgstr "No"
+
+# Action labels
+msgid "audit.action.absence.approval_requested"
+msgstr "Approval requested"
+
+msgid "audit.action.absence.approved"
+msgstr "Request approved"
+
+msgid "audit.action.absence.rejected"
+msgstr "Request rejected"
+
+msgid "audit.action.absence.cancelled"
+msgstr "Request cancelled"
+
+msgid "audit.action.user.pre_created"
+msgstr "Employee created"
+
+msgid "audit.action.user.stammdaten_updated"
+msgstr "Master data updated"
+
+msgid "audit.action.user.annual_rollover"
+msgstr "Annual rollover (user)"
+
+msgid "audit.action.system.annual_rollover"
+msgstr "Annual rollover (system)"
+
+# Field labels
+msgid "audit.field.job_title"
+msgstr "Job title"
+
+msgid "audit.field.eintrittsdatum"
+msgstr "Start date"
+
+msgid "audit.field.jahresanspruch"
+msgstr "Yearly allowance"
+
+msgid "audit.field.resturlaub_aktuell"
+msgstr "Remaining (current)"
+
+msgid "audit.field.resturlaub_vorjahr"
+msgstr "Remaining (carry-over)"
+
+msgid "audit.field.ist_aktiv"
+msgstr "Active"
+
+msgid "audit.field.ist_genehmiger"
+msgstr "Approver"
+
+msgid "audit.field.ist_hr"
+msgstr "HR"
+
+msgid "audit.field.display_name"
+msgstr "Display name"
+
+msgid "audit.field.email"
+msgstr "Email"
+
+msgid "audit.field.geburtsdatum"
+msgstr "Date of birth"
+
+msgid "audit.field.telefon"
+msgstr "Phone"
+
+msgid "audit.field.strasse"
+msgstr "Street"
+
+msgid "audit.field.plz"
+msgstr "ZIP"
+
+msgid "audit.field.ort"
+msgstr "City"
+
+msgid "audit.field.vorjahr_used"
+msgstr "Deducted from carry-over"
+
+msgid "audit.field.aktuell_used"
+msgstr "Deducted from current"
+
+msgid "audit.field.comment"
+msgstr "Reason"
+
+msgid "audit.field.previous_status"
+msgstr "Previous status"
+
+msgid "audit.field.genehmiger_id"
+msgstr "Approver (ID)"
+
+msgid "audit.field.old_aktuell"
+msgstr "Remaining (current) before"
+
+msgid "audit.field.old_vorjahr"
+msgstr "Remaining (carry-over) before"
+
+msgid "audit.field.new_aktuell"
+msgstr "Remaining (current) after"
+
+msgid "audit.field.new_vorjahr"
+msgstr "Remaining (carry-over) after"
+
+msgid "audit.field.users_updated"
+msgstr "Users updated"
+
+msgid "audit.field.anteilig_berechnet"
+msgstr "Pro-rated"
+
+# ---- HR-erfasst Antrag/Krank forms ----
+msgid "hr.antrag.title"
+msgstr "Record vacation for employee"
+
+msgid "hr.antrag.subtitle"
+msgstr "Vacation is recorded as approved immediately — no approval workflow."
+
+msgid "hr.krank.title"
+msgstr "Record sick leave for employee"
+
+msgid "hr.krank.subtitle"
+msgstr "Recorded as active immediately. Calendar event and optional out-of-office are set for the employee."
+
+msgid "hr.form.fuer_wen"
+msgstr "For whom?"
+
+msgid "hr.form.fuer_wen.placeholder"
+msgstr "– Select employee –"
+
+msgid "hr.antrag.preview.placeholder"
+msgstr "Select an employee and dates to preview workdays"
+
+msgid "hr.antrag.werktage_note"
+msgstr "Workdays factor in Berlin public holidays and half-day adjustments. Remaining vacation is read from the employee's profile."
+
+msgid "hr.antrag.notiz.hint"
+msgstr "(optional, internal)"
+
+msgid "hr.antrag.notiz.placeholder"
+msgstr "e.g. reason for HR entry, cover person …"
+
+msgid "hr.krank.notiz.placeholder"
+msgstr "e.g. reported by phone, certificate expected …"
+
+msgid "hr.antrag.ooo.hint"
+msgstr "Set immediately for the employee — leave blank to skip out-of-office."
+
+msgid "hr.krank.ooo.hint"
+msgstr "Leave blank if no out-of-office is desired. Activated immediately for the employee."
+
+msgid "hr.krank.ooo.internal_placeholder"
+msgstr "I am currently out of office for health reasons. For urgent matters please contact …"
+
+msgid "hr.krank.ooo.external_placeholder"
+msgstr "I am currently out of office for health reasons. For urgent matters please contact …"
+
+msgid "hr.krank.ooo.single_placeholder"
+msgstr "I am currently out of office for health reasons and will respond on my return. For urgent matters please contact …"
+
+msgid "hr.form.notify.heading"
+msgstr "Notify employee"
+
+msgid "hr.antrag.notify.label"
+msgstr "Send an info email to the employee — includes the period and note, no approval links."
+
+msgid "hr.krank.notify.label"
+msgstr "Send an info email to the employee — includes the period and note."
+
+msgid "hr.antrag.submit"
+msgstr "Record vacation"
+
+msgid "hr.krank.submit"
+msgstr "Record sick leave"

@@ -1,5 +1,5 @@
 {% extends 'layout.twig' %}
-{% block title %}Krankmeldung für MA erfassen – {{ org.short_name }}{% endblock %}
+{% block title %}{{ 'hr.krank.title'|trans }} – {{ org.short_name }}{% endblock %}
 {% block content %}
 
 <div class="flex items-center gap-3 mb-8">
@@ -7,8 +7,8 @@
         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
     </a>
     <div>
-        <h1 class="text-2xl font-bold tracking-tight">Krankmeldung für Mitarbeiter:in erfassen</h1>
-        <p class="text-sm text-gray-500 mt-0.5">Wird sofort als aktiv eingetragen. Kalender-Event und optionaler OOO werden für den/die MA gesetzt.</p>
+        <h1 class="text-2xl font-bold tracking-tight">{{ 'hr.krank.title'|trans }}</h1>
+        <p class="text-sm text-gray-500 mt-0.5">{{ 'hr.krank.subtitle'|trans }}</p>
     </div>
 </div>
 
@@ -23,10 +23,10 @@
 
     {# Mitarbeiter:in auswählen #}
     <div class="bg-white border border-card-border rounded-xl p-6">
-        <h2 class="font-semibold text-base mb-4">Für wen?</h2>
+        <h2 class="font-semibold text-base mb-4">{{ 'hr.form.fuer_wen'|trans }}</h2>
         <select name="fuer_user_id" required
             class="w-full px-3 py-2.5 text-sm border border-card-border rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500 bg-white">
-            <option value="">– Mitarbeiter:in auswählen –</option>
+            <option value="">{{ 'hr.form.fuer_wen.placeholder'|trans }}</option>
             {% for u in all_users %}
             <option value="{{ u.id }}" {{ form and form.fuer_user_id == u.id ? 'selected' : '' }}>
                 {{ u.display_name }} · {{ u.email }}
@@ -37,29 +37,29 @@
 
     {# Zeitraum #}
     <div class="bg-white border border-card-border rounded-xl p-6">
-        <h2 class="font-semibold text-base mb-4">Zeitraum</h2>
+        <h2 class="font-semibold text-base mb-4">{{ 'antrag.form.zeitraum'|trans }}</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
-                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">Von</label>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">{{ 'antrag.form.von'|trans }}</label>
                 <div class="flex gap-2">
                     <input type="date" name="startdatum" value="{{ form ? form.startdatum : today }}" required
                         class="flex-1 px-3 py-2 text-sm border border-card-border rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500">
                     <select name="halbtag_start"
                         class="px-3 py-2 text-sm border border-card-border rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500 bg-white">
-                        <option value="ganztag" {{ form and form.halbtag_start == 'ganztag' ? 'selected' : '' }}>Ganztag</option>
-                        <option value="nachmittag" {{ form and form.halbtag_start == 'nachmittag' ? 'selected' : '' }}>ab Nachmittag</option>
+                        <option value="ganztag" {{ form and form.halbtag_start == 'ganztag' ? 'selected' : '' }}>{{ 'antrag.halbtag.ganztag'|trans }}</option>
+                        <option value="nachmittag" {{ form and form.halbtag_start == 'nachmittag' ? 'selected' : '' }}>{{ 'antrag.halbtag.nachmittag'|trans }}</option>
                     </select>
                 </div>
             </div>
             <div>
-                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">Bis</label>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">{{ 'antrag.form.bis'|trans }}</label>
                 <div class="flex gap-2">
                     <input type="date" name="enddatum" value="{{ form ? form.enddatum : today }}" required
                         class="flex-1 px-3 py-2 text-sm border border-card-border rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500">
                     <select name="halbtag_ende"
                         class="px-3 py-2 text-sm border border-card-border rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500 bg-white">
-                        <option value="ganztag" {{ form and form.halbtag_ende == 'ganztag' ? 'selected' : '' }}>Ganztag</option>
-                        <option value="vormittag" {{ form and form.halbtag_ende == 'vormittag' ? 'selected' : '' }}>bis Mittag</option>
+                        <option value="ganztag" {{ form and form.halbtag_ende == 'ganztag' ? 'selected' : '' }}>{{ 'antrag.halbtag.ganztag'|trans }}</option>
+                        <option value="vormittag" {{ form and form.halbtag_ende == 'vormittag' ? 'selected' : '' }}>{{ 'antrag.halbtag.vormittag'|trans }}</option>
                     </select>
                 </div>
             </div>
@@ -68,31 +68,31 @@
 
     {# Notiz #}
     <div class="bg-white border border-card-border rounded-xl p-6">
-        <h2 class="font-semibold text-base mb-4">Notiz <span class="font-normal text-gray-500">(optional, intern)</span></h2>
-        <textarea name="notiz" rows="3" placeholder="z.B. telefonisch mitgeteilt, Attest erwartet …"
+        <h2 class="font-semibold text-base mb-4">{{ 'antrag.form.notiz'|trans }} <span class="font-normal text-gray-500">{{ 'hr.antrag.notiz.hint'|trans }}</span></h2>
+        <textarea name="notiz" rows="3" placeholder="{{ 'hr.krank.notiz.placeholder'|trans }}"
             class="w-full px-3 py-2 text-sm border border-card-border rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500 resize-none">{{ form ? form.notiz : '' }}</textarea>
     </div>
 
     {# Out-of-Office (optional) #}
     <div class="bg-white border border-card-border rounded-xl p-6">
-        <h2 class="font-semibold text-base mb-2">Out-of-Office-Nachricht <span class="font-normal text-gray-500">(optional)</span></h2>
-        <p class="text-xs text-gray-500 mb-4">Leer lassen wenn kein OOO gesetzt werden soll. Wird sofort für den/die MA aktiviert.</p>
+        <h2 class="font-semibold text-base mb-2">{{ 'antrag.form.ooo.heading'|trans }} <span class="font-normal text-gray-500">{{ 'antrag.form.notiz.hint_short'|trans }}</span></h2>
+        <p class="text-xs text-gray-500 mb-4">{{ 'hr.krank.ooo.hint'|trans }}</p>
         {% if org.identity_provider == 'google' %}
             <textarea name="ooo_text" rows="5"
-                placeholder="Ich bin krankheitsbedingt abwesend und melde mich nach meiner Rückkehr. In dringenden Fällen wendet euch bitte an …"
+                placeholder="{{ 'hr.krank.ooo.single_placeholder'|trans }}"
                 class="w-full px-3 py-2 text-sm border border-card-border rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500">{{ form ? form.ooo_text : '' }}</textarea>
         {% else %}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
-                    <label class="block text-xs font-medium text-gray-700 mb-1.5">Interne Antwort</label>
+                    <label class="block text-xs font-medium text-gray-700 mb-1.5">{{ 'antrag.form.ooo.internal_label'|trans }}</label>
                     <textarea name="ooo_internal" rows="5"
-                        placeholder="Ich bin krankheitsbedingt abwesend. In dringenden Fällen wendet euch bitte an …"
+                        placeholder="{{ 'hr.krank.ooo.internal_placeholder'|trans }}"
                         class="w-full px-3 py-2 text-sm border border-card-border rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500">{{ form ? form.ooo_internal : '' }}</textarea>
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-gray-700 mb-1.5">Externe Antwort</label>
+                    <label class="block text-xs font-medium text-gray-700 mb-1.5">{{ 'antrag.form.ooo.external_label'|trans }}</label>
                     <textarea name="ooo_external" rows="5"
-                        placeholder="I am currently out of office for health reasons. For urgent matters please contact …"
+                        placeholder="{{ 'hr.krank.ooo.external_placeholder'|trans }}"
                         class="w-full px-3 py-2 text-sm border border-card-border rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500">{{ form ? form.ooo_external : '' }}</textarea>
                 </div>
             </div>
@@ -101,22 +101,22 @@
 
     {# Benachrichtigung #}
     <div class="bg-white border border-card-border rounded-xl p-6">
-        <h2 class="font-semibold text-base mb-3">Mitarbeiter:in benachrichtigen</h2>
+        <h2 class="font-semibold text-base mb-3">{{ 'hr.form.notify.heading'|trans }}</h2>
         <label class="flex items-start gap-3 cursor-pointer">
             <input type="checkbox" name="send_notification" value="1"
                 {{ form and form.send_notification ? 'checked' : '' }}
                 class="mt-0.5 rounded border-card-border text-sage-500 focus:ring-sage-500">
-            <span class="text-sm text-gray-700">Info-Mail an Mitarbeiter:in senden — enthält Zeitraum und Notiz.</span>
+            <span class="text-sm text-gray-700">{{ 'hr.krank.notify.label'|trans }}</span>
         </label>
     </div>
 
     {# Footer #}
     <div class="flex items-center justify-between pt-2">
         <a href="/hr" class="px-5 py-2.5 text-sm font-medium border border-black rounded-md hover:bg-gray-50 transition-colors">
-            Abbrechen
+            {{ 'action.cancel'|trans }}
         </a>
         <button type="submit" class="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-medium bg-sage-500 text-white rounded-md hover:bg-sage-600 transition-colors">
-            Krankmeldung erfassen
+            {{ 'hr.krank.submit'|trans }}
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </button>
     </div>

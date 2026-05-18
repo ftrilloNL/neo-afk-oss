@@ -1,16 +1,16 @@
 {% extends 'layout.twig' %}
 {% set active_nav = 'hr-users' %}
-{% block title %}HR-Stammdaten – {{ org.short_name }}{% endblock %}
+{% block title %}{{ 'hr.users.title'|trans }} – {{ org.short_name }}{% endblock %}
 {% block content %}
 
 <div class="flex items-center justify-between mb-8">
     <div>
-        <h1 class="text-2xl font-bold tracking-tight">HR-Stammdaten</h1>
-        <p class="text-sm text-gray-500 mt-1">{{ all_users|length }} Mitarbeiter · Urlaubsanspruch, Resturlaub und Rollen verwalten</p>
+        <h1 class="text-2xl font-bold tracking-tight">{{ 'hr.users.title'|trans }}</h1>
+        <p class="text-sm text-gray-500 mt-1">{{ 'hr.users.subtitle'|trans({'%count%': all_users|length}) }}</p>
     </div>
     <a href="/hr/users/new" class="text-sm px-5 py-2 bg-sage-500 text-white rounded-full hover:bg-sage-600 inline-flex items-center gap-2">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-        Mitarbeiter hinzufügen
+        {{ 'hr.users.add'|trans }}
     </a>
 </div>
 
@@ -23,19 +23,19 @@
 <div class="bg-white border border-card-border rounded-xl overflow-hidden">
     {% if all_users|length == 0 %}
     <div class="p-12 text-center text-sm text-gray-500">
-        Noch keine Mitarbeiter angelegt — User entstehen automatisch beim ersten SSO-Login.
+        {{ 'hr.users.empty'|trans }}
     </div>
     {% else %}
     <div class="overflow-x-auto"><table class="w-full text-sm">
         <thead>
             <tr class="text-[10px] font-semibold uppercase tracking-wider text-gray-500 border-b border-card-border">
-                <th class="text-left px-5 py-3">Mitarbeiter</th>
-                <th class="text-left px-5 py-3 tabular">Eintritt</th>
-                <th class="text-left px-5 py-3 tabular">Anspruch</th>
-                <th class="text-left px-5 py-3 tabular">Aktuell</th>
-                <th class="text-left px-5 py-3 tabular">Vorjahr</th>
-                <th class="text-left px-5 py-3">Rollen</th>
-                <th class="text-left px-5 py-3">Status</th>
+                <th class="text-left px-5 py-3">{{ 'hr.users.col.mitarbeiter'|trans }}</th>
+                <th class="text-left px-5 py-3 tabular">{{ 'hr.users.col.eintritt'|trans }}</th>
+                <th class="text-left px-5 py-3 tabular">{{ 'hr.users.col.anspruch'|trans }}</th>
+                <th class="text-left px-5 py-3 tabular">{{ 'hr.users.col.aktuell'|trans }}</th>
+                <th class="text-left px-5 py-3 tabular">{{ 'hr.users.col.vorjahr'|trans }}</th>
+                <th class="text-left px-5 py-3">{{ 'profil.field.roles'|trans }}</th>
+                <th class="text-left px-5 py-3">{{ 'home.absences.col.status'|trans }}</th>
                 <th class="text-right px-5 py-3"></th>
             </tr>
         </thead>
@@ -46,7 +46,7 @@
                     <div class="font-medium">
                         {{ u.display_name }}
                         {% if u.entra_oid is null %}
-                        <span class="ml-1 pill bg-amber-100 text-amber-800 text-[9px] px-1.5 py-0.5">Pending Login</span>
+                        <span class="ml-1 pill bg-amber-100 text-amber-800 text-[9px] px-1.5 py-0.5">{{ 'hr.users.pending_login'|trans }}</span>
                         {% endif %}
                     </div>
                     <div class="text-xs text-gray-500">{{ u.email }}</div>
@@ -59,20 +59,20 @@
                 <td class="px-5 py-3.5 tabular">{{ u.resturlaub_vorjahr|number_format(1, ',', '.') }}</td>
                 <td class="px-5 py-3.5">
                     <div class="flex flex-wrap gap-1">
-                        {% if u.ist_hr %}<span class="pill bg-sage-100 text-sage-800 text-[10px] px-2 py-0.5">HR</span>{% endif %}
-                        {% if u.ist_genehmiger %}<span class="pill bg-gray-100 text-gray-800 text-[10px] px-2 py-0.5">Genehmiger</span>{% endif %}
+                        {% if u.ist_hr %}<span class="pill bg-sage-100 text-sage-800 text-[10px] px-2 py-0.5">{{ 'common.role.hr'|trans }}</span>{% endif %}
+                        {% if u.ist_genehmiger %}<span class="pill bg-gray-100 text-gray-800 text-[10px] px-2 py-0.5">{{ 'common.role.genehmiger'|trans }}</span>{% endif %}
                         {% if not u.ist_hr and not u.ist_genehmiger %}<span class="text-xs text-gray-400">—</span>{% endif %}
                     </div>
                 </td>
                 <td class="px-5 py-3.5">
                     {% if u.ist_aktiv %}
-                        <span class="pill bg-green-100 text-green-800 text-[10px] px-2 py-0.5">Aktiv</span>
+                        <span class="pill bg-green-100 text-green-800 text-[10px] px-2 py-0.5">{{ 'hr.users.status.aktiv'|trans }}</span>
                     {% else %}
-                        <span class="pill bg-gray-100 text-gray-500 text-[10px] px-2 py-0.5">Inaktiv</span>
+                        <span class="pill bg-gray-100 text-gray-500 text-[10px] px-2 py-0.5">{{ 'hr.users.status.inaktiv'|trans }}</span>
                     {% endif %}
                 </td>
                 <td class="px-5 py-3.5 text-right">
-                    <a href="/hr/users/{{ u.id }}/edit" class="text-xs px-3 py-1.5 border border-card-border rounded-full hover:bg-gray-50">Bearbeiten</a>
+                    <a href="/hr/users/{{ u.id }}/edit" class="text-xs px-3 py-1.5 border border-card-border rounded-full hover:bg-gray-50">{{ 'action.edit'|trans }}</a>
                 </td>
             </tr>
             {% endfor %}

@@ -1,7 +1,7 @@
 {% extends 'layout.twig' %}
 {% import 'macros/status.twig' as status %}
 {% set active_nav = 'hr' %}
-{% block title %}HR-Auswertung – {{ org.short_name }}{% endblock %}
+{% block title %}{{ 'hr.title'|trans }} – {{ org.short_name }}{% endblock %}
 {% block content %}
 
 {% if flash_success %}
@@ -17,17 +17,17 @@
 
 <div class="flex items-center justify-between mb-8">
     <div>
-        <h1 class="text-2xl font-bold tracking-tight">HR-Auswertung</h1>
-        <p class="text-sm text-gray-500 mt-1">Alle Abwesenheiten · {{ count }} Einträge gefunden</p>
+        <h1 class="text-2xl font-bold tracking-tight">{{ 'hr.title'|trans }}</h1>
+        <p class="text-sm text-gray-500 mt-1">{{ 'hr.subtitle'|trans({'%count%': count}) }}</p>
     </div>
     <div class="flex gap-2">
         <a href="/hr/antrag/neu" class="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium border border-card-border rounded-md hover:bg-gray-50 transition-colors">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v4M10 16h4"/></svg>
-            Urlaub erfassen
+            {{ 'nav.hr.antrag'|trans }}
         </a>
         <a href="/hr/krank/neu" class="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium border border-card-border rounded-md hover:bg-gray-50 transition-colors">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2v6h6M4 13.5V4a2 2 0 0 1 2-2h8l6 6v11.5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M11 14h2v6h-2zM8 17h8"/></svg>
-            Krankmeldung erfassen
+            {{ 'nav.hr.krank'|trans }}
         </a>
     </div>
 </div>
@@ -36,61 +36,61 @@
 <form method="get" action="/hr" class="bg-white border border-card-border rounded-xl p-5 mb-6">
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-end">
         <div>
-            <label class="block text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-1.5">Art</label>
+            <label class="block text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-1.5">{{ 'hr.filter.art'|trans }}</label>
             <select name="art" class="w-full px-3 py-2 text-sm border border-card-border rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500 bg-white">
-                <option value="">Alle</option>
-                <option value="urlaub" {{ filters.art == 'urlaub' ? 'selected' : '' }}>Urlaub</option>
-                <option value="krank"  {{ filters.art == 'krank'  ? 'selected' : '' }}>Krank</option>
+                <option value="">{{ 'hr.filter.all'|trans }}</option>
+                <option value="urlaub" {{ filters.art == 'urlaub' ? 'selected' : '' }}>{{ 'common.art.urlaub'|trans }}</option>
+                <option value="krank"  {{ filters.art == 'krank'  ? 'selected' : '' }}>{{ 'common.art.krank'|trans }}</option>
             </select>
         </div>
         <div>
-            <label class="block text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-1.5">Status</label>
+            <label class="block text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-1.5">{{ 'hr.filter.status'|trans }}</label>
             <select name="status" class="w-full px-3 py-2 text-sm border border-card-border rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500 bg-white">
-                <option value="">Alle</option>
-                <option value="beantragt"  {{ filters.status == 'beantragt'  ? 'selected' : '' }}>Beantragt</option>
-                <option value="aktiv"      {{ filters.status == 'aktiv'      ? 'selected' : '' }}>Aktiv / Genehmigt</option>
-                <option value="abgelehnt"  {{ filters.status == 'abgelehnt'  ? 'selected' : '' }}>Abgelehnt</option>
-                <option value="storniert"  {{ filters.status == 'storniert'  ? 'selected' : '' }}>Storniert</option>
+                <option value="">{{ 'hr.filter.all'|trans }}</option>
+                <option value="beantragt"  {{ filters.status == 'beantragt'  ? 'selected' : '' }}>{{ 'status.beantragt'|trans }}</option>
+                <option value="aktiv"      {{ filters.status == 'aktiv'      ? 'selected' : '' }}>{{ 'hr.filter.status.aktiv_or_approved'|trans }}</option>
+                <option value="abgelehnt"  {{ filters.status == 'abgelehnt'  ? 'selected' : '' }}>{{ 'status.abgelehnt'|trans }}</option>
+                <option value="storniert"  {{ filters.status == 'storniert'  ? 'selected' : '' }}>{{ 'status.storniert'|trans }}</option>
             </select>
         </div>
         <div>
-            <label class="block text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-1.5">Person</label>
+            <label class="block text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-1.5">{{ 'hr.filter.person'|trans }}</label>
             <select name="user_id" class="w-full px-3 py-2 text-sm border border-card-border rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500 bg-white">
-                <option value="">Alle</option>
+                <option value="">{{ 'hr.filter.all'|trans }}</option>
                 {% for u in all_users %}
                 <option value="{{ u.id }}" {{ filters.user_id == u.id ? 'selected' : '' }}>{{ u.display_name }}</option>
                 {% endfor %}
             </select>
         </div>
         <div>
-            <label class="block text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-1.5">Von</label>
+            <label class="block text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-1.5">{{ 'hr.filter.from'|trans }}</label>
             <input type="date" name="from" value="{{ filters.from }}"
                 class="w-full px-3 py-2 text-sm border border-card-border rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500">
         </div>
         <div>
-            <label class="block text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-1.5">Bis</label>
+            <label class="block text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-1.5">{{ 'hr.filter.to'|trans }}</label>
             <input type="date" name="to" value="{{ filters.to }}"
                 class="w-full px-3 py-2 text-sm border border-card-border rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500">
         </div>
     </div>
     <div class="flex items-center justify-end gap-2 mt-4">
-        <a href="/hr" class="text-xs px-3 py-1.5 border border-card-border rounded-full hover:bg-gray-50">Filter zurücksetzen</a>
-        <button type="submit" class="text-xs px-4 py-1.5 bg-sage-500 text-white rounded-full hover:bg-sage-600">Anwenden</button>
+        <a href="/hr" class="text-xs px-3 py-1.5 border border-card-border rounded-full hover:bg-gray-50">{{ 'hr.filter.reset'|trans }}</a>
+        <button type="submit" class="text-xs px-4 py-1.5 bg-sage-500 text-white rounded-full hover:bg-sage-600">{{ 'hr.filter.apply'|trans }}</button>
     </div>
 </form>
 
 {# Aggregat-Stats #}
 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
     <div class="bg-white border border-card-border rounded-xl p-5">
-        <div class="text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-2">Summe Tage gesamt</div>
+        <div class="text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-2">{{ 'hr.stats.total_days'|trans }}</div>
         <div class="text-2xl font-bold tabular">{{ total_tage|number_format(1, ',', '.') }}</div>
     </div>
     <div class="bg-white border border-card-border rounded-xl p-5">
-        <div class="text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-2">Davon Urlaub</div>
+        <div class="text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-2">{{ 'hr.stats.urlaub'|trans }}</div>
         <div class="text-2xl font-bold tabular text-sage-700">{{ total_urlaub|number_format(1, ',', '.') }}</div>
     </div>
     <div class="bg-white border border-card-border rounded-xl p-5">
-        <div class="text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-2">Davon Krank</div>
+        <div class="text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-2">{{ 'hr.stats.krank'|trans }}</div>
         <div class="text-2xl font-bold tabular text-amber-700">{{ total_krank|number_format(1, ',', '.') }}</div>
     </div>
 </div>
@@ -99,18 +99,18 @@
 <div class="bg-white border border-card-border rounded-xl overflow-hidden">
     {% if absences|length == 0 %}
     <div class="p-12 text-center text-sm text-gray-500">
-        Keine Einträge mit diesen Filterkriterien.
+        {{ 'hr.empty'|trans }}
     </div>
     {% else %}
     <div class="overflow-x-auto"><table class="w-full text-sm">
         <thead>
             <tr class="text-[10px] font-semibold uppercase tracking-wider text-gray-500 border-b border-card-border">
-                <th class="text-left px-5 py-3">Person</th>
-                <th class="text-left px-5 py-3">Art</th>
-                <th class="text-left px-5 py-3">Zeitraum</th>
-                <th class="text-left px-5 py-3 tabular">Tage</th>
-                <th class="text-left px-5 py-3">Status</th>
-                <th class="text-left px-5 py-3">Genehmigt von</th>
+                <th class="text-left px-5 py-3">{{ 'hr.col.person'|trans }}</th>
+                <th class="text-left px-5 py-3">{{ 'hr.col.art'|trans }}</th>
+                <th class="text-left px-5 py-3">{{ 'antrag.form.zeitraum'|trans }}</th>
+                <th class="text-left px-5 py-3 tabular">{{ 'common.days'|trans }}</th>
+                <th class="text-left px-5 py-3">{{ 'home.absences.col.status'|trans }}</th>
+                <th class="text-left px-5 py-3">{{ 'hr.col.approved_by'|trans }}</th>
                 <th class="text-right px-5 py-3"></th>
             </tr>
         </thead>
@@ -123,9 +123,9 @@
                 </td>
                 <td class="px-5 py-3.5">
                     {% if a.art == 'urlaub' %}
-                        <span class="inline-flex items-center gap-1.5"><span>🌴</span> Urlaub</span>
+                        <span class="inline-flex items-center gap-1.5"><span>🌴</span> {{ 'common.art.urlaub'|trans }}</span>
                     {% else %}
-                        <span class="inline-flex items-center gap-1.5"><span>🤒</span> Krank</span>
+                        <span class="inline-flex items-center gap-1.5"><span>🤒</span> {{ 'common.art.krank'|trans }}</span>
                     {% endif %}
                 </td>
                 <td class="px-5 py-3.5 tabular">{{ a.startdatum|date('d.m.') }}–{{ a.enddatum|date('d.m.Y') }}</td>
@@ -141,7 +141,7 @@
                 <td class="px-5 py-3.5 text-right">
                     {% if a.status in ['beantragt', 'aktiv'] %}
                     <a href="/{{ a.art == 'urlaub' ? 'antrag' : 'krank' }}/{{ a.id }}/edit"
-                       class="text-xs text-gray-500 hover:text-sage-700 underline underline-offset-2">Bearbeiten</a>
+                       class="text-xs text-gray-500 hover:text-sage-700 underline underline-offset-2">{{ 'action.edit'|trans }}</a>
                     {% endif %}
                 </td>
             </tr>

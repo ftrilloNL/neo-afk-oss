@@ -493,3 +493,410 @@ msgstr "Approval-Link ungültig"
 
 msgid "approval.error.advice"
 msgstr "Bitte den/die Antragsteller:in bitten, einen neuen Antrag zu stellen."
+
+# ---- HR Auswertung ----
+msgid "hr.title"
+msgstr "HR-Auswertung"
+
+msgid "hr.subtitle"
+msgstr "Alle Abwesenheiten · %count% Einträge gefunden"
+
+msgid "hr.filter.art"
+msgstr "Art"
+
+msgid "hr.filter.status"
+msgstr "Status"
+
+msgid "hr.filter.person"
+msgstr "Person"
+
+msgid "hr.filter.all"
+msgstr "Alle"
+
+msgid "hr.filter.from"
+msgstr "Von"
+
+msgid "hr.filter.to"
+msgstr "Bis"
+
+msgid "hr.filter.reset"
+msgstr "Filter zurücksetzen"
+
+msgid "hr.filter.apply"
+msgstr "Anwenden"
+
+msgid "hr.filter.status.aktiv_or_approved"
+msgstr "Aktiv / Genehmigt"
+
+msgid "hr.stats.total_days"
+msgstr "Summe Tage gesamt"
+
+msgid "hr.stats.urlaub"
+msgstr "Davon Urlaub"
+
+msgid "hr.stats.krank"
+msgstr "Davon Krank"
+
+msgid "hr.empty"
+msgstr "Keine Einträge mit diesen Filterkriterien."
+
+msgid "hr.col.person"
+msgstr "Person"
+
+msgid "hr.col.art"
+msgstr "Art"
+
+msgid "hr.col.approved_by"
+msgstr "Genehmigt von"
+
+# ---- HR Users (Stammdaten) ----
+msgid "hr.users.title"
+msgstr "HR-Stammdaten"
+
+msgid "hr.users.subtitle"
+msgstr "%count% Mitarbeiter · Urlaubsanspruch, Resturlaub und Rollen verwalten"
+
+msgid "hr.users.add"
+msgstr "Mitarbeiter hinzufügen"
+
+msgid "hr.users.empty"
+msgstr "Noch keine Mitarbeiter angelegt — User entstehen automatisch beim ersten SSO-Login."
+
+msgid "hr.users.col.mitarbeiter"
+msgstr "Mitarbeiter"
+
+msgid "hr.users.col.eintritt"
+msgstr "Eintritt"
+
+msgid "hr.users.col.anspruch"
+msgstr "Anspruch"
+
+msgid "hr.users.col.aktuell"
+msgstr "Aktuell"
+
+msgid "hr.users.col.vorjahr"
+msgstr "Vorjahr"
+
+msgid "hr.users.pending_login"
+msgstr "Pending Login"
+
+msgid "hr.users.status.aktiv"
+msgstr "Aktiv"
+
+msgid "hr.users.status.inaktiv"
+msgstr "Inaktiv"
+
+# ---- HR Users new ----
+msgid "hr.users.new.title"
+msgstr "Neuen Mitarbeiter anlegen"
+
+msgid "hr.users.new.subtitle"
+msgstr "Der Mitarbeiter wird mit „Pending Login\"-Status angelegt und beim ersten M365-SSO-Login automatisch verlinkt."
+
+msgid "hr.users.errors.summary"
+msgstr "Bitte korrigiere die markierten Felder."
+
+msgid "hr.users.similar.heading"
+msgstr "Möglicher doppelter Mitarbeiter erkannt"
+
+msgid "hr.users.similar.intro"
+msgstr "Es gibt bereits Datensätze mit ähnlicher E-Mail-Adresse:"
+
+msgid "hr.users.similar.pending_pill"
+msgstr "Pending"
+
+msgid "hr.users.similar.advice"
+msgstr "Falls das wirklich ein anderer Mensch ist (z.B. Namensgleichheit), unten in der Form das Häkchen „Trotzdem als neuen Mitarbeiter anlegen\" setzen und erneut speichern."
+
+msgid "hr.users.field.display_name"
+msgstr "Anzeigename"
+
+msgid "hr.users.field.display_name.hint"
+msgstr "Vorname Nachname — wird beim ersten SSO ggf. mit Microsoft-Wert überschrieben"
+
+msgid "hr.users.field.email"
+msgstr "E-Mail (M365-Login)"
+
+msgid "hr.users.field.email.hint"
+msgstr "Muss exakt der M365-Login-Adresse entsprechen"
+
+msgid "hr.users.field.job_title.placeholder"
+msgstr "z.B. Senior Software Engineer, Head of Sales"
+
+msgid "hr.users.field.jahresanspruch"
+msgstr "Jahresanspruch (Tage)"
+
+msgid "hr.users.field.anteilig.label"
+msgstr "Resturlaub aktuell anteilig nach Eintrittsdatum berechnen"
+
+msgid "hr.users.field.anteilig.suggestion"
+msgstr "Vorschlag bei aktueller Eingabe: <strong>%days% Tage</strong> — überschreibt den Wert im Feld „Resturlaub aktuell\" beim Speichern."
+
+msgid "hr.users.field.anteilig.hint"
+msgstr "Pro vollendetem Monat 1/12 vom Jahresanspruch. Häkchen entfernen, um den Wert manuell zu setzen."
+
+msgid "hr.users.field.resturlaub_aktuell.hint"
+msgstr "Wird ignoriert, wenn anteilige Berechnung aktiv ist."
+
+msgid "hr.users.roles_status.heading"
+msgstr "Rollen & Status"
+
+msgid "hr.users.role.aktiv.label"
+msgstr "Aktiv — kann sich einloggen, taucht in Listen auf"
+
+msgid "hr.users.role.genehmiger.label"
+msgstr "Genehmiger:in — kann Urlaubsanträge anderer freigeben"
+
+msgid "hr.users.role.hr.label"
+msgstr "HR — sieht alle Abwesenheiten, kann Stammdaten editieren"
+
+msgid "hr.users.override_similarity.label"
+msgstr "Trotzdem als neuen Mitarbeiter anlegen"
+
+msgid "hr.users.override_similarity.hint"
+msgstr "Ich habe die oben angezeigten Datensätze geprüft — es handelt sich um eine andere Person."
+
+msgid "hr.users.submit.create"
+msgstr "Anlegen"
+
+# ---- HR Users edit ----
+msgid "hr.users.edit.field.resturlaub.hint"
+msgstr "Halbtages-Werte erlaubt, z.B. 21,5"
+
+msgid "hr.users.edit.section.personal"
+msgstr "Persönliche Daten"
+
+msgid "hr.users.field.strasse"
+msgstr "Straße + Hausnummer"
+
+msgid "hr.users.field.plz"
+msgstr "PLZ"
+
+msgid "hr.users.field.ort"
+msgstr "Ort"
+
+# ---- HR audit log ----
+msgid "audit.title"
+msgstr "Audit-Log"
+
+msgid "audit.subtitle"
+msgstr "Schreib-Operationen auf User und Anträge · %count% Einträge angezeigt (max. 200)"
+
+msgid "audit.filter.action"
+msgstr "Aktion"
+
+msgid "audit.filter.actor"
+msgstr "Akteur"
+
+msgid "audit.empty"
+msgstr "Keine Einträge mit diesen Filtern."
+
+msgid "audit.col.timestamp"
+msgstr "Zeitpunkt"
+
+msgid "audit.col.actor"
+msgstr "Akteur"
+
+msgid "audit.col.action"
+msgstr "Aktion"
+
+msgid "audit.col.target"
+msgstr "Ziel"
+
+msgid "audit.col.details"
+msgstr "Details"
+
+msgid "audit.system_actor"
+msgstr "System"
+
+msgid "audit.show_diff"
+msgstr "Vorher / Nachher anzeigen"
+
+msgid "audit.show_details"
+msgstr "Details anzeigen"
+
+msgid "audit.diff.col.field"
+msgstr "Feld"
+
+msgid "audit.diff.col.before"
+msgstr "Vorher"
+
+msgid "audit.diff.col.after"
+msgstr "Nachher"
+
+msgid "audit.master_data.heading"
+msgstr "Stammdaten neu gesetzt"
+
+msgid "audit.fmt.yes"
+msgstr "Ja"
+
+msgid "audit.fmt.no"
+msgstr "Nein"
+
+# Action labels
+msgid "audit.action.absence.approval_requested"
+msgstr "Genehmigung angefragt"
+
+msgid "audit.action.absence.approved"
+msgstr "Antrag genehmigt"
+
+msgid "audit.action.absence.rejected"
+msgstr "Antrag abgelehnt"
+
+msgid "audit.action.absence.cancelled"
+msgstr "Antrag storniert"
+
+msgid "audit.action.user.pre_created"
+msgstr "Mitarbeiter:in angelegt"
+
+msgid "audit.action.user.stammdaten_updated"
+msgstr "Stammdaten geändert"
+
+msgid "audit.action.user.annual_rollover"
+msgstr "Jahres-Rollover (User)"
+
+msgid "audit.action.system.annual_rollover"
+msgstr "Jahres-Rollover (System)"
+
+# Field labels
+msgid "audit.field.job_title"
+msgstr "Job-Titel"
+
+msgid "audit.field.eintrittsdatum"
+msgstr "Eintrittsdatum"
+
+msgid "audit.field.jahresanspruch"
+msgstr "Jahresanspruch"
+
+msgid "audit.field.resturlaub_aktuell"
+msgstr "Resturlaub aktuell"
+
+msgid "audit.field.resturlaub_vorjahr"
+msgstr "Resturlaub Vorjahr"
+
+msgid "audit.field.ist_aktiv"
+msgstr "Aktiv"
+
+msgid "audit.field.ist_genehmiger"
+msgstr "Genehmiger:in"
+
+msgid "audit.field.ist_hr"
+msgstr "HR"
+
+msgid "audit.field.display_name"
+msgstr "Anzeigename"
+
+msgid "audit.field.email"
+msgstr "E-Mail"
+
+msgid "audit.field.geburtsdatum"
+msgstr "Geburtsdatum"
+
+msgid "audit.field.telefon"
+msgstr "Telefon"
+
+msgid "audit.field.strasse"
+msgstr "Straße"
+
+msgid "audit.field.plz"
+msgstr "PLZ"
+
+msgid "audit.field.ort"
+msgstr "Ort"
+
+msgid "audit.field.vorjahr_used"
+msgstr "Aus Vorjahr abgebucht"
+
+msgid "audit.field.aktuell_used"
+msgstr "Aus Aktuell abgebucht"
+
+msgid "audit.field.comment"
+msgstr "Begründung"
+
+msgid "audit.field.previous_status"
+msgstr "Vorheriger Status"
+
+msgid "audit.field.genehmiger_id"
+msgstr "Genehmiger:in (ID)"
+
+msgid "audit.field.old_aktuell"
+msgstr "Resturlaub aktuell vorher"
+
+msgid "audit.field.old_vorjahr"
+msgstr "Resturlaub Vorjahr vorher"
+
+msgid "audit.field.new_aktuell"
+msgstr "Resturlaub aktuell nachher"
+
+msgid "audit.field.new_vorjahr"
+msgstr "Resturlaub Vorjahr nachher"
+
+msgid "audit.field.users_updated"
+msgstr "User aktualisiert"
+
+msgid "audit.field.anteilig_berechnet"
+msgstr "Anteilig berechnet"
+
+# ---- HR-erfasst Antrag/Krank forms ----
+msgid "hr.antrag.title"
+msgstr "Urlaub für Mitarbeiter:in erfassen"
+
+msgid "hr.antrag.subtitle"
+msgstr "Urlaub wird sofort als genehmigt eingetragen — kein Genehmigungsworkflow."
+
+msgid "hr.krank.title"
+msgstr "Krankmeldung für Mitarbeiter:in erfassen"
+
+msgid "hr.krank.subtitle"
+msgstr "Wird sofort als aktiv eingetragen. Kalender-Event und optionaler OOO werden für den/die MA gesetzt."
+
+msgid "hr.form.fuer_wen"
+msgstr "Für wen?"
+
+msgid "hr.form.fuer_wen.placeholder"
+msgstr "– Mitarbeiter:in auswählen –"
+
+msgid "hr.antrag.preview.placeholder"
+msgstr "Mitarbeiter:in und Daten wählen für Werktage-Vorschau"
+
+msgid "hr.antrag.werktage_note"
+msgstr "Werktage berücksichtigen Berliner Feiertage und Halbtag-Korrektur. Resturlaub wird aus dem Profil des/der Mitarbeiter:in gelesen."
+
+msgid "hr.antrag.notiz.hint"
+msgstr "(optional, intern)"
+
+msgid "hr.antrag.notiz.placeholder"
+msgstr "z.B. Grund der HR-Erfassung, Vertretung …"
+
+msgid "hr.krank.notiz.placeholder"
+msgstr "z.B. telefonisch mitgeteilt, Attest erwartet …"
+
+msgid "hr.antrag.ooo.hint"
+msgstr "Wird sofort für den/die Mitarbeiter:in gesetzt — leer lassen um keinen OOO zu setzen."
+
+msgid "hr.krank.ooo.hint"
+msgstr "Leer lassen wenn kein OOO gesetzt werden soll. Wird sofort für den/die MA aktiviert."
+
+msgid "hr.krank.ooo.internal_placeholder"
+msgstr "Ich bin krankheitsbedingt abwesend. In dringenden Fällen wendet euch bitte an …"
+
+msgid "hr.krank.ooo.external_placeholder"
+msgstr "I am currently out of office for health reasons. For urgent matters please contact …"
+
+msgid "hr.krank.ooo.single_placeholder"
+msgstr "Ich bin krankheitsbedingt abwesend und melde mich nach meiner Rückkehr. In dringenden Fällen wendet euch bitte an …"
+
+msgid "hr.form.notify.heading"
+msgstr "Mitarbeiter:in benachrichtigen"
+
+msgid "hr.antrag.notify.label"
+msgstr "Info-Mail an Mitarbeiter:in senden — enthält Zeitraum und Notiz, keine Genehmigungslinks."
+
+msgid "hr.krank.notify.label"
+msgstr "Info-Mail an Mitarbeiter:in senden — enthält Zeitraum und Notiz."
+
+msgid "hr.antrag.submit"
+msgstr "Urlaub erfassen"
+
+msgid "hr.krank.submit"
+msgstr "Krankmeldung erfassen"
