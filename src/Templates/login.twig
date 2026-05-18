@@ -1,5 +1,5 @@
 {% extends 'layout-auth.twig' %}
-{% block title %}Anmelden – {{ org.short_name }}{% endblock %}
+{% block title %}{{ 'login.title'|trans }} – {{ org.short_name }}{% endblock %}
 {% block content %}
 <div class="w-full max-w-md">
     {# Logo above card #}
@@ -9,14 +9,14 @@
     </div>
 
     <div class="bg-white border border-card-border rounded-xl p-10">
-        <h1 class="text-3xl font-bold tracking-tight mb-2">Willkommen zurück</h1>
+        <h1 class="text-3xl font-bold tracking-tight mb-2">{{ 'login.welcome_back'|trans }}</h1>
         <p class="text-gray-600 leading-relaxed mb-8">
-            Melde dich mit deinem Microsoft-365-Account an, um Urlaub zu beantragen oder Krankmeldungen zu erfassen.
+            {{ 'login.subtitle'|trans }}
         </p>
 
         {% if auth_error %}
         <div class="mb-5 px-4 py-3 rounded-md bg-red-50 border border-red-200 text-sm text-red-800">
-            Anmeldung fehlgeschlagen: <strong>{{ auth_error }}</strong>. Bitte erneut versuchen.
+            {{ 'login.auth_failed'|trans({'%error%': '<strong>' ~ auth_error ~ '</strong>'})|raw }}
         </div>
         {% endif %}
 
@@ -27,17 +27,17 @@
                 <rect width="10" height="10" x="1"  y="12" fill="#00A4EF" />
                 <rect width="10" height="10" x="12" y="12" fill="#FFB900" />
             </svg>
-            Mit Microsoft 365 anmelden
+            {{ 'login.button_microsoft'|trans }}
         </a>
 
         <div class="my-6 flex items-center gap-3">
             <div class="flex-1 h-px bg-card-border"></div>
-            <span class="text-xs text-gray-400 uppercase tracking-wider">oder</span>
+            <span class="text-xs text-gray-400 uppercase tracking-wider">{{ 'common.or'|trans }}</span>
             <div class="flex-1 h-px bg-card-border"></div>
         </div>
 
-        <a href="mailto:{{ org.support_email }}?subject=Login-Problem%20{{ org.short_name|url_encode }}" class="block text-center text-sm text-gray-600 hover:text-black underline underline-offset-2">
-            Probleme beim Login? IT kontaktieren
+        <a href="mailto:{{ org.support_email }}?subject={{ 'login.support_subject'|trans({'%org%': org.short_name})|url_encode }}" class="block text-center text-sm text-gray-600 hover:text-black underline underline-offset-2">
+            {{ 'login.contact_it'|trans }}
         </a>
     </div>
 </div>

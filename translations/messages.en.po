@@ -10,3 +10,46 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+# ---- Status (used by macros/status.twig) ----
+msgid "status.beantragt"
+msgstr "Requested"
+
+msgid "status.abgelehnt"
+msgstr "Rejected"
+
+msgid "status.storniert"
+msgstr "Cancelled"
+
+# 'aktiv' branches on art (vacation = approved, sick = active)
+msgid "status.aktiv.urlaub"
+msgstr "Approved"
+
+msgid "status.aktiv.krank"
+msgstr "Active"
+
+# ---- Common shared strings ----
+msgid "common.or"
+msgstr "or"
+
+# ---- Login ----
+msgid "login.title"
+msgstr "Sign in"
+
+msgid "login.welcome_back"
+msgstr "Welcome back"
+
+msgid "login.subtitle"
+msgstr "Sign in with your Microsoft 365 account to request vacation or report sick leave."
+
+msgid "login.auth_failed"
+msgstr "Sign-in failed: %error%. Please try again."
+
+msgid "login.button_microsoft"
+msgstr "Sign in with Microsoft 365"
+
+msgid "login.contact_it"
+msgstr "Trouble signing in? Contact IT"
+
+msgid "login.support_subject"
+msgstr "Login issue %org%"
