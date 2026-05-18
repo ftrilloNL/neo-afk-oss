@@ -256,3 +256,127 @@ msgstr "%count% active employees"
 
 msgid "team.empty"
 msgstr "No active employees yet."
+
+# ---- Antrag (vacation request) — shared between user + HR forms ----
+msgid "antrag.edit.title"
+msgstr "Edit vacation"
+
+msgid "antrag.edit.heading"
+msgstr "Edit vacation request"
+
+msgid "antrag.form.zeitraum"
+msgstr "Period"
+
+msgid "antrag.form.von"
+msgstr "From"
+
+msgid "antrag.form.bis"
+msgstr "To"
+
+msgid "antrag.halbtag.ganztag"
+msgstr "Full day"
+
+msgid "antrag.halbtag.nachmittag"
+msgstr "From afternoon"
+
+msgid "antrag.halbtag.vormittag"
+msgstr "Until noon"
+
+msgid "antrag.form.werktage_note"
+msgstr "Workdays factor in Berlin public holidays and half-day adjustments."
+
+msgid "antrag.form.section.genehmiger"
+msgstr "Approver"
+
+msgid "common.select_placeholder"
+msgstr "– Select –"
+
+msgid "antrag.form.notiz"
+msgstr "Note"
+
+msgid "antrag.form.notiz.hint"
+msgstr "(optional, visible only to the approver)"
+
+msgid "antrag.form.notiz.hint_short"
+msgstr "(optional)"
+
+msgid "antrag.form.notiz.placeholder"
+msgstr "e.g. cover person, reason …"
+
+msgid "antrag.form.ooo.heading"
+msgstr "Out-of-office message"
+
+msgid "antrag.form.ooo.hint"
+msgstr "Set automatically on approval — period matches the vacation above. The text is per-request because cover and context often vary."
+
+msgid "antrag.edit.ooo.hint"
+msgstr "Set on approval. If the vacation is already running with an active out-of-office, the message is updated immediately on save."
+
+msgid "antrag.form.ooo.internal_label"
+msgstr "Internal reply (colleagues)"
+
+msgid "antrag.form.ooo.external_label"
+msgstr "External reply (everyone else)"
+
+msgid "antrag.form.ooo.internal_placeholder"
+msgstr "Hi team, I'm on vacation and will be back on …. For urgent matters please reach out to …"
+
+msgid "antrag.form.ooo.external_placeholder"
+msgstr "Thank you for your message. I am out of office until … and will reply upon my return. For urgent matters please contact …"
+
+msgid "antrag.form.ooo.single_placeholder"
+msgstr "Hi, I'm on vacation and will be back on …. For urgent matters please reach out to …"
+
+msgid "antrag.form.resturlaub_label"
+msgstr "Available vacation"
+
+msgid "antrag.form.resturlaub.aktuell_suffix"
+msgstr "%n% current"
+
+msgid "antrag.form.resturlaub.vorjahr_suffix"
+msgstr "+ %n% previous year (expires 03/31)"
+
+msgid "action.cancel"
+msgstr "Cancel"
+
+msgid "action.save"
+msgstr "Save"
+
+msgid "antrag.form.submit"
+msgstr "Submit request"
+
+msgid "antrag.preview.placeholder"
+msgstr "Workdays will appear once both dates are entered"
+
+msgid "antrag.preview.werktag_one"
+msgstr "workday"
+
+msgid "antrag.preview.werktag_many"
+msgstr "workdays"
+
+msgid "antrag.preview.exceeds"
+msgstr "exceeds remaining vacation (%n% available)"
+
+msgid "antrag.preview.of_available"
+msgstr "of %n% available"
+
+msgid "antrag.preview.invalid_range"
+msgstr "End date is before start date"
+
+msgid "antrag.preview.invalid"
+msgstr "Invalid date"
+
+msgid "common.note_prefix"
+msgstr "Note:"
+
+msgid "antrag.edit.re_approval_warning"
+msgstr "Changing the date or half-day options resets the request to \"requested\" and triggers a new approval."
+
+msgid "antrag.edit.genehmiger_locked_hint"
+msgstr "The approver cannot be changed when editing. To switch approvers, cancel and submit again."
+
+msgid "antrag.edit.resturlaub_of"
+msgstr "Vacation remaining for %name%"
+
+msgid "antrag.edit.current_request"
+msgstr "Current request: %tage% days"

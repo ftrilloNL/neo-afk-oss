@@ -1,12 +1,12 @@
 {% extends 'layout.twig' %}
-{% block title %}Urlaub beantragen – {{ org.short_name }}{% endblock %}
+{% block title %}{{ 'nav.antrag'|trans }} – {{ org.short_name }}{% endblock %}
 {% block content %}
 
 <div class="flex items-center gap-3 mb-8">
     <a href="/" class="text-gray-500 hover:text-black p-1.5 rounded-md hover:bg-gray-100">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
     </a>
-    <h1 class="text-2xl font-bold tracking-tight">Urlaub beantragen</h1>
+    <h1 class="text-2xl font-bold tracking-tight">{{ 'nav.antrag'|trans }}</h1>
 </div>
 
 {% if flash_error %}
@@ -20,29 +20,29 @@
 
     {# Zeitraum #}
     <div class="bg-white border border-card-border rounded-xl p-6">
-        <h2 class="font-semibold text-base mb-4">Zeitraum</h2>
+        <h2 class="font-semibold text-base mb-4">{{ 'antrag.form.zeitraum'|trans }}</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
-                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">Von</label>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">{{ 'antrag.form.von'|trans }}</label>
                 <div class="flex gap-2">
                     <input type="date" name="startdatum" value="{{ today }}" required
                         class="flex-1 px-3 py-2 text-sm border border-card-border rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500">
                     <select name="halbtag_start"
                         class="px-3 py-2 text-sm border border-card-border rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500 bg-white">
-                        <option value="ganztag">Ganztag</option>
-                        <option value="nachmittag">ab Nachmittag</option>
+                        <option value="ganztag">{{ 'antrag.halbtag.ganztag'|trans }}</option>
+                        <option value="nachmittag">{{ 'antrag.halbtag.nachmittag'|trans }}</option>
                     </select>
                 </div>
             </div>
             <div>
-                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">Bis</label>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">{{ 'antrag.form.bis'|trans }}</label>
                 <div class="flex gap-2">
                     <input type="date" name="enddatum" value="{{ today }}" required
                         class="flex-1 px-3 py-2 text-sm border border-card-border rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500">
                     <select name="halbtag_ende"
                         class="px-3 py-2 text-sm border border-card-border rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500 bg-white">
-                        <option value="ganztag">Ganztag</option>
-                        <option value="vormittag">bis Mittag</option>
+                        <option value="ganztag">{{ 'antrag.halbtag.ganztag'|trans }}</option>
+                        <option value="vormittag">{{ 'antrag.halbtag.vormittag'|trans }}</option>
                     </select>
                 </div>
             </div>
@@ -53,19 +53,19 @@
              hx-trigger="load, change from:closest form"
              hx-include="[name='startdatum'],[name='enddatum'],[name='halbtag_start'],[name='halbtag_ende']"
              hx-swap="innerHTML">
-            <div class="text-sm text-gray-400">Werktage werden nach Eingabe beider Daten angezeigt</div>
+            <div class="text-sm text-gray-400">{{ 'antrag.preview.placeholder'|trans }}</div>
         </div>
         <p class="text-xs text-gray-500 mt-3">
-            Werktage berücksichtigen Berliner Feiertage und Halbtag-Korrektur.
+            {{ 'antrag.form.werktage_note'|trans }}
         </p>
     </div>
 
     {# Genehmiger #}
     <div class="bg-white border border-card-border rounded-xl p-6">
-        <h2 class="font-semibold text-base mb-4">Genehmiger:in</h2>
+        <h2 class="font-semibold text-base mb-4">{{ 'antrag.form.section.genehmiger'|trans }}</h2>
         <select name="genehmiger_id" required
             class="w-full px-3 py-2.5 text-sm border border-card-border rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500 bg-white">
-            <option value="">– Wählen –</option>
+            <option value="">{{ 'common.select_placeholder'|trans }}</option>
             {% for g in genehmiger_options %}
                 {% if g.id != user.id %}
                 <option value="{{ g.id }}">{{ g.display_name }} · {{ g.email }}</option>
@@ -76,32 +76,32 @@
 
     {# Notiz #}
     <div class="bg-white border border-card-border rounded-xl p-6">
-        <h2 class="font-semibold text-base mb-4">Notiz <span class="font-normal text-gray-500">(optional, nur für Genehmiger:in sichtbar)</span></h2>
-        <textarea name="notiz" rows="3" placeholder="z.B. Vertretung, Urlaubsgrund …"
+        <h2 class="font-semibold text-base mb-4">{{ 'antrag.form.notiz'|trans }} <span class="font-normal text-gray-500">{{ 'antrag.form.notiz.hint'|trans }}</span></h2>
+        <textarea name="notiz" rows="3" placeholder="{{ 'antrag.form.notiz.placeholder'|trans }}"
             class="w-full px-3 py-2 text-sm border border-card-border rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500 resize-none"></textarea>
     </div>
 
     {# Out-of-Office-Text(e) — bei Microsoft zwei Felder (Gmail hat keine
        Trennung intern/extern und unterstuetzt nur einen Body pro Vacation). #}
     <div class="bg-white border border-card-border rounded-xl p-6">
-        <h2 class="font-semibold text-base mb-2">Out-of-Office-Nachricht</h2>
-        <p class="text-xs text-gray-500 mb-4">Wird beim Approval automatisch gesetzt — Zeitraum entspricht dem Urlaub oben. Texte je Antrag individuell, weil Vertretung und Kontext oft variieren.</p>
+        <h2 class="font-semibold text-base mb-2">{{ 'antrag.form.ooo.heading'|trans }}</h2>
+        <p class="text-xs text-gray-500 mb-4">{{ 'antrag.form.ooo.hint'|trans }}</p>
         {% if org.identity_provider == 'google' %}
             <textarea name="ooo_text" rows="6"
-                placeholder="Liebe Grüße, ich bin im Urlaub und melde mich am … zurück. In dringenden Fällen wendet euch an …"
+                placeholder="{{ 'antrag.form.ooo.single_placeholder'|trans }}"
                 class="w-full px-3 py-2 text-sm border border-card-border rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500"></textarea>
         {% else %}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
-                    <label class="block text-xs font-medium text-gray-700 mb-1.5">Interne Antwort (Kolleg:innen)</label>
+                    <label class="block text-xs font-medium text-gray-700 mb-1.5">{{ 'antrag.form.ooo.internal_label'|trans }}</label>
                     <textarea name="ooo_internal" rows="6"
-                        placeholder="Liebe Kolleg:innen, ich bin im Urlaub und melde mich am … zurück. In dringenden Fällen wendet euch an …"
+                        placeholder="{{ 'antrag.form.ooo.internal_placeholder'|trans }}"
                         class="w-full px-3 py-2 text-sm border border-card-border rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500"></textarea>
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-gray-700 mb-1.5">Externe Antwort (alle anderen)</label>
+                    <label class="block text-xs font-medium text-gray-700 mb-1.5">{{ 'antrag.form.ooo.external_label'|trans }}</label>
                     <textarea name="ooo_external" rows="6"
-                        placeholder="Thank you for your message. I am out of office until … and will reply upon my return. For urgent matters please contact …"
+                        placeholder="{{ 'antrag.form.ooo.external_placeholder'|trans }}"
                         class="w-full px-3 py-2 text-sm border border-card-border rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500"></textarea>
                 </div>
             </div>
@@ -112,14 +112,14 @@
     <div class="bg-sage-50 border border-sage-200 rounded-xl p-5">
         <div class="flex items-center justify-between">
             <div>
-                <div class="text-xs font-semibold uppercase tracking-wider text-sage-700 mb-1">Verfügbarer Resturlaub</div>
+                <div class="text-xs font-semibold uppercase tracking-wider text-sage-700 mb-1">{{ 'antrag.form.resturlaub_label'|trans }}</div>
                 <div class="text-2xl font-bold tabular text-sage-900">
-                    {{ ((user.resturlaub_aktuell + user.resturlaub_vorjahr))|number_format(1, ',', '.') }} Tage
+                    {{ ((user.resturlaub_aktuell + user.resturlaub_vorjahr))|number_format(1, ',', '.') }} {{ 'common.days'|trans }}
                 </div>
             </div>
             <div class="text-xs text-sage-700 text-right">
-                {{ user.resturlaub_aktuell|number_format(1, ',', '.') }} aktuell<br>
-                + {{ user.resturlaub_vorjahr|number_format(1, ',', '.') }} Vorjahr (verfällt 31.03.)
+                {{ 'antrag.form.resturlaub.aktuell_suffix'|trans({'%n%': user.resturlaub_aktuell|number_format(1, ',', '.')}) }}<br>
+                {{ 'antrag.form.resturlaub.vorjahr_suffix'|trans({'%n%': user.resturlaub_vorjahr|number_format(1, ',', '.')}) }}
             </div>
         </div>
     </div>
@@ -127,10 +127,10 @@
     {# Footer #}
     <div class="flex items-center justify-between pt-2">
         <a href="/" class="px-5 py-2.5 text-sm font-medium border border-black rounded-md hover:bg-gray-50 transition-colors">
-            Abbrechen
+            {{ 'action.cancel'|trans }}
         </a>
         <button type="submit" class="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-medium bg-sage-500 text-white rounded-md hover:bg-sage-600 transition-colors">
-            Antrag einreichen
+            {{ 'antrag.form.submit'|trans }}
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </button>
     </div>

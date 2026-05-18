@@ -256,3 +256,127 @@ msgstr "%count% aktive Mitarbeiter:innen"
 
 msgid "team.empty"
 msgstr "Noch keine aktiven Mitarbeiter:innen."
+
+# ---- Antrag (vacation request) — shared between user + HR forms ----
+msgid "antrag.edit.title"
+msgstr "Urlaub bearbeiten"
+
+msgid "antrag.edit.heading"
+msgstr "Urlaubsantrag bearbeiten"
+
+msgid "antrag.form.zeitraum"
+msgstr "Zeitraum"
+
+msgid "antrag.form.von"
+msgstr "Von"
+
+msgid "antrag.form.bis"
+msgstr "Bis"
+
+msgid "antrag.halbtag.ganztag"
+msgstr "Ganztag"
+
+msgid "antrag.halbtag.nachmittag"
+msgstr "ab Nachmittag"
+
+msgid "antrag.halbtag.vormittag"
+msgstr "bis Mittag"
+
+msgid "antrag.form.werktage_note"
+msgstr "Werktage berücksichtigen Berliner Feiertage und Halbtag-Korrektur."
+
+msgid "antrag.form.section.genehmiger"
+msgstr "Genehmiger:in"
+
+msgid "common.select_placeholder"
+msgstr "– Wählen –"
+
+msgid "antrag.form.notiz"
+msgstr "Notiz"
+
+msgid "antrag.form.notiz.hint"
+msgstr "(optional, nur für Genehmiger:in sichtbar)"
+
+msgid "antrag.form.notiz.hint_short"
+msgstr "(optional)"
+
+msgid "antrag.form.notiz.placeholder"
+msgstr "z.B. Vertretung, Urlaubsgrund …"
+
+msgid "antrag.form.ooo.heading"
+msgstr "Out-of-Office-Nachricht"
+
+msgid "antrag.form.ooo.hint"
+msgstr "Wird beim Approval automatisch gesetzt — Zeitraum entspricht dem Urlaub oben. Texte je Antrag individuell, weil Vertretung und Kontext oft variieren."
+
+msgid "antrag.edit.ooo.hint"
+msgstr "Wird beim Approval gesetzt. Bei aktuell laufendem Urlaub mit gesetzter OOO wird die Nachricht beim Speichern direkt aktualisiert."
+
+msgid "antrag.form.ooo.internal_label"
+msgstr "Interne Antwort (Kolleg:innen)"
+
+msgid "antrag.form.ooo.external_label"
+msgstr "Externe Antwort (alle anderen)"
+
+msgid "antrag.form.ooo.internal_placeholder"
+msgstr "Liebe Kolleg:innen, ich bin im Urlaub und melde mich am … zurück. In dringenden Fällen wendet euch an …"
+
+msgid "antrag.form.ooo.external_placeholder"
+msgstr "Thank you for your message. I am out of office until … and will reply upon my return. For urgent matters please contact …"
+
+msgid "antrag.form.ooo.single_placeholder"
+msgstr "Liebe Grüße, ich bin im Urlaub und melde mich am … zurück. In dringenden Fällen wendet euch an …"
+
+msgid "antrag.form.resturlaub_label"
+msgstr "Verfügbarer Resturlaub"
+
+msgid "antrag.form.resturlaub.aktuell_suffix"
+msgstr "%n% aktuell"
+
+msgid "antrag.form.resturlaub.vorjahr_suffix"
+msgstr "+ %n% Vorjahr (verfällt 31.03.)"
+
+msgid "action.cancel"
+msgstr "Abbrechen"
+
+msgid "action.save"
+msgstr "Speichern"
+
+msgid "antrag.form.submit"
+msgstr "Antrag einreichen"
+
+msgid "antrag.preview.placeholder"
+msgstr "Werktage werden nach Eingabe beider Daten angezeigt"
+
+msgid "antrag.preview.werktag_one"
+msgstr "Werktag"
+
+msgid "antrag.preview.werktag_many"
+msgstr "Werktage"
+
+msgid "antrag.preview.exceeds"
+msgstr "überschreitet Resturlaub (%n% verfügbar)"
+
+msgid "antrag.preview.of_available"
+msgstr "von %n% verfügbar"
+
+msgid "antrag.preview.invalid_range"
+msgstr "Enddatum liegt vor Startdatum"
+
+msgid "antrag.preview.invalid"
+msgstr "Ungültiges Datum"
+
+msgid "common.note_prefix"
+msgstr "Hinweis:"
+
+msgid "antrag.edit.re_approval_warning"
+msgstr "Eine Änderung von Datum oder Halbtag-Optionen setzt den Antrag auf „beantragt\" zurück und löst eine erneute Genehmigung aus."
+
+msgid "antrag.edit.genehmiger_locked_hint"
+msgstr "Genehmiger:in kann beim Bearbeiten nicht gewechselt werden. Bei Bedarf bitte stornieren und neu beantragen."
+
+msgid "antrag.edit.resturlaub_of"
+msgstr "Resturlaub von %name%"
+
+msgid "antrag.edit.current_request"
+msgstr "Aktueller Antrag: %tage% Tage"
