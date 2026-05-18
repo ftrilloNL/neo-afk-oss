@@ -380,3 +380,43 @@ msgstr "Vacation remaining for %name%"
 
 msgid "antrag.edit.current_request"
 msgstr "Current request: %tage% days"
+
+# ---- Krank (sick leave) ----
+msgid "krank.form.title"
+msgstr "Report sick leave"
+
+msgid "krank.edit.heading"
+msgstr "Edit sick leave"
+
+msgid "krank.form.notiz.hint"
+msgstr "(optional, visible only to HR)"
+
+msgid "krank.form.notiz.placeholder"
+msgstr "e.g. doctor's note to follow …"
+
+msgid "krank.form.ooo.hint"
+msgstr "Set immediately after submit — period matches the sick leave above. Leave blank if no out-of-office is desired."
+
+msgid "krank.edit.ooo.hint"
+msgstr "If the sick leave is currently running, out-of-office updates immediately. Leave blank to clear the out-of-office."
+
+msgid "krank.form.ooo.internal_placeholder"
+msgstr "Hi team, I'm out sick and expect to be back by …. For urgent matters please reach out to …"
+
+msgid "krank.form.ooo.external_placeholder"
+msgstr "Thank you for your message. I am out of office due to illness and will reply upon my return. For urgent matters please contact …"
+
+msgid "krank.form.ooo.single_placeholder"
+msgstr "Hi, I'm out sick and expect to be back by …. For urgent matters please reach out to …"
+
+msgid "krank.dsgvo.heading"
+msgstr "Privacy note"
+
+msgid "krank.dsgvo.body"
+msgstr "Your sick leave takes effect immediately. In the shared calendar it appears only as <strong>\"Out of office\"</strong>, not as \"Sick\". HR is notified."
+
+msgid "krank.edit.note_heading"
+msgstr "Note"
+
+msgid "krank.edit.note_body"
+msgstr "HR is notified by email about every edit. When the period changes the calendar entry and (if running) the out-of-office message are updated immediately."

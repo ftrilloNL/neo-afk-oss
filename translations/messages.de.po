@@ -380,3 +380,43 @@ msgstr "Resturlaub von %name%"
 
 msgid "antrag.edit.current_request"
 msgstr "Aktueller Antrag: %tage% Tage"
+
+# ---- Krank (sick leave) ----
+msgid "krank.form.title"
+msgstr "Krankmeldung erfassen"
+
+msgid "krank.edit.heading"
+msgstr "Krankmeldung bearbeiten"
+
+msgid "krank.form.notiz.hint"
+msgstr "(optional, nur für HR sichtbar)"
+
+msgid "krank.form.notiz.placeholder"
+msgstr "z.B. Arzttermin folgt …"
+
+msgid "krank.form.ooo.hint"
+msgstr "Wird nach dem Absenden direkt gesetzt — Zeitraum entspricht der Krankmeldung oben. Leer lassen, wenn kein OOO gewünscht ist."
+
+msgid "krank.edit.ooo.hint"
+msgstr "Bei aktuell laufender Krankmeldung wird OOO direkt aktualisiert. Leer lassen, um OOO zu deaktivieren."
+
+msgid "krank.form.ooo.internal_placeholder"
+msgstr "Liebe Kolleg:innen, ich bin krankgemeldet und voraussichtlich bis … zurück. In dringenden Fällen wendet euch an …"
+
+msgid "krank.form.ooo.external_placeholder"
+msgstr "Thank you for your message. I am out of office due to illness and will reply upon my return. For urgent matters please contact …"
+
+msgid "krank.form.ooo.single_placeholder"
+msgstr "Liebe Grüße, ich bin krankgemeldet und voraussichtlich bis … zurück. In dringenden Fällen wendet euch an …"
+
+msgid "krank.dsgvo.heading"
+msgstr "DSGVO-Hinweis"
+
+msgid "krank.dsgvo.body"
+msgstr "Die Krankmeldung wird sofort wirksam. Im geteilten Kalender erscheint dein Eintrag nur als <strong>„Abwesend\"</strong>, nicht als „Krank\". HR wird informiert."
+
+msgid "krank.edit.note_heading"
+msgstr "Hinweis"
+
+msgid "krank.edit.note_body"
+msgstr "HR wird über jede Bearbeitung per Mail informiert. Bei Änderung des Zeitraums werden Kalender-Eintrag und (falls laufend) OOO direkt angepasst."

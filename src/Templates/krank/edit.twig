@@ -1,5 +1,5 @@
 {% extends 'layout.twig' %}
-{% block title %}Krankmeldung bearbeiten – {{ org.short_name }}{% endblock %}
+{% block title %}{{ 'krank.edit.heading'|trans }} – {{ org.short_name }}{% endblock %}
 {% block content %}
 
 <div class="flex items-center gap-3 mb-8">
@@ -7,7 +7,7 @@
         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
     </a>
     <h1 class="text-2xl font-bold tracking-tight">
-        Krankmeldung bearbeiten
+        {{ 'krank.edit.heading'|trans }}
         {% if is_hr_edit %}
             <span class="text-sm font-normal text-gray-500">— {{ applicant.display_name }}</span>
         {% endif %}
@@ -22,29 +22,29 @@
     {{ csrf_field() }}
 
     <div class="bg-white border border-card-border rounded-xl p-6">
-        <h2 class="font-semibold text-base mb-4">Zeitraum</h2>
+        <h2 class="font-semibold text-base mb-4">{{ 'antrag.form.zeitraum'|trans }}</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
-                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">Von</label>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">{{ 'antrag.form.von'|trans }}</label>
                 <div class="flex gap-2">
                     <input type="date" name="startdatum" value="{{ absence.startdatum }}" required
                         class="flex-1 px-3 py-2 text-sm border border-card-border rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500">
                     <select name="halbtag_start"
                         class="px-3 py-2 text-sm border border-card-border rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500 bg-white">
-                        <option value="ganztag" {{ absence.halbtag_start == 'ganztag' ? 'selected' : '' }}>Ganztag</option>
-                        <option value="nachmittag" {{ absence.halbtag_start == 'nachmittag' ? 'selected' : '' }}>ab Nachmittag</option>
+                        <option value="ganztag" {{ absence.halbtag_start == 'ganztag' ? 'selected' : '' }}>{{ 'antrag.halbtag.ganztag'|trans }}</option>
+                        <option value="nachmittag" {{ absence.halbtag_start == 'nachmittag' ? 'selected' : '' }}>{{ 'antrag.halbtag.nachmittag'|trans }}</option>
                     </select>
                 </div>
             </div>
             <div>
-                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">Bis</label>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">{{ 'antrag.form.bis'|trans }}</label>
                 <div class="flex gap-2">
                     <input type="date" name="enddatum" value="{{ absence.enddatum }}" required
                         class="flex-1 px-3 py-2 text-sm border border-card-border rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500">
                     <select name="halbtag_ende"
                         class="px-3 py-2 text-sm border border-card-border rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500 bg-white">
-                        <option value="ganztag" {{ absence.halbtag_ende == 'ganztag' ? 'selected' : '' }}>Ganztag</option>
-                        <option value="vormittag" {{ absence.halbtag_ende == 'vormittag' ? 'selected' : '' }}>bis Mittag</option>
+                        <option value="ganztag" {{ absence.halbtag_ende == 'ganztag' ? 'selected' : '' }}>{{ 'antrag.halbtag.ganztag'|trans }}</option>
+                        <option value="vormittag" {{ absence.halbtag_ende == 'vormittag' ? 'selected' : '' }}>{{ 'antrag.halbtag.vormittag'|trans }}</option>
                     </select>
                 </div>
             </div>
@@ -55,31 +55,31 @@
              hx-trigger="load, change from:closest form"
              hx-include="[name='startdatum'],[name='enddatum'],[name='halbtag_start'],[name='halbtag_ende']"
              hx-swap="innerHTML">
-            <div class="text-sm text-gray-400">Werktage werden nach Eingabe beider Daten angezeigt</div>
+            <div class="text-sm text-gray-400">{{ 'antrag.preview.placeholder'|trans }}</div>
         </div>
     </div>
 
     <div class="bg-white border border-card-border rounded-xl p-6">
-        <h2 class="font-semibold text-base mb-4">Notiz <span class="font-normal text-gray-500">(optional)</span></h2>
+        <h2 class="font-semibold text-base mb-4">{{ 'antrag.form.notiz'|trans }} <span class="font-normal text-gray-500">{{ 'antrag.form.notiz.hint_short'|trans }}</span></h2>
         <textarea name="notiz" rows="3"
             class="w-full px-3 py-2 text-sm border border-card-border rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500 resize-none">{{ absence.notiz }}</textarea>
     </div>
 
     <div class="bg-white border border-card-border rounded-xl p-6">
-        <h2 class="font-semibold text-base mb-2">Out-of-Office-Nachricht <span class="font-normal text-gray-500">(optional)</span></h2>
-        <p class="text-xs text-gray-500 mb-4">Bei aktuell laufender Krankmeldung wird OOO direkt aktualisiert. Leer lassen, um OOO zu deaktivieren.</p>
+        <h2 class="font-semibold text-base mb-2">{{ 'antrag.form.ooo.heading'|trans }} <span class="font-normal text-gray-500">{{ 'antrag.form.notiz.hint_short'|trans }}</span></h2>
+        <p class="text-xs text-gray-500 mb-4">{{ 'krank.edit.ooo.hint'|trans }}</p>
         {% if org.identity_provider == 'google' %}
             <textarea name="ooo_text" rows="5"
                 class="w-full px-3 py-2 text-sm border border-card-border rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500">{{ absence.ooo_internal }}</textarea>
         {% else %}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
-                    <label class="block text-xs font-medium text-gray-700 mb-1.5">Interne Antwort (Kolleg:innen)</label>
+                    <label class="block text-xs font-medium text-gray-700 mb-1.5">{{ 'antrag.form.ooo.internal_label'|trans }}</label>
                     <textarea name="ooo_internal" rows="5"
                         class="w-full px-3 py-2 text-sm border border-card-border rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500">{{ absence.ooo_internal }}</textarea>
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-gray-700 mb-1.5">Externe Antwort (alle anderen)</label>
+                    <label class="block text-xs font-medium text-gray-700 mb-1.5">{{ 'antrag.form.ooo.external_label'|trans }}</label>
                     <textarea name="ooo_external" rows="5"
                         class="w-full px-3 py-2 text-sm border border-card-border rounded-md focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-sage-500">{{ absence.ooo_external }}</textarea>
                 </div>
@@ -88,18 +88,18 @@
     </div>
 
     <div class="bg-amber-50 border border-amber-200 rounded-xl p-5 text-sm text-amber-900">
-        <div class="font-semibold mb-1">Hinweis</div>
+        <div class="font-semibold mb-1">{{ 'krank.edit.note_heading'|trans }}</div>
         <p class="text-amber-800">
-            HR wird über jede Bearbeitung per Mail informiert. Bei Änderung des Zeitraums werden Kalender-Eintrag und (falls laufend) OOO direkt angepasst.
+            {{ 'krank.edit.note_body'|trans }}
         </p>
     </div>
 
     <div class="flex items-center justify-between pt-2">
         <a href="/" class="px-5 py-2.5 text-sm font-medium border border-black rounded-md hover:bg-gray-50 transition-colors">
-            Abbrechen
+            {{ 'action.cancel'|trans }}
         </a>
         <button type="submit" class="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-medium bg-sage-500 text-white rounded-md hover:bg-sage-600 transition-colors">
-            Speichern
+            {{ 'action.save'|trans }}
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </button>
     </div>
