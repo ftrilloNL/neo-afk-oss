@@ -57,6 +57,9 @@ use Slim\App as SlimApp;
 use Slim\Factory\AppFactory;
 use Slim\Views\Twig;
 use Slim\Views\TwigMiddleware;
+use Symfony\Bridge\Twig\Extension\TranslationExtension;
+use Symfony\Component\Translation\Loader\PoFileLoader;
+use Symfony\Component\Translation\Translator;
 
 final class App
 {
@@ -240,6 +243,28 @@ final class App
         $c->set(Connection::class, fn (Container $c) => new Connection($c->get(Config::class)));
         $c->set(Csrf::class, fn () => new Csrf());
         $c->set(DevModeLog::class, fn () => new DevModeLog($rootPath . '/var/logs'));
+
+        // i18n-Translator: AFK-2 setzt die Locale beim Bau auf den Repo-Default.
+        // AFK-3 (LocaleMiddleware) mutiert den Wert pro Request via
+        // `$translator->setLocale($detected)` -- deshalb bewusst die konkrete
+        // Klasse im DI binden, nicht TranslatorInterface (das hat kein setLocale).
+        // Fallback-Kette ist immer 'en' als kanonische Basis: fehlt ein Key in
+        // der aktiven Sprache, faellt der Translator auf den englischen Eintrag
+        // zurueck statt den Rohschluessel anzuzeigen.
+        $c->set(Translator::class, function (Container $c) use ($rootPath) {
+            $config = $c->get(Config::class);
+            $translator = new Translator($config->defaultLocale());
+            $translator->setFallbackLocales(['en']);
+            $translator->addLoader('po', new PoFileLoader());
+            foreach ($config->supportedLocales() as $locale) {
+                $poFile = $rootPath . "/translations/messages.{$locale}.po";
+                if (is_file($poFile)) {
+                    $translator->addResource('po', $poFile, $locale);
+                }
+            }
+            return $translator;
+        });
+
         $c->set(Twig::class, function (Container $c) use ($rootPath) {
             $twig = Twig::create(
                 $rootPath . '/src/Templates',
@@ -247,6 +272,8 @@ final class App
             );
             $csrf = $c->get(Csrf::class);
             $config = $c->get(Config::class);
+            $translator = $c->get(Translator::class);
+            $twig->getEnvironment()->addExtension(new TranslationExtension($translator));
             $twig->getEnvironment()->addGlobal('org', $config->org());
             $twig->getEnvironment()->addFunction(new \Twig\TwigFunction(
                 'csrf_field',

@@ -4,6 +4,20 @@ namespace App;
 
 final class Config
 {
+    /**
+     * Repo-Default fuer die UI-Sprache. OSS-Repo: 'en'. Privates Repo: 'de'.
+     * Wird durch DEFAULT_LOCALE env-Var ueberschrieben, falls gesetzt.
+     */
+    private const REPO_DEFAULT_LOCALE = 'en';
+
+    /**
+     * UI-Sprachen, fuer die `translations/messages.<locale>.po` existiert.
+     * Erweitern um z.B. 'fr' braucht NUR einen neuen .po-File + Eintrag hier.
+     *
+     * @var list<string>
+     */
+    private const SUPPORTED_LOCALES = ['de', 'en'];
+
     public function get(string $key, ?string $default = null): string
     {
         $value = $_ENV[$key] ?? $default;
@@ -11,6 +25,25 @@ final class Config
             throw new \RuntimeException("Missing required env: {$key}");
         }
         return (string) $value;
+    }
+
+    /**
+     * Default-Locale, wenn keine andere Quelle (z.B. Accept-Language) greift.
+     * AFK-2 setzt diesen Wert beim Translator-Bau; AFK-3-Middleware mutiert ihn
+     * spaeter pro Request via `Translator::setLocale()`.
+     */
+    public function defaultLocale(): string
+    {
+        $value = $_ENV['DEFAULT_LOCALE'] ?? self::REPO_DEFAULT_LOCALE;
+        return in_array($value, self::SUPPORTED_LOCALES, true) ? $value : self::REPO_DEFAULT_LOCALE;
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function supportedLocales(): array
+    {
+        return self::SUPPORTED_LOCALES;
     }
 
     public function appUrl(): string
