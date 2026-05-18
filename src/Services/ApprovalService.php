@@ -154,6 +154,22 @@ final class ApprovalService
         }
 
         if ($action === 'approve') {
+            // 0. Re-Approval-Fall: wenn schon ein Event existiert (aus vorheriger
+            //    Approve, bevor User-Edit Status auf `beantragt` zurueckgesetzt hat),
+            //    erst loeschen. Best-effort.
+            if (!empty($absence['kalender_event_id'])) {
+                try {
+                    $this->calendar->deleteEvent((string) $absence['kalender_event_id']);
+                } catch (\Throwable $e) {
+                    error_log(sprintf(
+                        'ApprovalService: alter Kalender-Event %s konnte nicht geloescht werden (re-approval von absence %d): %s',
+                        $absence['kalender_event_id'],
+                        $absenceId,
+                        $e->getMessage(),
+                    ));
+                }
+            }
+
             // 1. Graph-Call zuerst — Side-Effect, kann scheitern.
             $eventStart = new \DateTimeImmutable($absence['startdatum']);
             $eventEnd = (new \DateTimeImmutable($absence['enddatum']))->modify('+1 day');
@@ -262,6 +278,7 @@ final class ApprovalService
                 $this->absences->update($absenceId, [
                     'status' => 'abgelehnt',
                     'begruendung_ablehnung' => $rejectComment,
+                    'kalender_event_id' => null,
                 ]);
                 $this->audit->log(
                     null,
@@ -274,6 +291,35 @@ final class ApprovalService
             } catch (\Throwable $e) {
                 $dbal->rollBack();
                 throw $e;
+            }
+
+            // Re-Approval-Reject-Fall: alter Kalender-Event + OOO koennen noch vom
+            //  ursprünglichen Approve haengen. Best-effort cleanup.
+            if (!empty($absence['kalender_event_id'])) {
+                try {
+                    $this->calendar->deleteEvent((string) $absence['kalender_event_id']);
+                } catch (\Throwable $e) {
+                    error_log(sprintf(
+                        'ApprovalService: Kalender-Event %s nach Reject nicht geloescht (absence %d): %s',
+                        $absence['kalender_event_id'],
+                        $absenceId,
+                        $e->getMessage(),
+                    ));
+                }
+            }
+            $startDate = new \DateTimeImmutable($absence['startdatum']);
+            $endDate = new \DateTimeImmutable($absence['enddatum']);
+            $today = new \DateTimeImmutable('today');
+            if ($today >= $startDate && $today <= $endDate) {
+                try {
+                    $this->ooo->clearAutoReplyIfOurs((string) $applicant['email']);
+                } catch (\Throwable $e) {
+                    error_log(sprintf(
+                        'ApprovalService: OOO-Clear nach Reject fehlgeschlagen fuer %s: %s',
+                        $applicant['email'],
+                        $e->getMessage(),
+                    ));
+                }
             }
 
             try {

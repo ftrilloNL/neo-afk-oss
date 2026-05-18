@@ -8,6 +8,7 @@ use App\Models\AuditLogRepository;
 use App\Models\UserRepository;
 use App\Providers\Contracts\CalendarProvider;
 use App\Providers\Contracts\OooProvider;
+use App\Services\AbsenceEditService;
 use App\Services\MailService;
 use App\Services\WerktageService;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -25,6 +26,7 @@ final class KrankController
         private readonly MailService $mail,
         private readonly AuditLogRepository $audit,
         private readonly Config $config,
+        private readonly AbsenceEditService $editService,
         private readonly Twig $view,
     ) {
     }
@@ -170,6 +172,62 @@ final class KrankController
         );
 
         $_SESSION['flash_success'] = 'Krankmeldung erfasst. HR wurde benachrichtigt. Gute Besserung!';
+        return $response->withHeader('Location', '/')->withStatus(302);
+    }
+
+    public function edit(Request $request, Response $response, array $args): Response
+    {
+        unset($_SESSION['flash_error']);
+        $userId = (int) $_SESSION['user_id'];
+        $absenceId = (int) ($args['id'] ?? 0);
+        $user = $this->users->findById($userId);
+        $absence = $this->absences->findById($absenceId);
+        if ($user === null || $absence === null) {
+            return $response->withHeader('Location', '/')->withStatus(302);
+        }
+        if ($absence['art'] !== 'krank') {
+            return $response->withHeader('Location', '/')->withStatus(302);
+        }
+
+        $isOwner = (int) $absence['user_id'] === $userId;
+        $isHr = (bool) $user['ist_hr'];
+        if (!$isOwner && !$isHr) {
+            $_SESSION['flash_error'] = 'Du darfst diese Krankmeldung nicht bearbeiten.';
+            return $response->withHeader('Location', '/')->withStatus(302);
+        }
+        if (in_array($absence['status'], ['storniert', 'abgelehnt'], true)) {
+            $_SESSION['flash_error'] = sprintf('Krankmeldung ist %s und kann nicht bearbeitet werden.', $absence['status']);
+            return $response->withHeader('Location', '/')->withStatus(302);
+        }
+
+        $applicant = $isOwner ? $user : $this->users->findById((int) $absence['user_id']);
+
+        return $this->view->render($response, 'krank/edit.twig', [
+            'user' => $user,
+            'applicant' => $applicant,
+            'absence' => $absence,
+            'is_hr_edit' => $isHr && !$isOwner,
+            'active_nav' => $isHr && !$isOwner ? 'hr' : 'krank',
+            'today' => date('Y-m-d'),
+            'flash_error' => null,
+        ]);
+    }
+
+    public function update(Request $request, Response $response, array $args): Response
+    {
+        unset($_SESSION['flash_error']);
+        $userId = (int) $_SESSION['user_id'];
+        $absenceId = (int) ($args['id'] ?? 0);
+
+        $body = (array) ($request->getParsedBody() ?? []);
+        $result = $this->editService->editKrank($absenceId, $userId, $body);
+
+        if (!$result['ok']) {
+            $_SESSION['flash_error'] = $result['error'] ?? 'Bearbeitung fehlgeschlagen.';
+            return $response->withHeader('Location', '/krank/' . $absenceId . '/edit')->withStatus(302);
+        }
+
+        $_SESSION['flash_success'] = $result['success'] ?? 'Krankmeldung aktualisiert.';
         return $response->withHeader('Location', '/')->withStatus(302);
     }
 }

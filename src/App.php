@@ -41,6 +41,7 @@ use App\Providers\Microsoft\MicrosoftGraphHttp;
 use App\Providers\Microsoft\MicrosoftIdentityProvider;
 use App\Providers\Microsoft\MicrosoftMailTransport;
 use App\Providers\Microsoft\MicrosoftOooProvider;
+use App\Services\AbsenceEditService;
 use App\Services\ApprovalService;
 use App\Services\AvatarService;
 use App\Services\Csrf;
@@ -155,10 +156,14 @@ final class App
         $app->get('/antrag/neu', [AntragController::class, 'neu'])->add(AuthMiddleware::class);
         $app->get('/antrag/preview-tage', [AntragController::class, 'previewTage'])->add(AuthMiddleware::class);
         $app->post('/antrag', [AntragController::class, 'submit'])->add(CsrfMiddleware::class)->add(AuthMiddleware::class);
+        $app->get('/antrag/{id}/edit', [AntragController::class, 'edit'])->add(AuthMiddleware::class);
+        $app->post('/antrag/{id}', [AntragController::class, 'update'])->add(CsrfMiddleware::class)->add(AuthMiddleware::class);
         $app->post('/antrag/{id}/storno', [StornoController::class, 'storno'])->add(CsrfMiddleware::class)->add(AuthMiddleware::class);
 
         $app->get('/krank/neu', [KrankController::class, 'neu'])->add(AuthMiddleware::class);
         $app->post('/krank', [KrankController::class, 'submit'])->add(CsrfMiddleware::class)->add(AuthMiddleware::class);
+        $app->get('/krank/{id}/edit', [KrankController::class, 'edit'])->add(AuthMiddleware::class);
+        $app->post('/krank/{id}', [KrankController::class, 'update'])->add(CsrfMiddleware::class)->add(AuthMiddleware::class);
 
         $app->get('/profil', [ProfilController::class, 'index'])->add(AuthMiddleware::class);
         $app->get('/team', [TeamController::class, 'index'])->add(AuthMiddleware::class);
@@ -353,6 +358,20 @@ final class App
             $c->get(ApprovalTokenRepository::class),
             $c->get(UserRepository::class),
             $c->get(ResturlaubService::class),
+            $c->get(CalendarProvider::class),
+            $c->get(OooProvider::class),
+            $c->get(MailService::class),
+            $c->get(AuditLogRepository::class),
+            $c->get(Config::class),
+            $c->get(Connection::class),
+        ));
+        $c->set(AbsenceEditService::class, fn (Container $c) => new AbsenceEditService(
+            $c->get(UserRepository::class),
+            $c->get(AbsenceRepository::class),
+            $c->get(ApprovalTokenRepository::class),
+            $c->get(WerktageService::class),
+            $c->get(ResturlaubService::class),
+            $c->get(ApprovalService::class),
             $c->get(CalendarProvider::class),
             $c->get(OooProvider::class),
             $c->get(MailService::class),

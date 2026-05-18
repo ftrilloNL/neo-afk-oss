@@ -123,6 +123,8 @@
                 </td>
                 <td class="px-5 py-3.5 text-right">
                     {% if a.status in ['beantragt', 'aktiv'] %}
+                    <a href="/{{ a.art == 'urlaub' ? 'antrag' : 'krank' }}/{{ a.id }}/edit"
+                       class="text-xs text-gray-500 hover:text-sage-700 underline underline-offset-2 mr-3">Bearbeiten</a>
                     <form method="post" action="/antrag/{{ a.id }}/storno" class="inline" onsubmit="return confirm('Diesen Antrag wirklich stornieren?');">
                         {{ csrf_field() }}
                         <button type="submit" class="text-xs text-gray-500 hover:text-red-700 underline underline-offset-2">Stornieren</button>
