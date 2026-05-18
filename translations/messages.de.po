@@ -32,6 +32,137 @@ msgstr "Aktiv"
 msgid "common.or"
 msgstr "oder"
 
+msgid "common.days"
+msgstr "Tage"
+
+msgid "common.art.urlaub"
+msgstr "Urlaub"
+
+msgid "common.art.krank"
+msgstr "Krank"
+
+msgid "action.edit"
+msgstr "Bearbeiten"
+
+msgid "action.storno"
+msgstr "Stornieren"
+
+# ---- Layout / sidebar / nav ----
+msgid "layout.mobile_menu_open"
+msgstr "Menü öffnen"
+
+msgid "layout.mobile_menu_close"
+msgstr "Menü schließen"
+
+msgid "nav.section.general"
+msgstr "Allgemein"
+
+msgid "nav.section.hr"
+msgstr "Verwaltung"
+
+msgid "nav.section.for_employees"
+msgstr "Für Mitarbeiter:innen"
+
+msgid "nav.home"
+msgstr "Übersicht"
+
+msgid "nav.antrag"
+msgstr "Urlaub beantragen"
+
+msgid "nav.krank"
+msgstr "Krankmeldung"
+
+msgid "nav.genehmigungen"
+msgstr "Meine Genehmigungen"
+
+msgid "nav.profil"
+msgstr "Mein Profil"
+
+msgid "nav.team"
+msgstr "Team"
+
+msgid "nav.hr"
+msgstr "HR-Auswertung"
+
+msgid "nav.hr.users"
+msgstr "Mitarbeiter"
+
+msgid "nav.hr.audit"
+msgstr "Audit-Log"
+
+msgid "nav.hr.antrag"
+msgstr "Urlaub erfassen"
+
+msgid "nav.hr.krank"
+msgstr "Krankmeldung erfassen"
+
+msgid "nav.logout"
+msgstr "Abmelden"
+
+# ---- Home (dashboard) ----
+msgid "home.title"
+msgstr "Übersicht"
+
+msgid "home.greeting"
+msgstr "Hallo %name% 👋"
+
+msgid "home.resturlaub.label"
+msgstr "Mein Resturlaub"
+
+msgid "home.vorjahr_note"
+msgstr "+ %days% Tage aus Vorjahr"
+
+msgid "home.vorjahr_expires"
+msgstr "(verfallen 31.03.%year%)"
+
+msgid "home.approvals_link"
+msgstr "Genehmigungen (%count%)"
+
+msgid "home.metric.jahresanspruch"
+msgstr "Jahresanspruch"
+
+msgid "home.metric.jahresanspruch.since"
+msgstr "seit %date%"
+
+msgid "home.metric.jahresanspruch.no_date"
+msgstr "pro Kalenderjahr"
+
+msgid "home.metric.total_available"
+msgstr "Verfügbar gesamt"
+
+msgid "home.metric.total_available.breakdown"
+msgstr "%aktuell% aktuell + %vorjahr% Vorjahr"
+
+msgid "home.metric.krank_days"
+msgstr "Krank-Tage %year%"
+
+msgid "home.metric.krank_days.note"
+msgstr "Im Kalender nur als „Abwesend\" — Detail nur du + HR sichtbar"
+
+msgid "home.absences.heading"
+msgstr "Meine Abwesenheiten"
+
+msgid "home.absences.col.type"
+msgstr "Typ"
+
+msgid "home.absences.col.range"
+msgstr "Zeitraum"
+
+msgid "home.absences.col.days"
+msgstr "Tage"
+
+msgid "home.absences.col.status"
+msgstr "Status"
+
+msgid "home.absences.empty"
+msgstr "Noch keine Abwesenheiten erfasst."
+
+msgid "home.absences.empty_cta"
+msgstr "Ersten Antrag stellen"
+
+msgid "home.confirm_storno"
+msgstr "Diesen Antrag wirklich stornieren?"
+
 # ---- Login ----
 msgid "login.title"
 msgstr "Anmelden"

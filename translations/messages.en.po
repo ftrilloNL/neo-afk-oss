@@ -32,6 +32,137 @@ msgstr "Active"
 msgid "common.or"
 msgstr "or"
 
+msgid "common.days"
+msgstr "days"
+
+msgid "common.art.urlaub"
+msgstr "Vacation"
+
+msgid "common.art.krank"
+msgstr "Sick"
+
+msgid "action.edit"
+msgstr "Edit"
+
+msgid "action.storno"
+msgstr "Cancel"
+
+# ---- Layout / sidebar / nav ----
+msgid "layout.mobile_menu_open"
+msgstr "Open menu"
+
+msgid "layout.mobile_menu_close"
+msgstr "Close menu"
+
+msgid "nav.section.general"
+msgstr "General"
+
+msgid "nav.section.hr"
+msgstr "Administration"
+
+msgid "nav.section.for_employees"
+msgstr "For employees"
+
+msgid "nav.home"
+msgstr "Dashboard"
+
+msgid "nav.antrag"
+msgstr "Request vacation"
+
+msgid "nav.krank"
+msgstr "Report sick"
+
+msgid "nav.genehmigungen"
+msgstr "Approvals"
+
+msgid "nav.profil"
+msgstr "Profile"
+
+msgid "nav.team"
+msgstr "Team"
+
+msgid "nav.hr"
+msgstr "HR analytics"
+
+msgid "nav.hr.users"
+msgstr "Employees"
+
+msgid "nav.hr.audit"
+msgstr "Audit log"
+
+msgid "nav.hr.antrag"
+msgstr "Record vacation"
+
+msgid "nav.hr.krank"
+msgstr "Record sick leave"
+
+msgid "nav.logout"
+msgstr "Sign out"
+
+# ---- Home (dashboard) ----
+msgid "home.title"
+msgstr "Dashboard"
+
+msgid "home.greeting"
+msgstr "Hello %name% 👋"
+
+msgid "home.resturlaub.label"
+msgstr "Remaining vacation"
+
+msgid "home.vorjahr_note"
+msgstr "+ %days% days from previous year"
+
+msgid "home.vorjahr_expires"
+msgstr "(expire 03/31/%year%)"
+
+msgid "home.approvals_link"
+msgstr "Approvals (%count%)"
+
+msgid "home.metric.jahresanspruch"
+msgstr "Yearly allowance"
+
+msgid "home.metric.jahresanspruch.since"
+msgstr "since %date%"
+
+msgid "home.metric.jahresanspruch.no_date"
+msgstr "per calendar year"
+
+msgid "home.metric.total_available"
+msgstr "Total available"
+
+msgid "home.metric.total_available.breakdown"
+msgstr "%aktuell% current + %vorjahr% carry-over"
+
+msgid "home.metric.krank_days"
+msgstr "Sick days %year%"
+
+msgid "home.metric.krank_days.note"
+msgstr "Shown in the calendar only as \"Out of office\" — details visible to you and HR"
+
+msgid "home.absences.heading"
+msgstr "My absences"
+
+msgid "home.absences.col.type"
+msgstr "Type"
+
+msgid "home.absences.col.range"
+msgstr "Period"
+
+msgid "home.absences.col.days"
+msgstr "Days"
+
+msgid "home.absences.col.status"
+msgstr "Status"
+
+msgid "home.absences.empty"
+msgstr "No absences recorded yet."
+
+msgid "home.absences.empty_cta"
+msgstr "Submit your first request"
+
+msgid "home.confirm_storno"
+msgstr "Really cancel this request?"
+
 # ---- Login ----
 msgid "login.title"
 msgstr "Sign in"
