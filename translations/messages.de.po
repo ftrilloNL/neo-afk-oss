@@ -982,3 +982,63 @@ msgstr "Antrag ist bereits %status%."
 
 msgid "flash.storno.success"
 msgstr "Antrag storniert."
+
+# ---- Approval (magic-link) ----
+msgid "approval.error.token_invalid"
+msgstr "Token ungültig, abgelaufen oder bereits verwendet."
+
+msgid "approval.error.processing_failed"
+msgstr "Verarbeitung fehlgeschlagen: %detail%"
+
+# ---- HR-erfasst (Antrag + Krank shared) ----
+msgid "flash.hr.select_employee"
+msgstr "Bitte eine:n Mitarbeiter:in auswählen."
+
+msgid "flash.hr.employee_not_found"
+msgstr "Mitarbeiter:in nicht gefunden oder inaktiv."
+
+msgid "flash.hr.start_end_required"
+msgstr "Bitte Start- und Enddatum ausfüllen."
+
+msgid "flash.hr.antrag.insufficient_resturlaub"
+msgstr "Resturlaub nicht ausreichend (%tage% Tage beantragt, %verfuegbar% verfügbar). Bitte Resturlaub zuerst unter Mitarbeiter:innen anpassen."
+
+msgid "calendar.subject.urlaub"
+msgstr "[URLAUB] %name%"
+
+msgid "flash.hr.antrag.created"
+msgstr "Urlaub für %name% erfasst (%start% bis %end%, %tage% Tage)."
+
+msgid "flash.hr.krank.created"
+msgstr "Krankmeldung für %name% erfasst (%start% bis %end%)."
+
+# ---- HR users (Stammdaten) ----
+msgid "flash.hr.users.display_name_required"
+msgstr "Anzeigename ist Pflicht."
+
+msgid "flash.hr.users.email_required"
+msgstr "E-Mail ist Pflicht — muss der M365-Login-Adresse exakt entsprechen."
+
+msgid "flash.hr.users.email_invalid"
+msgstr "Keine gültige E-Mail-Adresse."
+
+msgid "flash.hr.users.email_duplicate"
+msgstr "Es existiert bereits ein Mitarbeiter mit dieser E-Mail."
+
+msgid "flash.hr.users.date_invalid"
+msgstr "Ungültiges Datumsformat."
+
+msgid "flash.hr.users.jahresanspruch_range"
+msgstr "Muss zwischen 0 und 99 liegen."
+
+msgid "flash.hr.users.decimal_invalid"
+msgstr "Bitte eine Zahl eingeben (z.B. 21,5)."
+
+msgid "flash.hr.users.decimal_range"
+msgstr "Muss zwischen 0 und 999,9 liegen."
+
+msgid "flash.hr.users.created"
+msgstr "%name% angelegt. Wird beim ersten M365-Login automatisch verlinkt."
+
+msgid "flash.hr.users.updated"
+msgstr "Stammdaten für %name% gespeichert."

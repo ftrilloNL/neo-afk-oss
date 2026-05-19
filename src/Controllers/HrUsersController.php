@@ -10,6 +10,7 @@ use App\Services\ResturlaubService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Views\Twig;
+use Symfony\Component\Translation\Translator;
 
 /**
  * HR-Stammdaten-Pflege: Liste aller User, Editieren von Anspruch, Resturlaub,
@@ -29,6 +30,7 @@ final class HrUsersController
         private readonly ResturlaubService $resturlaub,
         private readonly Connection $db,
         private readonly Twig $view,
+        private readonly Translator $translator,
     ) {
     }
 
@@ -83,23 +85,23 @@ final class HrUsersController
 
         $displayName = trim((string) ($body['display_name'] ?? ''));
         if ($displayName === '') {
-            $errors['display_name'] = 'Anzeigename ist Pflicht.';
+            $errors['display_name'] = $this->translator->trans('flash.hr.users.display_name_required');
         }
 
         $email = trim((string) ($body['email'] ?? ''));
         if ($email === '') {
-            $errors['email'] = 'E-Mail ist Pflicht — muss der M365-Login-Adresse exakt entsprechen.';
+            $errors['email'] = $this->translator->trans('flash.hr.users.email_required');
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $errors['email'] = 'Keine gültige E-Mail-Adresse.';
+            $errors['email'] = $this->translator->trans('flash.hr.users.email_invalid');
         } elseif ($this->users->findByEmail($email) !== null) {
-            $errors['email'] = 'Es existiert bereits ein Mitarbeiter mit dieser E-Mail.';
+            $errors['email'] = $this->translator->trans('flash.hr.users.email_duplicate');
         }
 
         $eintritt = (string) ($body['eintrittsdatum'] ?? '');
         $eintrittClean = null;
         if ($eintritt !== '') {
             if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $eintritt)) {
-                $errors['eintrittsdatum'] = 'Ungültiges Datumsformat.';
+                $errors['eintrittsdatum'] = $this->translator->trans('flash.hr.users.date_invalid');
             } else {
                 $eintrittClean = $eintritt;
             }
@@ -107,7 +109,7 @@ final class HrUsersController
 
         $jahresanspruch = (int) ($body['jahresanspruch'] ?? -1);
         if ($jahresanspruch < 0 || $jahresanspruch > 99) {
-            $errors['jahresanspruch'] = 'Muss zwischen 0 und 99 liegen.';
+            $errors['jahresanspruch'] = $this->translator->trans('flash.hr.users.jahresanspruch_range');
         }
 
         $aktuell = $this->parseDecimal($body['resturlaub_aktuell'] ?? '', $errors, 'resturlaub_aktuell');
@@ -170,9 +172,9 @@ final class HrUsersController
             ],
         );
 
-        $_SESSION['flash'] = sprintf(
-            '%s angelegt. Wird beim ersten M365-Login automatisch verlinkt.',
-            $displayName,
+        $_SESSION['flash'] = $this->translator->trans(
+            'flash.hr.users.created',
+            ['%name%' => $displayName]
         );
         return $response->withHeader('Location', '/hr/users')->withStatus(302);
     }
@@ -215,7 +217,7 @@ final class HrUsersController
         $eintrittClean = null;
         if ($eintritt !== '') {
             if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $eintritt)) {
-                $errors['eintrittsdatum'] = 'Ungültiges Datumsformat.';
+                $errors['eintrittsdatum'] = $this->translator->trans('flash.hr.users.date_invalid');
             } else {
                 $eintrittClean = $eintritt;
             }
@@ -223,7 +225,7 @@ final class HrUsersController
 
         $jahresanspruch = (int) ($body['jahresanspruch'] ?? -1);
         if ($jahresanspruch < 0 || $jahresanspruch > 99) {
-            $errors['jahresanspruch'] = 'Muss zwischen 0 und 99 liegen.';
+            $errors['jahresanspruch'] = $this->translator->trans('flash.hr.users.jahresanspruch_range');
         }
 
         $aktuell = $this->parseDecimal($body['resturlaub_aktuell'] ?? '', $errors, 'resturlaub_aktuell');
@@ -233,7 +235,7 @@ final class HrUsersController
         $geburtClean = null;
         if ($geburt !== '') {
             if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $geburt)) {
-                $errors['geburtsdatum'] = 'Ungültiges Datumsformat.';
+                $errors['geburtsdatum'] = $this->translator->trans('flash.hr.users.date_invalid');
             } else {
                 $geburtClean = $geburt;
             }
@@ -291,7 +293,7 @@ final class HrUsersController
             throw $e;
         }
 
-        $_SESSION['flash'] = sprintf('Stammdaten für %s gespeichert.', $target['display_name']);
+        $_SESSION['flash'] = $this->translator->trans('flash.hr.users.updated', ['%name%' => $target['display_name']]);
         return $response->withHeader('Location', '/hr/users')->withStatus(302);
     }
 
@@ -326,12 +328,12 @@ final class HrUsersController
         // Akzeptiere sowohl 21.5 als auch 21,5 — deutsche Tastatur.
         $normalized = str_replace(',', '.', $str);
         if ($normalized === '' || !is_numeric($normalized)) {
-            $errors[$field] = 'Bitte eine Zahl eingeben (z.B. 21,5).';
+            $errors[$field] = $this->translator->trans('flash.hr.users.decimal_invalid');
             return 0.0;
         }
         $val = (float) $normalized;
         if ($val < 0 || $val > 999.9) {
-            $errors[$field] = 'Muss zwischen 0 und 999,9 liegen.';
+            $errors[$field] = $this->translator->trans('flash.hr.users.decimal_range');
             return 0.0;
         }
         return $val;

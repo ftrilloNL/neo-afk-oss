@@ -13,6 +13,7 @@ use App\Services\WerktageService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Views\Twig;
+use Symfony\Component\Translation\Translator;
 
 final class HrKrankController
 {
@@ -26,6 +27,7 @@ final class HrKrankController
         private readonly AuditLogRepository $audit,
         private readonly Config $config,
         private readonly Twig $view,
+        private readonly Translator $translator,
     ) {
     }
 
@@ -56,11 +58,11 @@ final class HrKrankController
 
         $fuerUserId = (int) ($body['fuer_user_id'] ?? 0);
         if ($fuerUserId === 0) {
-            return $this->redirectWithError($response, 'Bitte eine:n Mitarbeiter:in auswählen.', $body);
+            return $this->redirectWithError($response, $this->translator->trans('flash.hr.select_employee'), $body);
         }
         $targetUser = $this->users->findById($fuerUserId);
         if ($targetUser === null || !(bool) $targetUser['ist_aktiv']) {
-            return $this->redirectWithError($response, 'Mitarbeiter:in nicht gefunden oder inaktiv.', $body);
+            return $this->redirectWithError($response, $this->translator->trans('flash.hr.employee_not_found'), $body);
         }
 
         $startStr = trim((string) ($body['startdatum'] ?? ''));
@@ -80,16 +82,16 @@ final class HrKrankController
         }
 
         if ($startStr === '' || $endStr === '') {
-            return $this->redirectWithError($response, 'Bitte Start- und Enddatum ausfüllen.', $body);
+            return $this->redirectWithError($response, $this->translator->trans('flash.hr.start_end_required'), $body);
         }
         try {
             $start = new \DateTimeImmutable($startStr);
             $end = new \DateTimeImmutable($endStr);
         } catch (\Exception) {
-            return $this->redirectWithError($response, 'Ungültiges Datum.', $body);
+            return $this->redirectWithError($response, $this->translator->trans('flash.common.invalid_date'), $body);
         }
         if ($end < $start) {
-            return $this->redirectWithError($response, 'Enddatum darf nicht vor Startdatum liegen.', $body);
+            return $this->redirectWithError($response, $this->translator->trans('flash.common.end_before_start'), $body);
         }
         if (!in_array($halbtagStart, ['ganztag', 'nachmittag'], true)) {
             $halbtagStart = 'ganztag';
@@ -103,7 +105,7 @@ final class HrKrankController
         // DSGVO-konform: Kalender-Subject zeigt nur "Abwesend", nicht "Krank"
         $eventStart = $start;
         $eventEnd = $end->modify('+1 day');
-        $subject = sprintf('Abwesend – %s', $targetUser['display_name']);
+        $subject = $this->translator->trans('calendar.subject.absent', ['%name%' => $targetUser['display_name']]);
         $eventId = $this->calendar->createEvent($subject, $eventStart, $eventEnd, true);
 
         $absenceId = $this->absences->insert([
@@ -213,11 +215,13 @@ final class HrKrankController
             }
         }
 
-        $_SESSION['flash_success'] = sprintf(
-            'Krankmeldung für %s erfasst (%s bis %s).',
-            $targetUser['display_name'],
-            $start->format('d.m.'),
-            $end->format('d.m.Y')
+        $_SESSION['flash_success'] = $this->translator->trans(
+            'flash.hr.krank.created',
+            [
+                '%name%' => $targetUser['display_name'],
+                '%start%' => $start->format('d.m.'),
+                '%end%' => $end->format('d.m.Y'),
+            ]
         );
         return $response->withHeader('Location', '/hr')->withStatus(302);
     }

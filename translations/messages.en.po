@@ -980,3 +980,63 @@ msgstr "Request is already %status%."
 
 msgid "flash.storno.success"
 msgstr "Request cancelled."
+
+# ---- Approval (magic-link) ----
+msgid "approval.error.token_invalid"
+msgstr "Token invalid, expired, or already used."
+
+msgid "approval.error.processing_failed"
+msgstr "Processing failed: %detail%"
+
+# ---- HR-erfasst ----
+msgid "flash.hr.select_employee"
+msgstr "Please select an employee."
+
+msgid "flash.hr.employee_not_found"
+msgstr "Employee not found or inactive."
+
+msgid "flash.hr.start_end_required"
+msgstr "Please fill in the start and end date."
+
+msgid "flash.hr.antrag.insufficient_resturlaub"
+msgstr "Remaining vacation insufficient (%tage% days requested, %verfuegbar% available). Please adjust remaining vacation under Employees first."
+
+msgid "calendar.subject.urlaub"
+msgstr "[VACATION] %name%"
+
+msgid "flash.hr.antrag.created"
+msgstr "Vacation recorded for %name% (%start% to %end%, %tage% days)."
+
+msgid "flash.hr.krank.created"
+msgstr "Sick leave recorded for %name% (%start% to %end%)."
+
+# ---- HR users (master data) ----
+msgid "flash.hr.users.display_name_required"
+msgstr "Display name is required."
+
+msgid "flash.hr.users.email_required"
+msgstr "Email is required — must exactly match the M365 login address."
+
+msgid "flash.hr.users.email_invalid"
+msgstr "Not a valid email address."
+
+msgid "flash.hr.users.email_duplicate"
+msgstr "An employee with this email already exists."
+
+msgid "flash.hr.users.date_invalid"
+msgstr "Invalid date format."
+
+msgid "flash.hr.users.jahresanspruch_range"
+msgstr "Must be between 0 and 99."
+
+msgid "flash.hr.users.decimal_invalid"
+msgstr "Please enter a number (e.g. 21.5)."
+
+msgid "flash.hr.users.decimal_range"
+msgstr "Must be between 0 and 999.9."
+
+msgid "flash.hr.users.created"
+msgstr "%name% created. Will be linked automatically on the first M365 login."
+
+msgid "flash.hr.users.updated"
+msgstr "Master data saved for %name%."

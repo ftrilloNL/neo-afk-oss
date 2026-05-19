@@ -7,6 +7,7 @@ use App\Services\ApprovalService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Views\Twig;
+use Symfony\Component\Translation\Translator;
 
 /**
  * Magic-Link-Approval-Endpunkt. Bewusst public (kein AuthMiddleware) — der Token
@@ -18,6 +19,7 @@ final class ApprovalController
         private readonly ApprovalService $approval,
         private readonly UserRepository $users,
         private readonly Twig $view,
+        private readonly Translator $translator,
     ) {
     }
 
@@ -27,7 +29,7 @@ final class ApprovalController
         $found = $this->approval->lookupValidToken($token);
         if ($found === null) {
             return $this->view->render($response->withStatus(410), 'approval/error.twig', [
-                'reason' => 'Token ungültig, abgelaufen oder bereits verwendet.',
+                'reason' => $this->translator->trans('approval.error.token_invalid'),
             ]);
         }
 
@@ -47,7 +49,7 @@ final class ApprovalController
         $found = $this->approval->lookupValidToken($token);
         if ($found === null) {
             return $this->view->render($response->withStatus(410), 'approval/error.twig', [
-                'reason' => 'Token ungültig, abgelaufen oder bereits verwendet.',
+                'reason' => $this->translator->trans('approval.error.token_invalid'),
             ]);
         }
 
@@ -58,7 +60,7 @@ final class ApprovalController
             $this->approval->processTokenAction($found['token'], $found['absence'], $rejectComment);
         } catch (\Throwable $e) {
             return $this->view->render($response->withStatus(500), 'approval/error.twig', [
-                'reason' => 'Verarbeitung fehlgeschlagen: ' . $e->getMessage(),
+                'reason' => $this->translator->trans('approval.error.processing_failed', ['%detail%' => $e->getMessage()]),
             ]);
         }
 

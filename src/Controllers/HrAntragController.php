@@ -14,6 +14,7 @@ use App\Services\WerktageService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Views\Twig;
+use Symfony\Component\Translation\Translator;
 
 final class HrAntragController
 {
@@ -28,6 +29,7 @@ final class HrAntragController
         private readonly AuditLogRepository $audit,
         private readonly Connection $db,
         private readonly Twig $view,
+        private readonly Translator $translator,
     ) {
     }
 
@@ -113,11 +115,11 @@ final class HrAntragController
 
         $fuerUserId = (int) ($body['fuer_user_id'] ?? 0);
         if ($fuerUserId === 0) {
-            return $this->redirectWithError($response, 'Bitte eine:n Mitarbeiter:in auswählen.', $body);
+            return $this->redirectWithError($response, $this->translator->trans('flash.hr.select_employee'), $body);
         }
         $targetUser = $this->users->findById($fuerUserId);
         if ($targetUser === null || !(bool) $targetUser['ist_aktiv']) {
-            return $this->redirectWithError($response, 'Mitarbeiter:in nicht gefunden oder inaktiv.', $body);
+            return $this->redirectWithError($response, $this->translator->trans('flash.hr.employee_not_found'), $body);
         }
 
         $startStr = trim((string) ($body['startdatum'] ?? ''));
@@ -128,16 +130,16 @@ final class HrAntragController
         $sendNotification = !empty($body['send_notification']);
 
         if ($startStr === '' || $endStr === '') {
-            return $this->redirectWithError($response, 'Bitte Start- und Enddatum ausfüllen.', $body);
+            return $this->redirectWithError($response, $this->translator->trans('flash.hr.start_end_required'), $body);
         }
         try {
             $start = new \DateTimeImmutable($startStr);
             $end = new \DateTimeImmutable($endStr);
         } catch (\Exception) {
-            return $this->redirectWithError($response, 'Ungültiges Datum.', $body);
+            return $this->redirectWithError($response, $this->translator->trans('flash.common.invalid_date'), $body);
         }
         if ($end < $start) {
-            return $this->redirectWithError($response, 'Enddatum darf nicht vor Startdatum liegen.', $body);
+            return $this->redirectWithError($response, $this->translator->trans('flash.common.end_before_start'), $body);
         }
         if (!in_array($halbtagStart, ['ganztag', 'nachmittag'], true)) {
             $halbtagStart = 'ganztag';
@@ -148,15 +150,17 @@ final class HrAntragController
 
         $tageGezaehlt = $this->werktage->compute($start, $end, $halbtagStart, $halbtagEnde);
         if ($tageGezaehlt <= 0) {
-            return $this->redirectWithError($response, 'Der Zeitraum enthält keine Werktage.', $body);
+            return $this->redirectWithError($response, $this->translator->trans('flash.common.no_workdays'), $body);
         }
 
         $verfuegbar = (float) $targetUser['resturlaub_aktuell'] + (float) $targetUser['resturlaub_vorjahr'];
         if ($tageGezaehlt > $verfuegbar) {
-            return $this->redirectWithError($response, sprintf(
-                'Resturlaub nicht ausreichend (%s Tage beantragt, %s verfügbar). Bitte Resturlaub zuerst unter Mitarbeiter:innen anpassen.',
-                number_format($tageGezaehlt, 1, ',', '.'),
-                number_format($verfuegbar, 1, ',', '.')
+            return $this->redirectWithError($response, $this->translator->trans(
+                'flash.hr.antrag.insufficient_resturlaub',
+                [
+                    '%tage%' => number_format($tageGezaehlt, 1, ',', '.'),
+                    '%verfuegbar%' => number_format($verfuegbar, 1, ',', '.'),
+                ]
             ), $body);
         }
 
@@ -172,7 +176,7 @@ final class HrAntragController
         // 1. Kalender-Event anlegen (seiteneffekt, kann scheitern — noch nix committed)
         $eventStart = $start;
         $eventEnd = $end->modify('+1 day');
-        $subject = sprintf('[URLAUB] %s', $targetUser['display_name']);
+        $subject = $this->translator->trans('calendar.subject.urlaub', ['%name%' => $targetUser['display_name']]);
         $eventId = $this->calendar->createEvent($subject, $eventStart, $eventEnd, true);
 
         // 2. DB-Transaction: Absence einfügen + Resturlaub abbuchen + Audit atomar
@@ -277,12 +281,14 @@ final class HrAntragController
             }
         }
 
-        $_SESSION['flash_success'] = sprintf(
-            'Urlaub für %s erfasst (%s bis %s, %s Tage).',
-            $targetUser['display_name'],
-            $start->format('d.m.'),
-            $end->format('d.m.Y'),
-            number_format($tageGezaehlt, 1, ',', '.')
+        $_SESSION['flash_success'] = $this->translator->trans(
+            'flash.hr.antrag.created',
+            [
+                '%name%' => $targetUser['display_name'],
+                '%start%' => $start->format('d.m.'),
+                '%end%' => $end->format('d.m.Y'),
+                '%tage%' => number_format($tageGezaehlt, 1, ',', '.'),
+            ]
         );
         return $response->withHeader('Location', '/hr')->withStatus(302);
     }
