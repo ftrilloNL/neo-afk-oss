@@ -900,3 +900,16 @@ msgstr "Record vacation"
 
 msgid "hr.krank.submit"
 msgstr "Record sick leave"
+
+# ---- PHP-side flash messages ----
+msgid "flash.genehmigungen.reject.no_reason"
+msgstr "Please provide a reason for the rejection."
+
+msgid "flash.genehmigungen.not_found"
+msgstr "Request not found."
+
+msgid "flash.genehmigungen.approved"
+msgstr "Request approved. The applicant has been notified by email."
+
+msgid "flash.genehmigungen.rejected"
+msgstr "Request rejected. The applicant has been notified by email."

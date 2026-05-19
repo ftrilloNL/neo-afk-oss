@@ -900,3 +900,16 @@ msgstr "Urlaub erfassen"
 
 msgid "hr.krank.submit"
 msgstr "Krankmeldung erfassen"
+
+# ---- PHP-side flash messages ----
+msgid "flash.genehmigungen.reject.no_reason"
+msgstr "Bitte Begründung für die Ablehnung angeben."
+
+msgid "flash.genehmigungen.not_found"
+msgstr "Antrag nicht gefunden."
+
+msgid "flash.genehmigungen.approved"
+msgstr "Antrag genehmigt. Antragsteller:in wurde per Mail informiert."
+
+msgid "flash.genehmigungen.rejected"
+msgstr "Antrag abgelehnt. Antragsteller:in wurde per Mail informiert."

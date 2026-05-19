@@ -8,6 +8,7 @@ use App\Services\ApprovalService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Views\Twig;
+use Symfony\Component\Translation\Translator;
 
 final class GenehmigungenController
 {
@@ -16,6 +17,7 @@ final class GenehmigungenController
         private readonly AbsenceRepository $absences,
         private readonly ApprovalService $approval,
         private readonly Twig $view,
+        private readonly Translator $translator,
     ) {
     }
 
@@ -53,7 +55,7 @@ final class GenehmigungenController
         $body = (array) ($request->getParsedBody() ?? []);
         $comment = trim((string) ($body['begruendung'] ?? ''));
         if ($comment === '') {
-            $_SESSION['flash_error'] = 'Bitte Begründung für die Ablehnung angeben.';
+            $_SESSION['flash_error'] = $this->translator->trans('flash.genehmigungen.reject.no_reason');
             return $response->withHeader('Location', '/genehmigungen')->withStatus(302);
         }
         return $this->processAction($response, (int) ($args['id'] ?? 0), 'reject', $comment);
@@ -64,20 +66,21 @@ final class GenehmigungenController
         $userId = (int) $_SESSION['user_id'];
         $absence = $this->absences->findById($absenceId);
         if ($absence === null) {
-            $_SESSION['flash_error'] = 'Antrag nicht gefunden.';
+            $_SESSION['flash_error'] = $this->translator->trans('flash.genehmigungen.not_found');
             return $response->withHeader('Location', '/genehmigungen')->withStatus(302);
         }
 
         try {
             $this->approval->processInAppAction($userId, $absence, $action, $comment);
         } catch (\Throwable $e) {
+            // ApprovalService wirft mit bereits uebersetzter Message (siehe Service-DI: Translator).
             $_SESSION['flash_error'] = $e->getMessage();
             return $response->withHeader('Location', '/genehmigungen')->withStatus(302);
         }
 
-        $_SESSION['flash_success'] = $action === 'approve'
-            ? 'Antrag genehmigt. Antragsteller:in wurde per Mail informiert.'
-            : 'Antrag abgelehnt. Antragsteller:in wurde per Mail informiert.';
+        $_SESSION['flash_success'] = $this->translator->trans(
+            $action === 'approve' ? 'flash.genehmigungen.approved' : 'flash.genehmigungen.rejected'
+        );
         return $response->withHeader('Location', '/genehmigungen')->withStatus(302);
     }
 }
