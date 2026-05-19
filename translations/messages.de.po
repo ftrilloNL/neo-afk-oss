@@ -1042,3 +1042,53 @@ msgstr "%name% angelegt. Wird beim ersten M365-Login automatisch verlinkt."
 
 msgid "flash.hr.users.updated"
 msgstr "Stammdaten für %name% gespeichert."
+
+# ---- AbsenceEditService (service-emitted user-facing strings) ----
+msgid "service.edit.urlaub.not_found"
+msgstr "Antrag oder Benutzer:in nicht gefunden."
+
+msgid "service.edit.urlaub.not_urlaub"
+msgstr "Antrag ist kein Urlaubsantrag."
+
+msgid "service.edit.applicant_gone"
+msgstr "Antragsteller:in nicht mehr im System."
+
+msgid "service.edit.krank.not_found"
+msgstr "Krankmeldung oder Benutzer:in nicht gefunden."
+
+msgid "service.edit.krank.not_krank"
+msgstr "Eintrag ist keine Krankmeldung."
+
+msgid "service.edit.target_gone"
+msgstr "Eingetragene:r Mitarbeiter:in nicht mehr im System."
+
+msgid "service.edit.krank.saved"
+msgstr "Krankmeldung gespeichert. HR wurde informiert."
+
+msgid "service.edit.not_authorized"
+msgstr "Du darfst diesen Eintrag nicht bearbeiten."
+
+msgid "service.edit.terminal_status"
+msgstr "Stornierte oder abgelehnte Einträge können nicht bearbeitet werden."
+
+msgid "service.edit.dates_required"
+msgstr "Bitte Start- und Enddatum angeben."
+
+msgid "service.edit.insufficient_resturlaub"
+msgstr "Nicht genug Resturlaub: %tage% zusätzliche Tage benötigt, nur %verfuegbar% verfügbar."
+
+msgid "service.edit.insufficient_resturlaub_for"
+msgstr "Nicht genug Resturlaub bei %name%: %tage% zusätzliche Tage benötigt, nur %verfuegbar% verfügbar."
+
+msgid "service.edit.urlaub.updated_reapproval"
+msgstr "Antrag aktualisiert. Genehmiger:in muss erneut zustimmen."
+
+msgid "service.edit.urlaub.updated_for"
+msgstr "Urlaubsantrag von %name% aktualisiert."
+
+# ---- ApprovalService (user-facing exceptions only) ----
+msgid "service.approval.not_genehmiger"
+msgstr "Nicht als Genehmiger:in für diesen Antrag eingetragen."
+
+msgid "service.approval.already_processed"
+msgstr "Antrag wurde bereits bearbeitet (Status: %status%)."

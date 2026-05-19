@@ -10,6 +10,7 @@ use App\Models\AuditLogRepository;
 use App\Models\UserRepository;
 use App\Providers\Contracts\CalendarProvider;
 use App\Providers\Contracts\OooProvider;
+use Symfony\Component\Translation\Translator;
 
 /**
  * Bearbeitung bestehender Antraege + Krankmeldungen.
@@ -45,6 +46,7 @@ final class AbsenceEditService
         private readonly AuditLogRepository $audit,
         private readonly Config $config,
         private readonly Connection $db,
+        private readonly Translator $translator,
     ) {
     }
 
@@ -57,10 +59,10 @@ final class AbsenceEditService
         $absence = $this->absences->findById($absenceId);
         $editor = $this->users->findById($editorUserId);
         if ($absence === null || $editor === null) {
-            return ['ok' => false, 'error' => 'Antrag oder Benutzer:in nicht gefunden.'];
+            return ['ok' => false, 'error' => $this->translator->trans('service.edit.urlaub.not_found')];
         }
         if ($absence['art'] !== 'urlaub') {
-            return ['ok' => false, 'error' => 'Antrag ist kein Urlaubsantrag.'];
+            return ['ok' => false, 'error' => $this->translator->trans('service.edit.urlaub.not_urlaub')];
         }
 
         $authError = $this->authorizeEdit($absence, $editor);
@@ -75,7 +77,7 @@ final class AbsenceEditService
 
         $applicant = $this->users->findById((int) $absence['user_id']);
         if ($applicant === null) {
-            return ['ok' => false, 'error' => 'Antragsteller:in nicht mehr im System.'];
+            return ['ok' => false, 'error' => $this->translator->trans('service.edit.applicant_gone')];
         }
 
         $isHrEdit = (bool) $editor['ist_hr'];
@@ -108,10 +110,10 @@ final class AbsenceEditService
         $absence = $this->absences->findById($absenceId);
         $editor = $this->users->findById($editorUserId);
         if ($absence === null || $editor === null) {
-            return ['ok' => false, 'error' => 'Krankmeldung oder Benutzer:in nicht gefunden.'];
+            return ['ok' => false, 'error' => $this->translator->trans('service.edit.krank.not_found')];
         }
         if ($absence['art'] !== 'krank') {
-            return ['ok' => false, 'error' => 'Eintrag ist keine Krankmeldung.'];
+            return ['ok' => false, 'error' => $this->translator->trans('service.edit.krank.not_krank')];
         }
 
         $authError = $this->authorizeEdit($absence, $editor);
@@ -126,7 +128,7 @@ final class AbsenceEditService
 
         $applicant = $this->users->findById((int) $absence['user_id']);
         if ($applicant === null) {
-            return ['ok' => false, 'error' => 'Eingetragene:r Mitarbeiter:in nicht mehr im System.'];
+            return ['ok' => false, 'error' => $this->translator->trans('service.edit.target_gone')];
         }
 
         $criticalChange = $this->hasCriticalChange($absence, $parsed);
@@ -149,7 +151,7 @@ final class AbsenceEditService
 
         $this->notifyKrankEditToHr($applicant, $editor, $absence, $parsed);
 
-        return ['ok' => true, 'success' => 'Krankmeldung gespeichert. HR wurde informiert.'];
+        return ['ok' => true, 'success' => $this->translator->trans('service.edit.krank.saved')];
     }
 
     /** @param array<string, mixed> $absence @param array<string, mixed> $editor */
@@ -158,10 +160,10 @@ final class AbsenceEditService
         $isOwner = (int) $absence['user_id'] === (int) $editor['id'];
         $isHr = (bool) $editor['ist_hr'];
         if (!$isOwner && !$isHr) {
-            return 'Du darfst diesen Eintrag nicht bearbeiten.';
+            return $this->translator->trans('service.edit.not_authorized');
         }
         if (in_array($absence['status'], ['storniert', 'abgelehnt'], true)) {
-            return 'Stornierte oder abgelehnte Eintraege koennen nicht bearbeitet werden.';
+            return $this->translator->trans('service.edit.terminal_status');
         }
         return null;
     }
@@ -189,16 +191,16 @@ final class AbsenceEditService
         $notiz = trim((string) ($input['notiz'] ?? ''));
 
         if ($startStr === '' || $endStr === '') {
-            return ['error' => 'Bitte Start- und Enddatum angeben.'];
+            return ['error' => $this->translator->trans('service.edit.dates_required')];
         }
         try {
             $start = new \DateTimeImmutable($startStr);
             $end = new \DateTimeImmutable($endStr);
         } catch (\Exception) {
-            return ['error' => 'Ungueltiges Datum.'];
+            return ['error' => $this->translator->trans('flash.common.invalid_date')];
         }
         if ($end < $start) {
-            return ['error' => 'Enddatum darf nicht vor Startdatum liegen.'];
+            return ['error' => $this->translator->trans('flash.common.end_before_start')];
         }
         if (!in_array($halbtagStart, ['ganztag', 'nachmittag'], true)) {
             $halbtagStart = 'ganztag';
@@ -208,7 +210,7 @@ final class AbsenceEditService
         }
         $tage = $this->werktage->compute($start, $end, $halbtagStart, $halbtagEnde);
         if ($tage <= 0) {
-            return ['error' => 'Der Zeitraum enthaelt keine Werktage.'];
+            return ['error' => $this->translator->trans('flash.common.no_workdays')];
         }
 
         // Google: ein einziges ooo_text-Field, in beide Spalten gespiegelt.
@@ -320,10 +322,12 @@ final class AbsenceEditService
         if ($status === 'aktiv' && $diffTage > 0 && $criticalChange) {
             $verfuegbar = (float) $applicant['resturlaub_aktuell'] + (float) $applicant['resturlaub_vorjahr'];
             if ($diffTage > $verfuegbar) {
-                return ['ok' => false, 'error' => sprintf(
-                    'Nicht genug Resturlaub: %s zusaetzliche Tage benoetigt, nur %s verfuegbar.',
-                    number_format($diffTage, 1, ',', '.'),
-                    number_format($verfuegbar, 1, ',', '.'),
+                return ['ok' => false, 'error' => $this->translator->trans(
+                    'service.edit.insufficient_resturlaub',
+                    [
+                        '%tage%' => number_format($diffTage, 1, ',', '.'),
+                        '%verfuegbar%' => number_format($verfuegbar, 1, ',', '.'),
+                    ]
                 )];
             }
         }
@@ -385,8 +389,8 @@ final class AbsenceEditService
         }
 
         $msg = $statusReverted
-            ? 'Antrag aktualisiert. Genehmiger:in muss erneut zustimmen.'
-            : 'Antrag aktualisiert.';
+            ? $this->translator->trans('service.edit.urlaub.updated_reapproval')
+            : $this->translator->trans('flash.antrag.updated');
         return ['ok' => true, 'success' => $msg];
     }
 
@@ -419,11 +423,13 @@ final class AbsenceEditService
         if ($status === 'aktiv' && $diffTage > 0) {
             $verfuegbar = (float) $applicant['resturlaub_aktuell'] + (float) $applicant['resturlaub_vorjahr'];
             if ($diffTage > $verfuegbar) {
-                return ['ok' => false, 'error' => sprintf(
-                    'Nicht genug Resturlaub bei %s: %s zusaetzliche Tage benoetigt, nur %s verfuegbar.',
-                    $applicant['display_name'],
-                    number_format($diffTage, 1, ',', '.'),
-                    number_format($verfuegbar, 1, ',', '.'),
+                return ['ok' => false, 'error' => $this->translator->trans(
+                    'service.edit.insufficient_resturlaub_for',
+                    [
+                        '%name%' => $applicant['display_name'],
+                        '%tage%' => number_format($diffTage, 1, ',', '.'),
+                        '%verfuegbar%' => number_format($verfuegbar, 1, ',', '.'),
+                    ]
                 )];
             }
         }
@@ -476,9 +482,9 @@ final class AbsenceEditService
         // Info-Mail an Genehmiger:in (wenn vorhanden und != HR-Editor).
         $this->notifyGenehmigerAfterHrEdit($absence, $applicant, $editor, $parsed);
 
-        return ['ok' => true, 'success' => sprintf(
-            'Urlaubsantrag von %s aktualisiert.',
-            $applicant['display_name'],
+        return ['ok' => true, 'success' => $this->translator->trans(
+            'service.edit.urlaub.updated_for',
+            ['%name%' => $applicant['display_name']]
         )];
     }
 

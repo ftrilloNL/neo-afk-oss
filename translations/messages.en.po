@@ -1040,3 +1040,53 @@ msgstr "%name% created. Will be linked automatically on the first M365 login."
 
 msgid "flash.hr.users.updated"
 msgstr "Master data saved for %name%."
+
+# ---- AbsenceEditService ----
+msgid "service.edit.urlaub.not_found"
+msgstr "Request or user not found."
+
+msgid "service.edit.urlaub.not_urlaub"
+msgstr "Entry is not a vacation request."
+
+msgid "service.edit.applicant_gone"
+msgstr "Applicant is no longer in the system."
+
+msgid "service.edit.krank.not_found"
+msgstr "Sick leave or user not found."
+
+msgid "service.edit.krank.not_krank"
+msgstr "Entry is not a sick leave."
+
+msgid "service.edit.target_gone"
+msgstr "Recorded employee is no longer in the system."
+
+msgid "service.edit.krank.saved"
+msgstr "Sick leave saved. HR has been notified."
+
+msgid "service.edit.not_authorized"
+msgstr "You are not allowed to edit this entry."
+
+msgid "service.edit.terminal_status"
+msgstr "Cancelled or rejected entries cannot be edited."
+
+msgid "service.edit.dates_required"
+msgstr "Please provide a start and end date."
+
+msgid "service.edit.insufficient_resturlaub"
+msgstr "Not enough remaining vacation: %tage% additional days required, only %verfuegbar% available."
+
+msgid "service.edit.insufficient_resturlaub_for"
+msgstr "Not enough remaining vacation for %name%: %tage% additional days required, only %verfuegbar% available."
+
+msgid "service.edit.urlaub.updated_reapproval"
+msgstr "Request updated. The approver must confirm again."
+
+msgid "service.edit.urlaub.updated_for"
+msgstr "Vacation request for %name% updated."
+
+# ---- ApprovalService ----
+msgid "service.approval.not_genehmiger"
+msgstr "Not registered as approver for this request."
+
+msgid "service.approval.already_processed"
+msgstr "Request has already been processed (status: %status%)."

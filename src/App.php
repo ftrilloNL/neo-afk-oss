@@ -404,6 +404,7 @@ final class App
             $c->get(AuditLogRepository::class),
             $c->get(Config::class),
             $c->get(Connection::class),
+            $c->get(Translator::class),
         ));
         $c->set(AbsenceEditService::class, fn (Container $c) => new AbsenceEditService(
             $c->get(UserRepository::class),
@@ -418,6 +419,7 @@ final class App
             $c->get(AuditLogRepository::class),
             $c->get(Config::class),
             $c->get(Connection::class),
+            $c->get(Translator::class),
         ));
 
         // Middleware needs DI for repos

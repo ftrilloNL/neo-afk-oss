@@ -10,6 +10,7 @@ use App\Models\AuditLogRepository;
 use App\Models\UserRepository;
 use App\Providers\Contracts\CalendarProvider;
 use App\Providers\Contracts\OooProvider;
+use Symfony\Component\Translation\Translator;
 
 final class ApprovalService
 {
@@ -24,6 +25,7 @@ final class ApprovalService
         private readonly AuditLogRepository $audit,
         private readonly Config $config,
         private readonly Connection $db,
+        private readonly Translator $translator,
     ) {
     }
 
@@ -118,10 +120,13 @@ final class ApprovalService
     public function processInAppAction(int $callingUserId, array $absence, string $action, string $rejectComment = ''): void
     {
         if ((int) $absence['genehmiger_id'] !== $callingUserId) {
-            throw new \RuntimeException('Nicht als Genehmiger:in fuer diesen Antrag eingetragen.');
+            throw new \RuntimeException($this->translator->trans('service.approval.not_genehmiger'));
         }
         if ($absence['status'] !== 'beantragt') {
-            throw new \RuntimeException('Antrag wurde bereits bearbeitet (Status: ' . $absence['status'] . ').');
+            throw new \RuntimeException($this->translator->trans(
+                'service.approval.already_processed',
+                ['%status%' => $this->translator->trans('status.' . $absence['status'])]
+            ));
         }
         if (!in_array($action, ['approve', 'reject'], true)) {
             throw new \RuntimeException("Ungueltige Aktion: {$action}");
