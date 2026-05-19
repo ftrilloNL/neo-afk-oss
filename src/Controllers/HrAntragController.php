@@ -259,11 +259,11 @@ final class HrAntragController
             try {
                 $this->mail->send(
                     (string) $targetUser['email'],
-                    sprintf(
-                        'Urlaub von HR erfasst — %s bis %s',
-                        $this->dates->monthDay($start),
-                        $this->dates->short($end),
-                    ),
+                    'mail.hr_erfassung.urlaub.subject',
+                    [
+                        '%start%' => $this->dates->monthDay($start),
+                        '%end%' => $this->dates->short($end),
+                    ],
                     'mails/hr-erfassung-notif.twig',
                     [
                         'target' => $targetUser,

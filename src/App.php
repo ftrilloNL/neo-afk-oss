@@ -418,6 +418,7 @@ final class App
             $c->get(Twig::class),
             $c->get(Config::class),
             $c->get(MailTransport::class),
+            $c->get(Translator::class),
         ));
         $c->set(ApprovalService::class, fn (Container $c) => new ApprovalService(
             $c->get(AbsenceRepository::class),

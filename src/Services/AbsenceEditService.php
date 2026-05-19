@@ -631,7 +631,8 @@ final class AbsenceEditService
         try {
             $this->mail->send(
                 (string) $genehmiger['email'],
-                sprintf('Aenderung am Urlaubsantrag von %s', $applicant['display_name']),
+                'mail.antrag_edited_genehmiger.subject',
+                ['%name%' => $applicant['display_name']],
                 'mails/antrag-edited-genehmiger.twig',
                 [
                     'genehmiger' => $genehmiger,
@@ -674,12 +675,12 @@ final class AbsenceEditService
         try {
             $this->mail->send(
                 $hrEmail,
-                sprintf(
-                    'Krankmeldung aktualisiert: %s (%s–%s)',
-                    $applicant['display_name'],
-                    $this->dates->monthDay($parsed['start']),
-                    $this->dates->short($parsed['end']),
-                ),
+                'mail.krank_edited_hr.subject',
+                [
+                    '%name%' => $applicant['display_name'],
+                    '%start%' => $this->dates->monthDay($parsed['start']),
+                    '%end%' => $this->dates->short($parsed['end']),
+                ],
                 'mails/krank-edited-hr.twig',
                 [
                     'applicant' => $applicant,

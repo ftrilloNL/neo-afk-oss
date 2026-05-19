@@ -166,12 +166,12 @@ final class HrKrankController
         try {
             $this->mail->send(
                 $hrEmail,
-                sprintf(
-                    '[HR erfasst] Krankmeldung: %s (%s–%s)',
-                    $targetUser['display_name'],
-                    $this->dates->monthDay($start),
-                    $this->dates->short($end),
-                ),
+                'mail.krank_notif.subject.hr_recorded',
+                [
+                    '%name%' => $targetUser['display_name'],
+                    '%start%' => $this->dates->monthDay($start),
+                    '%end%' => $this->dates->short($end),
+                ],
                 'mails/krank-notif.twig',
                 [
                     'user' => $targetUser,
@@ -193,11 +193,11 @@ final class HrKrankController
             try {
                 $this->mail->send(
                     (string) $targetUser['email'],
-                    sprintf(
-                        'Krankmeldung von HR erfasst — %s bis %s',
-                        $this->dates->monthDay($start),
-                        $this->dates->short($end),
-                    ),
+                    'mail.hr_erfassung.krank.subject',
+                    [
+                        '%start%' => $this->dates->monthDay($start),
+                        '%end%' => $this->dates->short($end),
+                    ],
                     'mails/hr-erfassung-notif.twig',
                     [
                         'target' => $targetUser,

@@ -55,7 +55,8 @@ final class ApprovalService
         $appUrl = $this->config->appUrl();
         $this->mail->send(
             (string) $genehmiger['email'],
-            sprintf('Urlaubsantrag von %s — Genehmigung erforderlich', $applicant['display_name']),
+            'mail.approval_request.subject',
+            ['%name%' => $applicant['display_name']],
             'mails/approval-request.twig',
             [
                 'genehmiger' => $genehmiger,
@@ -226,13 +227,10 @@ final class ApprovalService
             $today = new \DateTimeImmutable('today');
             if ($startDate <= $today) {
                 try {
-                    $endFmt = $this->dates->short(new \DateTimeImmutable($absence['enddatum']));
-                    // OOO-default-body prose stays German for now -- AFK-7 territory.
-                    $fallback = sprintf(
-                        '<p>Ich bin vom %s bis %s außer Haus. Ihre Nachrichten werden in der Zwischenzeit nicht gelesen. Bei dringenden Anliegen wenden Sie sich bitte an meine Kolleg:innen.</p>',
-                        $this->dates->short($startDate),
-                        $endFmt,
-                    );
+                    $fallback = $this->translator->trans('mail.ooo.default_body', [
+                        '%start%' => $this->dates->short($startDate),
+                        '%end%' => $this->dates->short(new \DateTimeImmutable($absence['enddatum'])),
+                    ]);
                     $internal = !empty($absence['ooo_internal'])
                         ? $this->renderOooText((string) $absence['ooo_internal'])
                         : $fallback;
@@ -260,10 +258,11 @@ final class ApprovalService
             try {
                 $this->mail->send(
                     (string) $applicant['email'],
-                    sprintf('Urlaub genehmigt — %s bis %s',
-                        $this->dates->monthDay(new \DateTimeImmutable($absence['startdatum'])),
-                        $this->dates->short(new \DateTimeImmutable($absence['enddatum'])),
-                    ),
+                    'mail.approval_decision.approved.subject',
+                    [
+                        '%start%' => $this->dates->monthDay(new \DateTimeImmutable($absence['startdatum'])),
+                        '%end%' => $this->dates->short(new \DateTimeImmutable($absence['enddatum'])),
+                    ],
                     'mails/approval-decision.twig',
                     [
                         'applicant' => $applicant,
@@ -333,10 +332,11 @@ final class ApprovalService
             try {
                 $this->mail->send(
                     (string) $applicant['email'],
-                    sprintf('Urlaub abgelehnt — %s bis %s',
-                        $this->dates->monthDay(new \DateTimeImmutable($absence['startdatum'])),
-                        $this->dates->short(new \DateTimeImmutable($absence['enddatum'])),
-                    ),
+                    'mail.approval_decision.rejected.subject',
+                    [
+                        '%start%' => $this->dates->monthDay(new \DateTimeImmutable($absence['startdatum'])),
+                        '%end%' => $this->dates->short(new \DateTimeImmutable($absence['enddatum'])),
+                    ],
                     'mails/approval-decision.twig',
                     [
                         'applicant' => $applicant,

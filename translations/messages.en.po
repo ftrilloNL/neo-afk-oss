@@ -1139,3 +1139,258 @@ msgstr "m/d/Y H:i"
 
 msgid "date.format.month_year"
 msgstr "%month% %year%"
+
+# ---- Mail subjects ----
+msgid "mail.approval_request.subject"
+msgstr "Vacation request from %name% — approval required"
+
+msgid "mail.approval_decision.approved.subject"
+msgstr "Vacation approved — %start% to %end%"
+
+msgid "mail.approval_decision.rejected.subject"
+msgstr "Vacation rejected — %start% to %end%"
+
+msgid "mail.storno.confirmation.subject"
+msgstr "Cancellation confirmed"
+
+msgid "mail.storno.notif_genehmiger.subject.urlaub"
+msgstr "Cancelled: vacation request from %name%"
+
+msgid "mail.storno.notif_genehmiger.subject.krank"
+msgstr "Cancelled: sick leave from %name%"
+
+msgid "mail.krank_notif.subject"
+msgstr "Sick leave: %name% (%start%–%end%)"
+
+msgid "mail.krank_notif.subject.hr_recorded"
+msgstr "[HR recorded] Sick leave: %name% (%start%–%end%)"
+
+msgid "mail.krank_edited_hr.subject"
+msgstr "Sick leave updated: %name% (%start%–%end%)"
+
+msgid "mail.antrag_edited_genehmiger.subject"
+msgstr "Vacation request edited for %name%"
+
+msgid "mail.hr_erfassung.urlaub.subject"
+msgstr "Vacation recorded by HR — %start% to %end%"
+
+msgid "mail.hr_erfassung.krank.subject"
+msgstr "Sick leave recorded by HR — %start% to %end%"
+
+msgid "mail.reminder.subject"
+msgstr "Reminder: vacation request from %name% awaiting approval"
+
+# ---- Mail shared chrome ----
+msgid "mail.common.greeting"
+msgstr "Hi %name%,"
+
+msgid "mail.common.footer.auto_sent"
+msgstr "This email was sent automatically by %org%."
+
+msgid "mail.common.footer.problems"
+msgstr "Issues?"
+
+msgid "mail.common.footer.legal"
+msgstr "%short_name% · %legal_name%"
+
+# ---- Mail: approval-request body ----
+msgid "mail.approval_request.intro"
+msgstr "%name% has submitted a vacation request and listed you as the approver."
+
+msgid "mail.approval_request.btn_approve"
+msgstr "✓ Approve"
+
+msgid "mail.approval_request.btn_reject"
+msgstr "✗ Reject"
+
+msgid "mail.approval_request.expiry_note"
+msgstr "The links are valid for 7 days (until %expires%). Each link works only once."
+
+# ---- Mail: approval-decision body ----
+msgid "mail.approval_decision.approved.body"
+msgstr "Your vacation request from <strong>%start%</strong> to <strong>%end%</strong> (%days% days) has been approved. The entry appears in the shared calendar and your remaining vacation has been deducted."
+
+msgid "mail.approval_decision.rejected.body"
+msgstr "Your vacation request from <strong>%start%</strong> to <strong>%end%</strong> (%days% days) was rejected."
+
+msgid "mail.approval_decision.rejection_reason_label"
+msgstr "Reason"
+
+msgid "mail.approval_decision.approved.closing"
+msgstr "Enjoy your time off!"
+
+msgid "mail.approval_decision.rejected.advice"
+msgstr "If you have questions, please contact your approver directly."
+
+# ---- Mail: storno-confirmation body ----
+msgid "mail.storno.confirmation.heading"
+msgstr "Cancellation confirmed"
+
+msgid "mail.storno.confirmation.body.urlaub"
+msgstr "Your vacation request from <strong>%start%</strong> to <strong>%end%</strong> has been cancelled. The days have been credited back to your current remaining vacation."
+
+msgid "mail.storno.confirmation.body.krank"
+msgstr "Your sick leave from <strong>%start%</strong> to <strong>%end%</strong> has been cancelled."
+
+# ---- Mail: storno-notif-genehmiger body ----
+msgid "mail.storno.notif_genehmiger.body.by_owner"
+msgstr "%applicant% has cancelled their own vacation request from <strong>%start%</strong> to <strong>%end%</strong>, and the days have been credited back to their remaining vacation."
+
+msgid "mail.storno.notif_genehmiger.body.by_hr"
+msgstr "HR (%canceller%) has cancelled the vacation request from %applicant% spanning <strong>%start%</strong> to <strong>%end%</strong>. The days have been credited back to their remaining vacation."
+
+# ---- Mail: krank-notif body ----
+msgid "mail.krank_notif.heading"
+msgstr "New sick leave"
+
+msgid "mail.krank_notif.intro"
+msgstr "Received %received_at%"
+
+msgid "mail.krank_notif.field.employee"
+msgstr "Employee"
+
+# ---- Mail: krank-edited-hr body ----
+msgid "mail.krank_edited_hr.heading"
+msgstr "Sick leave was edited"
+
+msgid "mail.krank_edited_hr.intro"
+msgstr "%editor% edited the sick leave of %applicant%."
+
+msgid "mail.krank_edited_hr.before"
+msgstr "Before"
+
+msgid "mail.krank_edited_hr.after"
+msgstr "After"
+
+# ---- Mail: antrag-edited-genehmiger body ----
+msgid "mail.antrag_edited_genehmiger.heading"
+msgstr "Vacation request you approved was edited"
+
+msgid "mail.antrag_edited_genehmiger.intro"
+msgstr "HR (%editor%) edited the vacation request of %applicant% that you had approved."
+
+msgid "mail.antrag_edited_genehmiger.before"
+msgstr "Before"
+
+msgid "mail.antrag_edited_genehmiger.after"
+msgstr "After"
+
+# ---- Mail: hr-erfassung-notif body ----
+msgid "mail.hr_erfassung.body"
+msgstr "HR has recorded %art_descr% for you:"
+
+msgid "mail.hr_erfassung.art.urlaub_descr"
+msgstr "a vacation request"
+
+msgid "mail.hr_erfassung.art.krank_descr"
+msgstr "a sick leave"
+
+msgid "mail.hr_erfassung.field.period"
+msgstr "Period"
+
+# ---- Mail: reminder body ----
+msgid "mail.reminder.heading"
+msgstr "Reminder: vacation request awaiting you"
+
+msgid "mail.reminder.intro"
+msgstr "%name% has been waiting %days% days for your decision on a vacation request."
+
+msgid "mail.reminder.btn"
+msgstr "Go to approvals"
+
+msgid "mail.reminder.footer_note"
+msgstr "You get this email once, because you are listed as the approver and the request is still pending after 2 days."
+
+# ---- OOO default body ----
+msgid "mail.ooo.default_body"
+msgstr "<p>I'm out of office from %start% to %end%. Messages will not be read in the meantime. For urgent matters please reach out to my colleagues.</p>"
+
+msgid "mail.approval_decision.approved.heading"
+msgstr "Your vacation was approved 🎉"
+
+msgid "mail.approval_decision.rejected.heading"
+msgstr "Your vacation request was rejected"
+
+msgid "mail.storno.confirmation.calendar_removed"
+msgstr "The entry in the shared calendar has been removed."
+
+msgid "mail.storno.confirmation.refund_note"
+msgstr "The days have been credited back to your current remaining vacation."
+
+msgid "mail.storno.notif_genehmiger.heading"
+msgstr "Cancellation of a request you approved"
+
+msgid "mail.storno.notif_genehmiger.body.self_urlaub"
+msgstr "%applicant% has cancelled their own vacation request from <strong>%start%</strong> to <strong>%end%</strong> (%days% days)."
+
+msgid "mail.storno.notif_genehmiger.body.self_krank"
+msgstr "%applicant% has cancelled their own sick leave from <strong>%start%</strong> to <strong>%end%</strong> (%days% days)."
+
+msgid "mail.storno.notif_genehmiger.body.by_other_urlaub"
+msgstr "%canceller% has cancelled the vacation request from %applicant% spanning <strong>%start%</strong> to <strong>%end%</strong> (%days% days)."
+
+msgid "mail.storno.notif_genehmiger.body.by_other_krank"
+msgstr "%canceller% has cancelled the sick leave of %applicant% spanning <strong>%start%</strong> to <strong>%end%</strong> (%days% days)."
+
+msgid "mail.storno.notif_genehmiger.calendar_note_with_refund"
+msgstr "The shared calendar entry has been removed and the days have been credited back to the remaining vacation."
+
+msgid "mail.storno.notif_genehmiger.calendar_note"
+msgstr "The shared calendar entry has been removed."
+
+msgid "mail.storno.notif_genehmiger.info_only"
+msgstr "This email is for information only — no action needed on your side."
+
+msgid "mail.krank_notif.heading.name"
+msgstr "Sick leave: %name%"
+
+msgid "mail.krank_notif.calendar_note"
+msgstr "A <strong>\"Out of office\"</strong> entry was created in the shared calendar (privacy-compliant, no \"Sick\" marker visible)."
+
+msgid "mail.common.footer.short"
+msgstr "Automated email from %org%"
+
+msgid "mail.krank_edited_hr.heading_short"
+msgstr "Sick leave updated"
+
+msgid "mail.krank_edited_hr.intro.self"
+msgstr "%applicant% edited their own sick leave."
+
+msgid "mail.krank_edited_hr.now"
+msgstr "Now"
+
+msgid "mail.krank_edited_hr.period_with_days"
+msgstr "%start% to %end% (%days% days)"
+
+msgid "mail.krank_edited_hr.notiz_inline"
+msgstr "Note: %notiz%"
+
+msgid "mail.krank_edited_hr.calendar_updated"
+msgstr "The shared calendar has been updated accordingly."
+
+msgid "mail.antrag_edited_genehmiger.now"
+msgstr "Now"
+
+msgid "mail.antrag_edited_genehmiger.period_with_days"
+msgstr "%start% to %end% (%days% days)"
+
+msgid "mail.antrag_edited_genehmiger.calendar_updated"
+msgstr "The shared calendar has been updated accordingly. If the vacation is currently running, the out-of-office reply has been updated as well."
+
+msgid "mail.antrag_edited_genehmiger.info_only"
+msgstr "This email is for information only — no action needed on your side."
+
+msgid "mail.hr_erfassung.greeting"
+msgstr "Hi %name%,"
+
+msgid "mail.hr_erfassung.period_line"
+msgstr "Period: %start% to %end%"
+
+msgid "mail.hr_erfassung.werktage_line"
+msgstr "Workdays: %tage%"
+
+msgid "mail.hr_erfassung.notiz_line"
+msgstr "Note: %notiz%"
+
+msgid "mail.hr_erfassung.closing"
+msgstr "If you have questions, contact your HR team directly."

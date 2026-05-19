@@ -1,13 +1,13 @@
-Hallo {{ target.display_name }},
+{{ 'mail.hr_erfassung.greeting'|trans({'%name%': target.display_name}) }}
 
-HR hat für dich {% if art == 'urlaub' %}einen Urlaubsantrag{% else %}eine Krankmeldung{% endif %} erfasst:
+{{ 'mail.hr_erfassung.body'|trans({'%art_descr%': (art == 'urlaub' ? 'mail.hr_erfassung.art.urlaub_descr' : 'mail.hr_erfassung.art.krank_descr')|trans}) }}
 
-Zeitraum: {{ startdatum|localized_date }} bis {{ enddatum|localized_date }}
-Werktage: {{ tage|number_format(1, ',', '.') }}
+{{ 'mail.hr_erfassung.period_line'|trans({'%start%': startdatum|localized_date, '%end%': enddatum|localized_date}) }}
+{{ 'mail.hr_erfassung.werktage_line'|trans({'%tage%': tage|number_format(1, ',', '.')}) }}
 {% if notiz %}
-Notiz: {{ notiz }}
+{{ 'mail.hr_erfassung.notiz_line'|trans({'%notiz%': notiz}) }}
 {% endif %}
 
-Bei Fragen wende dich direkt an dein HR-Team.
+{{ 'mail.hr_erfassung.closing'|trans }}
 
 {{ org.name }}

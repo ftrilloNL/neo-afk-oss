@@ -55,7 +55,8 @@ foreach ($candidates as $a) {
     try {
         $mail->send(
             (string) $a['genehmiger_email'],
-            sprintf('Erinnerung: Urlaubsantrag von %s wartet auf Genehmigung', $a['user_display_name']),
+            'mail.reminder.subject',
+            ['%name%' => $a['user_display_name']],
             'mails/reminder.twig',
             [
                 'absence' => $a,

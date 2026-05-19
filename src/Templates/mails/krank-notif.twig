@@ -7,30 +7,30 @@
     <table role="presentation" width="520" cellpadding="0" cellspacing="0" style="background:#FFFFFF;border:1px solid #E5E5E0;border-radius:12px;overflow:hidden;">
         <tr><td style="padding:28px 32px 24px 32px;">
             <h1 style="margin:0 0 16px 0;font-size:18px;font-weight:700;color:#000000;">
-                Krankmeldung: {{ user.display_name }}
+                {{ 'mail.krank_notif.heading.name'|trans({'%name%': user.display_name}) }}
             </h1>
             <p style="margin:0 0 20px 0;font-size:14px;line-height:1.6;color:#6B6B6B;">
-                Eingegangen am {{ "now"|localized_date_time }}
+                {{ 'mail.krank_notif.intro'|trans({'%received_at%': "now"|localized_date_time}) }}
             </p>
 
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#FAFAF9;border:1px solid #E5E5E0;border-radius:8px;">
                 <tr><td style="padding:16px 20px;">
                     <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                         <tr>
-                            <td style="font-size:12px;color:#6B6B6B;text-transform:uppercase;letter-spacing:0.05em;padding:6px 0;width:120px;">Mitarbeiter:in</td>
+                            <td style="font-size:12px;color:#6B6B6B;text-transform:uppercase;letter-spacing:0.05em;padding:6px 0;width:120px;">{{ 'mail.krank_notif.field.employee'|trans }}</td>
                             <td style="font-size:14px;color:#1A1A1A;font-weight:500;padding:6px 0;">{{ user.display_name }}<br><span style="color:#6B6B6B;font-weight:400;font-size:13px;">{{ user.email }}</span></td>
                         </tr>
                         <tr>
-                            <td style="font-size:12px;color:#6B6B6B;text-transform:uppercase;letter-spacing:0.05em;padding:6px 0;">Zeitraum</td>
+                            <td style="font-size:12px;color:#6B6B6B;text-transform:uppercase;letter-spacing:0.05em;padding:6px 0;">{{ 'antrag.form.zeitraum'|trans }}</td>
                             <td style="font-size:14px;color:#1A1A1A;font-weight:500;padding:6px 0;">{{ startdatum|localized_date }} – {{ enddatum|localized_date }}</td>
                         </tr>
                         <tr>
-                            <td style="font-size:12px;color:#6B6B6B;text-transform:uppercase;letter-spacing:0.05em;padding:6px 0;">Tage</td>
+                            <td style="font-size:12px;color:#6B6B6B;text-transform:uppercase;letter-spacing:0.05em;padding:6px 0;">{{ 'common.days'|trans }}</td>
                             <td style="font-size:14px;color:#1A1A1A;font-weight:500;padding:6px 0;">{{ tage|number_format(1, ',', '.') }}</td>
                         </tr>
                         {% if notiz %}
                         <tr>
-                            <td style="font-size:12px;color:#6B6B6B;text-transform:uppercase;letter-spacing:0.05em;padding:6px 0;vertical-align:top;">Notiz</td>
+                            <td style="font-size:12px;color:#6B6B6B;text-transform:uppercase;letter-spacing:0.05em;padding:6px 0;vertical-align:top;">{{ 'antrag.form.notiz'|trans }}</td>
                             <td style="font-size:14px;color:#1A1A1A;padding:6px 0;white-space:pre-line;">{{ notiz }}</td>
                         </tr>
                         {% endif %}
@@ -39,12 +39,12 @@
             </table>
 
             <p style="margin:20px 0 0 0;font-size:12px;color:#6B6B6B;line-height:1.5;">
-                Im Gruppenkalender wurde ein Eintrag <strong>„Abwesend"</strong> erzeugt (DSGVO-konform, keine „Krank"-Markierung sichtbar).
+                {{ 'mail.krank_notif.calendar_note'|trans|raw }}
             </p>
         </td></tr>
 
         <tr><td style="padding:16px 32px;background:#FAFAF9;border-top:1px solid #E5E5E0;font-size:11px;color:#6B6B6B;line-height:1.5;text-align:center;">
-            Automatische Mail aus {{ org.short_name }}
+            {{ 'mail.common.footer.short'|trans({'%org%': org.short_name}) }}
         </td></tr>
     </table>
 </td></tr>

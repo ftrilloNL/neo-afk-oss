@@ -1143,3 +1143,258 @@ msgstr "d.m.Y H:i"
 # `localized_month_year`-Template — gets %month% (translated name) and %year% (numeric).
 msgid "date.format.month_year"
 msgstr "%month% %year%"
+
+# ---- Mail subjects ----
+msgid "mail.approval_request.subject"
+msgstr "Urlaubsantrag von %name% — Genehmigung erforderlich"
+
+msgid "mail.approval_decision.approved.subject"
+msgstr "Urlaub genehmigt — %start% bis %end%"
+
+msgid "mail.approval_decision.rejected.subject"
+msgstr "Urlaub abgelehnt — %start% bis %end%"
+
+msgid "mail.storno.confirmation.subject"
+msgstr "Stornierung bestätigt"
+
+msgid "mail.storno.notif_genehmiger.subject.urlaub"
+msgstr "Stornierung: Urlaubsantrag von %name%"
+
+msgid "mail.storno.notif_genehmiger.subject.krank"
+msgstr "Stornierung: Krankmeldung von %name%"
+
+msgid "mail.krank_notif.subject"
+msgstr "Krankmeldung: %name% (%start%–%end%)"
+
+msgid "mail.krank_notif.subject.hr_recorded"
+msgstr "[HR erfasst] Krankmeldung: %name% (%start%–%end%)"
+
+msgid "mail.krank_edited_hr.subject"
+msgstr "Krankmeldung aktualisiert: %name% (%start%–%end%)"
+
+msgid "mail.antrag_edited_genehmiger.subject"
+msgstr "Änderung am Urlaubsantrag von %name%"
+
+msgid "mail.hr_erfassung.urlaub.subject"
+msgstr "Urlaub von HR erfasst — %start% bis %end%"
+
+msgid "mail.hr_erfassung.krank.subject"
+msgstr "Krankmeldung von HR erfasst — %start% bis %end%"
+
+msgid "mail.reminder.subject"
+msgstr "Erinnerung: Urlaubsantrag von %name% wartet auf Genehmigung"
+
+# ---- Mail shared chrome (greeting, footer) ----
+msgid "mail.common.greeting"
+msgstr "Hallo %name%,"
+
+msgid "mail.common.footer.auto_sent"
+msgstr "Diese Mail wurde automatisch von %org% gesendet."
+
+msgid "mail.common.footer.problems"
+msgstr "Probleme?"
+
+msgid "mail.common.footer.legal"
+msgstr "%short_name% · %legal_name%"
+
+# ---- Mail: approval-request body ----
+msgid "mail.approval_request.intro"
+msgstr "%name% hat einen Urlaubsantrag eingereicht und dich als Genehmiger:in eingetragen."
+
+msgid "mail.approval_request.btn_approve"
+msgstr "✓ Genehmigen"
+
+msgid "mail.approval_request.btn_reject"
+msgstr "✗ Ablehnen"
+
+msgid "mail.approval_request.expiry_note"
+msgstr "Die Links sind 7 Tage gültig (bis %expires%). Jeder Link nur einmal verwendbar."
+
+# ---- Mail: approval-decision body ----
+msgid "mail.approval_decision.approved.body"
+msgstr "Dein Urlaubsantrag von <strong>%start%</strong> bis <strong>%end%</strong> (%days% Tage) wurde genehmigt. Der Eintrag erscheint im Gruppenkalender, dein Resturlaub wurde abgebucht."
+
+msgid "mail.approval_decision.rejected.body"
+msgstr "Dein Urlaubsantrag von <strong>%start%</strong> bis <strong>%end%</strong> (%days% Tage) wurde leider abgelehnt."
+
+msgid "mail.approval_decision.rejection_reason_label"
+msgstr "Begründung"
+
+msgid "mail.approval_decision.approved.closing"
+msgstr "Schöne Zeit!"
+
+msgid "mail.approval_decision.rejected.advice"
+msgstr "Bei Rückfragen wende dich direkt an deine:n Genehmiger:in."
+
+# ---- Mail: storno-confirmation body ----
+msgid "mail.storno.confirmation.heading"
+msgstr "Stornierung bestätigt"
+
+msgid "mail.storno.confirmation.body.urlaub"
+msgstr "Dein Urlaubsantrag vom <strong>%start%</strong> bis <strong>%end%</strong> wurde storniert. Die Tage wurden auf deinen aktuellen Resturlaub zurückgebucht."
+
+msgid "mail.storno.confirmation.body.krank"
+msgstr "Deine Krankmeldung vom <strong>%start%</strong> bis <strong>%end%</strong> wurde storniert."
+
+# ---- Mail: storno-notif-genehmiger body ----
+msgid "mail.storno.notif_genehmiger.body.by_owner"
+msgstr "%applicant% hat den Urlaubsantrag vom <strong>%start%</strong> bis <strong>%end%</strong> selbst storniert und die Tage wurden auf den aktuellen Resturlaub zurückgebucht."
+
+msgid "mail.storno.notif_genehmiger.body.by_hr"
+msgstr "HR (%canceller%) hat den Urlaubsantrag von %applicant% vom <strong>%start%</strong> bis <strong>%end%</strong> storniert. Die Tage wurden auf den aktuellen Resturlaub zurückgebucht."
+
+# ---- Mail: krank-notif body (HR notification of a sick leave) ----
+msgid "mail.krank_notif.heading"
+msgstr "Neue Krankmeldung"
+
+msgid "mail.krank_notif.intro"
+msgstr "Eingegangen am %received_at%"
+
+msgid "mail.krank_notif.field.employee"
+msgstr "Mitarbeiter:in"
+
+# ---- Mail: krank-edited-hr body ----
+msgid "mail.krank_edited_hr.heading"
+msgstr "Krankmeldung wurde bearbeitet"
+
+msgid "mail.krank_edited_hr.intro"
+msgstr "%editor% hat die Krankmeldung von %applicant% bearbeitet."
+
+msgid "mail.krank_edited_hr.before"
+msgstr "Vorher"
+
+msgid "mail.krank_edited_hr.after"
+msgstr "Nachher"
+
+# ---- Mail: antrag-edited-genehmiger body ----
+msgid "mail.antrag_edited_genehmiger.heading"
+msgstr "Änderung an einem von dir genehmigten Urlaubsantrag"
+
+msgid "mail.antrag_edited_genehmiger.intro"
+msgstr "HR (%editor%) hat den Urlaubsantrag von %applicant% bearbeitet, den du genehmigt hattest."
+
+msgid "mail.antrag_edited_genehmiger.before"
+msgstr "Vorher"
+
+msgid "mail.antrag_edited_genehmiger.after"
+msgstr "Nachher"
+
+# ---- Mail: hr-erfassung-notif body ----
+msgid "mail.hr_erfassung.body"
+msgstr "HR hat für dich %art_descr% erfasst:"
+
+msgid "mail.hr_erfassung.art.urlaub_descr"
+msgstr "einen Urlaubsantrag"
+
+msgid "mail.hr_erfassung.art.krank_descr"
+msgstr "eine Krankmeldung"
+
+msgid "mail.hr_erfassung.field.period"
+msgstr "Zeitraum"
+
+# ---- Mail: reminder body ----
+msgid "mail.reminder.heading"
+msgstr "Erinnerung: Urlaubsantrag wartet auf dich"
+
+msgid "mail.reminder.intro"
+msgstr "%name% wartet seit %days% Tagen auf deine Entscheidung zu einem Urlaubsantrag."
+
+msgid "mail.reminder.btn"
+msgstr "Zur Genehmigungen-Übersicht"
+
+msgid "mail.reminder.footer_note"
+msgstr "Du erhältst diese Mail einmalig, weil du als Genehmiger:in eingetragen bist und der Antrag nach 2 Tagen noch unbearbeitet ist."
+
+# ---- OOO default body (ApprovalService fallback) ----
+msgid "mail.ooo.default_body"
+msgstr "<p>Ich bin vom %start% bis %end% außer Haus. Ihre Nachrichten werden in der Zwischenzeit nicht gelesen. Bei dringenden Anliegen wenden Sie sich bitte an meine Kolleg:innen.</p>"
+
+msgid "mail.approval_decision.approved.heading"
+msgstr "Dein Urlaub wurde genehmigt 🎉"
+
+msgid "mail.approval_decision.rejected.heading"
+msgstr "Dein Urlaubsantrag wurde abgelehnt"
+
+msgid "mail.storno.confirmation.calendar_removed"
+msgstr "Der Eintrag im Gruppenkalender wurde entfernt."
+
+msgid "mail.storno.confirmation.refund_note"
+msgstr "Die Tage wurden auf deinen aktuellen Resturlaub zurückgebucht."
+
+msgid "mail.storno.notif_genehmiger.heading"
+msgstr "Stornierung eines von dir genehmigten Antrags"
+
+msgid "mail.storno.notif_genehmiger.body.self_urlaub"
+msgstr "%applicant% hat seinen Urlaubsantrag vom <strong>%start%</strong> bis <strong>%end%</strong> (%days% Tage) storniert."
+
+msgid "mail.storno.notif_genehmiger.body.self_krank"
+msgstr "%applicant% hat seine Krankmeldung vom <strong>%start%</strong> bis <strong>%end%</strong> (%days% Tage) storniert."
+
+msgid "mail.storno.notif_genehmiger.body.by_other_urlaub"
+msgstr "%canceller% hat den Urlaubsantrag von %applicant% vom <strong>%start%</strong> bis <strong>%end%</strong> (%days% Tage) storniert."
+
+msgid "mail.storno.notif_genehmiger.body.by_other_krank"
+msgstr "%canceller% hat die Krankmeldung von %applicant% vom <strong>%start%</strong> bis <strong>%end%</strong> (%days% Tage) storniert."
+
+msgid "mail.storno.notif_genehmiger.calendar_note_with_refund"
+msgstr "Der Eintrag im Gruppenkalender wurde entfernt und die Tage wurden auf den aktuellen Resturlaub zurückgebucht."
+
+msgid "mail.storno.notif_genehmiger.calendar_note"
+msgstr "Der Eintrag im Gruppenkalender wurde entfernt."
+
+msgid "mail.storno.notif_genehmiger.info_only"
+msgstr "Diese Mail ist nur zur Information — du musst nichts weiter tun."
+
+msgid "mail.krank_notif.heading.name"
+msgstr "Krankmeldung: %name%"
+
+msgid "mail.krank_notif.calendar_note"
+msgstr "Im Gruppenkalender wurde ein Eintrag <strong>„Abwesend\"</strong> erzeugt (DSGVO-konform, keine „Krank\"-Markierung sichtbar)."
+
+msgid "mail.common.footer.short"
+msgstr "Automatische Mail aus %org%"
+
+msgid "mail.krank_edited_hr.heading_short"
+msgstr "Krankmeldung aktualisiert"
+
+msgid "mail.krank_edited_hr.intro.self"
+msgstr "%applicant% hat seine eigene Krankmeldung bearbeitet."
+
+msgid "mail.krank_edited_hr.now"
+msgstr "Jetzt"
+
+msgid "mail.krank_edited_hr.period_with_days"
+msgstr "%start% bis %end% (%days% Tage)"
+
+msgid "mail.krank_edited_hr.notiz_inline"
+msgstr "Notiz: %notiz%"
+
+msgid "mail.krank_edited_hr.calendar_updated"
+msgstr "Der Gruppenkalender wurde entsprechend aktualisiert."
+
+msgid "mail.antrag_edited_genehmiger.now"
+msgstr "Jetzt"
+
+msgid "mail.antrag_edited_genehmiger.period_with_days"
+msgstr "%start% bis %end% (%days% Tage)"
+
+msgid "mail.antrag_edited_genehmiger.calendar_updated"
+msgstr "Der Gruppenkalender wurde entsprechend aktualisiert. Bei aktuell laufendem Urlaub wurde auch die Out-of-Office-Antwort angepasst."
+
+msgid "mail.antrag_edited_genehmiger.info_only"
+msgstr "Diese Mail ist nur zur Information — du musst nichts weiter tun."
+
+msgid "mail.hr_erfassung.greeting"
+msgstr "Hallo %name%,"
+
+msgid "mail.hr_erfassung.period_line"
+msgstr "Zeitraum: %start% bis %end%"
+
+msgid "mail.hr_erfassung.werktage_line"
+msgstr "Werktage: %tage%"
+
+msgid "mail.hr_erfassung.notiz_line"
+msgstr "Notiz: %notiz%"
+
+msgid "mail.hr_erfassung.closing"
+msgstr "Bei Fragen wende dich direkt an dein HR-Team."

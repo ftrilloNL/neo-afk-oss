@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Config;
 use App\Providers\Contracts\MailTransport;
 use Slim\Views\Twig;
+use Symfony\Component\Translation\Translator;
 
 /**
  * Versendet Twig-gerenderte HTML-Mails. Provider-Auswahl (Microsoft SMTP-XOAUTH2
@@ -13,6 +14,11 @@ use Slim\Views\Twig;
  * Im Dev-Modus (APP_ENV != production) werden Mails als HTML-Files in `var/mails/`
  * geschrieben — Magic-Links lassen sich daraus im Browser oeffnen, ohne dass ein
  * echter Mail-Versand stattfindet.
+ *
+ * Locale: Subject + Body werden in der aktuellen Translator-Locale gerendert.
+ * Web-Aufrufe: Locale wurde durch LocaleMiddleware aus Accept-Language gesetzt.
+ * Cron-Aufrufe: keine Middleware -> Locale steht auf Config::defaultLocale()
+ * (Initial-Wert des Translators in App.php).
  */
 final class MailService
 {
@@ -20,15 +26,18 @@ final class MailService
         private readonly Twig $view,
         private readonly Config $config,
         private readonly MailTransport $transport,
+        private readonly Translator $translator,
     ) {
     }
 
     /**
-     * @param array<string, mixed> $context
+     * @param array<string, scalar|\Stringable> $subjectVars Interpolations-Vars fuer den Subject-Key.
+     * @param array<string, mixed> $context Twig-Render-Kontext fuer den Body.
      * @param string $to Eine Adresse, oder komma-/semikolon-separierte Liste.
      */
-    public function send(string $to, string $subject, string $template, array $context = []): void
+    public function send(string $to, string $subjectKey, array $subjectVars, string $template, array $context = []): void
     {
+        $subject = $this->translator->trans($subjectKey, $subjectVars);
         $body = $this->view->fetch($template, $context);
 
         if (!$this->config->isProduction()) {

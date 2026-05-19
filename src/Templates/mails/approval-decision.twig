@@ -7,39 +7,43 @@
     <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="background:#FFFFFF;border:1px solid #E5E5E0;border-radius:12px;overflow:hidden;">
         <tr><td style="padding:32px;">
             <h1 style="margin:0 0 16px 0;font-size:20px;font-weight:700;color:#000000;">
-                {% if decision == 'approved' %}
-                Dein Urlaub wurde genehmigt 🎉
-                {% else %}
-                Dein Urlaubsantrag wurde abgelehnt
-                {% endif %}
+                {{ (decision == 'approved' ? 'mail.approval_decision.approved.heading' : 'mail.approval_decision.rejected.heading')|trans }}
             </h1>
-            <p style="margin:0 0 16px 0;font-size:15px;line-height:1.6;">Hallo {{ applicant.display_name|split(' ')|first }},</p>
+            <p style="margin:0 0 16px 0;font-size:15px;line-height:1.6;">{{ 'mail.common.greeting'|trans({'%name%': applicant.display_name|split(' ')|first}) }}</p>
 
             {% if decision == 'approved' %}
             <p style="margin:0 0 24px 0;font-size:15px;line-height:1.6;">
-                Dein Urlaubsantrag von <strong>{{ absence.startdatum|localized_date }}</strong> bis <strong>{{ absence.enddatum|localized_date }}</strong> ({{ absence.tage_gezaehlt|number_format(1, ',', '.') }} Tage) wurde genehmigt. Der Eintrag erscheint im Gruppenkalender, dein Resturlaub wurde abgebucht.
+                {{ 'mail.approval_decision.approved.body'|trans({
+                    '%start%': absence.startdatum|localized_date,
+                    '%end%': absence.enddatum|localized_date,
+                    '%days%': absence.tage_gezaehlt|number_format(1, ',', '.'),
+                })|raw }}
             </p>
-            <p style="margin:0 0 24px 0;font-size:15px;line-height:1.6;">Schöne Zeit!</p>
+            <p style="margin:0 0 24px 0;font-size:15px;line-height:1.6;">{{ 'mail.approval_decision.approved.closing'|trans }}</p>
             {% else %}
             <p style="margin:0 0 16px 0;font-size:15px;line-height:1.6;">
-                Dein Urlaubsantrag von <strong>{{ absence.startdatum|localized_date }}</strong> bis <strong>{{ absence.enddatum|localized_date }}</strong> ({{ absence.tage_gezaehlt|number_format(1, ',', '.') }} Tage) wurde leider abgelehnt.
+                {{ 'mail.approval_decision.rejected.body'|trans({
+                    '%start%': absence.startdatum|localized_date,
+                    '%end%': absence.enddatum|localized_date,
+                    '%days%': absence.tage_gezaehlt|number_format(1, ',', '.'),
+                })|raw }}
             </p>
             {% if comment %}
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#FAFAF9;border-left:3px solid #7B9468;margin-bottom:24px;">
                 <tr><td style="padding:14px 18px;">
-                    <div style="font-size:12px;color:#6B6B6B;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">Begründung</div>
+                    <div style="font-size:12px;color:#6B6B6B;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">{{ 'mail.approval_decision.rejection_reason_label'|trans }}</div>
                     <div style="font-size:14px;color:#1A1A1A;line-height:1.5;white-space:pre-line;">{{ comment }}</div>
                 </td></tr>
             </table>
             {% endif %}
             <p style="margin:0 0 24px 0;font-size:15px;line-height:1.6;">
-                Bei Rückfragen wende dich direkt an deine:n Genehmiger:in.
+                {{ 'mail.approval_decision.rejected.advice'|trans }}
             </p>
             {% endif %}
         </td></tr>
 
         <tr><td style="padding:16px 32px;background:#FAFAF9;border-top:1px solid #E5E5E0;font-size:11px;color:#6B6B6B;line-height:1.5;text-align:center;">
-            {{ org.short_name }} · {{ org.legal_name }}
+            {{ 'mail.common.footer.legal'|trans({'%short_name%': org.short_name, '%legal_name%': org.legal_name}) }}
         </td></tr>
     </table>
 </td></tr>

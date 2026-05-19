@@ -160,12 +160,12 @@ final class KrankController
         $hrEmail = $this->config->get('HR_NOTIFICATION_EMAIL');
         $this->mail->send(
             $hrEmail,
-            sprintf(
-                'Krankmeldung: %s (%s–%s)',
-                $user['display_name'],
-                $this->dates->monthDay($start),
-                $this->dates->short($end),
-            ),
+            'mail.krank_notif.subject',
+            [
+                '%name%' => $user['display_name'],
+                '%start%' => $this->dates->monthDay($start),
+                '%end%' => $this->dates->short($end),
+            ],
             'mails/krank-notif.twig',
             [
                 'user' => $user,

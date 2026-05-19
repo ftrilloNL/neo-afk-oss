@@ -127,7 +127,8 @@ final class StornoController
             try {
                 $this->mail->send(
                     (string) $applicant['email'],
-                    'Stornierung bestätigt',
+                    'mail.storno.confirmation.subject',
+                    [],
                     'mails/storno-confirmation.twig',
                     ['applicant' => $applicant, 'absence' => $absence],
                 );
@@ -157,8 +158,8 @@ final class StornoController
                 try {
                     $this->mail->send(
                         (string) $genehmiger['email'],
-                        'Stornierung: ' . ($absence['art'] === 'urlaub' ? 'Urlaubsantrag' : 'Krankmeldung')
-                            . ' von ' . $applicant['display_name'],
+                        'mail.storno.notif_genehmiger.subject.' . $absence['art'],
+                        ['%name%' => $applicant['display_name']],
                         'mails/storno-notif-genehmiger.twig',
                         [
                             'genehmiger' => $genehmiger,
