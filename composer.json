@@ -37,7 +37,11 @@
     "scripts": {
         "test": "phpunit",
         "stan": "phpstan analyse src --level=8",
-        "fix": "php-cs-fixer fix"
+        "fix": "php-cs-fixer fix",
+        "i18n:extract": "php bin/extract-translations.php",
+        "i18n:extract:write": "php bin/extract-translations.php --write",
+        "i18n:extract:check": "php bin/extract-translations.php --check",
+        "i18n:extract:orphans": "php bin/extract-translations.php --orphans"
     },
     "config": {
         "sort-packages": true,
