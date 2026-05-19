@@ -14,6 +14,7 @@ use App\Services\WerktageService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Views\Twig;
+use Symfony\Component\Translation\Translator;
 
 final class KrankController
 {
@@ -28,6 +29,7 @@ final class KrankController
         private readonly Config $config,
         private readonly AbsenceEditService $editService,
         private readonly Twig $view,
+        private readonly Translator $translator,
     ) {
     }
 
@@ -74,18 +76,18 @@ final class KrankController
         }
 
         if ($startStr === '' || $endStr === '') {
-            $_SESSION['flash_error'] = 'Bitte Datums-Felder ausfüllen.';
+            $_SESSION['flash_error'] = $this->translator->trans('flash.krank.required_dates');
             return $response->withHeader('Location', '/krank/neu')->withStatus(302);
         }
         try {
             $start = new \DateTimeImmutable($startStr);
             $end = new \DateTimeImmutable($endStr);
         } catch (\Exception) {
-            $_SESSION['flash_error'] = 'Ungültiges Datum.';
+            $_SESSION['flash_error'] = $this->translator->trans('flash.common.invalid_date');
             return $response->withHeader('Location', '/krank/neu')->withStatus(302);
         }
         if ($end < $start) {
-            $_SESSION['flash_error'] = 'Enddatum darf nicht vor Startdatum liegen.';
+            $_SESSION['flash_error'] = $this->translator->trans('flash.common.end_before_start');
             return $response->withHeader('Location', '/krank/neu')->withStatus(302);
         }
         if (!in_array($halbtagStart, ['ganztag', 'nachmittag'], true)) {
@@ -100,7 +102,7 @@ final class KrankController
         // DSGVO-konform: Kalender-Subject zeigt nur "Abwesend", nicht "Krank"
         $eventStart = $start;
         $eventEnd = $end->modify('+1 day');
-        $subject = sprintf('Abwesend – %s', $user['display_name']);
+        $subject = $this->translator->trans('calendar.subject.absent', ['%name%' => $user['display_name']]);
         $eventId = $this->calendar->createEvent($subject, $eventStart, $eventEnd, true);
 
         $absenceId = $this->absences->insert([
@@ -151,7 +153,8 @@ final class KrankController
             }
         }
 
-        // HR-Notification
+        // HR-Notification — mail subject + body are translated in AFK-7
+        // (mail templates story). Body for now stays via mails/krank-notif.twig.
         $hrEmail = $this->config->get('HR_NOTIFICATION_EMAIL');
         $this->mail->send(
             $hrEmail,
@@ -171,7 +174,7 @@ final class KrankController
             ]
         );
 
-        $_SESSION['flash_success'] = 'Krankmeldung erfasst. HR wurde benachrichtigt. Gute Besserung!';
+        $_SESSION['flash_success'] = $this->translator->trans('flash.krank.submitted');
         return $response->withHeader('Location', '/')->withStatus(302);
     }
 
@@ -192,11 +195,14 @@ final class KrankController
         $isOwner = (int) $absence['user_id'] === $userId;
         $isHr = (bool) $user['ist_hr'];
         if (!$isOwner && !$isHr) {
-            $_SESSION['flash_error'] = 'Du darfst diese Krankmeldung nicht bearbeiten.';
+            $_SESSION['flash_error'] = $this->translator->trans('flash.krank.edit.not_authorized');
             return $response->withHeader('Location', '/')->withStatus(302);
         }
         if (in_array($absence['status'], ['storniert', 'abgelehnt'], true)) {
-            $_SESSION['flash_error'] = sprintf('Krankmeldung ist %s und kann nicht bearbeitet werden.', $absence['status']);
+            $_SESSION['flash_error'] = $this->translator->trans(
+                'flash.edit.terminal_status_krank',
+                ['%status%' => $this->translator->trans('status.' . $absence['status'])]
+            );
             return $response->withHeader('Location', '/')->withStatus(302);
         }
 
@@ -223,11 +229,12 @@ final class KrankController
         $result = $this->editService->editKrank($absenceId, $userId, $body);
 
         if (!$result['ok']) {
-            $_SESSION['flash_error'] = $result['error'] ?? 'Bearbeitung fehlgeschlagen.';
+            // editService produces already-translated messages (it injects Translator).
+            $_SESSION['flash_error'] = $result['error'] ?? $this->translator->trans('flash.edit.failed');
             return $response->withHeader('Location', '/krank/' . $absenceId . '/edit')->withStatus(302);
         }
 
-        $_SESSION['flash_success'] = $result['success'] ?? 'Krankmeldung aktualisiert.';
+        $_SESSION['flash_success'] = $result['success'] ?? $this->translator->trans('flash.krank.updated');
         return $response->withHeader('Location', '/')->withStatus(302);
     }
 }

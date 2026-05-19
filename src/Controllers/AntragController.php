@@ -11,6 +11,7 @@ use App\Services\WerktageService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Views\Twig;
+use Symfony\Component\Translation\Translator;
 
 final class AntragController
 {
@@ -22,6 +23,7 @@ final class AntragController
         private readonly AuditLogRepository $audit,
         private readonly AbsenceEditService $editService,
         private readonly Twig $view,
+        private readonly Translator $translator,
     ) {
     }
 
@@ -114,16 +116,16 @@ final class AntragController
         $notiz = trim((string) ($body['notiz'] ?? ''));
 
         if ($startStr === '' || $endStr === '' || $genehmigerId === 0) {
-            return $this->redirectWithError($response, 'Bitte alle Pflichtfelder ausfüllen.');
+            return $this->redirectWithError($response, $this->translator->trans('flash.antrag.required_fields'));
         }
         try {
             $start = new \DateTimeImmutable($startStr);
             $end = new \DateTimeImmutable($endStr);
         } catch (\Exception) {
-            return $this->redirectWithError($response, 'Ungültiges Datum.');
+            return $this->redirectWithError($response, $this->translator->trans('flash.common.invalid_date'));
         }
         if ($end < $start) {
-            return $this->redirectWithError($response, 'Enddatum darf nicht vor Startdatum liegen.');
+            return $this->redirectWithError($response, $this->translator->trans('flash.common.end_before_start'));
         }
         if (!in_array($halbtagStart, ['ganztag', 'nachmittag'], true)) {
             $halbtagStart = 'ganztag';
@@ -132,12 +134,12 @@ final class AntragController
             $halbtagEnde = 'ganztag';
         }
         if ($genehmigerId === $userId) {
-            return $this->redirectWithError($response, 'Du kannst dich nicht selbst als Genehmiger:in eintragen.');
+            return $this->redirectWithError($response, $this->translator->trans('flash.antrag.self_approver'));
         }
 
         $tageGezaehlt = $this->werktage->compute($start, $end, $halbtagStart, $halbtagEnde);
         if ($tageGezaehlt <= 0) {
-            return $this->redirectWithError($response, 'Der Zeitraum enthält keine Werktage.');
+            return $this->redirectWithError($response, $this->translator->trans('flash.common.no_workdays'));
         }
 
         // Google: ein einziges ooo_text-Field, das in beide Spalten gespiegelt wird.
@@ -169,13 +171,16 @@ final class AntragController
         $verfuegbar = (float) $user['resturlaub_aktuell'] + (float) $user['resturlaub_vorjahr'];
         if ($tageGezaehlt > $verfuegbar) {
             // Automatische Ablehnung — kein Approval-Round-Trip noetig
+            $vars = [
+                '%tage%' => number_format($tageGezaehlt, 1, ',', '.'),
+                '%verfuegbar%' => number_format($verfuegbar, 1, ',', '.'),
+            ];
+            // DB-stored reason: writer's active locale. Pragmatic compromise --
+            // the value is read-only after write, so this is intentionally NOT
+            // re-translated on display (UI-only i18n scope, Epic AFK-1).
             $this->absences->update($absenceId, [
                 'status' => 'abgelehnt',
-                'begruendung_ablehnung' => sprintf(
-                    'Automatische Ablehnung: Resturlaub nicht ausreichend (%s Tage beantragt, %s Tage verfügbar).',
-                    number_format($tageGezaehlt, 1, ',', '.'),
-                    number_format($verfuegbar, 1, ',', '.')
-                ),
+                'begruendung_ablehnung' => $this->translator->trans('flash.antrag.auto_rejected.reason_stored', $vars),
             ]);
             $this->audit->log(
                 $userId,
@@ -184,11 +189,7 @@ final class AntragController
                 $absenceId,
                 ['reason' => 'insufficient_resturlaub']
             );
-            $_SESSION['flash_error'] = sprintf(
-                'Antrag automatisch abgelehnt: %s Tage beantragt, nur %s verfügbar.',
-                number_format($tageGezaehlt, 1, ',', '.'),
-                number_format($verfuegbar, 1, ',', '.')
-            );
+            $_SESSION['flash_error'] = $this->translator->trans('flash.antrag.auto_rejected', $vars);
             return $response->withHeader('Location', '/')->withStatus(302);
         }
 
@@ -202,7 +203,7 @@ final class AntragController
 
         $this->approval->requestApproval($absenceId);
 
-        $_SESSION['flash_success'] = 'Urlaubsantrag eingereicht. Genehmiger:in wird per Mail informiert.';
+        $_SESSION['flash_success'] = $this->translator->trans('flash.antrag.submitted');
         return $response->withHeader('Location', '/')->withStatus(302);
     }
 
@@ -223,11 +224,14 @@ final class AntragController
         $isOwner = (int) $absence['user_id'] === $userId;
         $isHr = (bool) $user['ist_hr'];
         if (!$isOwner && !$isHr) {
-            $_SESSION['flash_error'] = 'Du darfst diesen Antrag nicht bearbeiten.';
+            $_SESSION['flash_error'] = $this->translator->trans('flash.antrag.edit.not_authorized');
             return $response->withHeader('Location', '/')->withStatus(302);
         }
         if (in_array($absence['status'], ['storniert', 'abgelehnt'], true)) {
-            $_SESSION['flash_error'] = sprintf('Antrag ist %s und kann nicht bearbeitet werden.', $absence['status']);
+            $_SESSION['flash_error'] = $this->translator->trans(
+                'flash.edit.terminal_status_antrag',
+                ['%status%' => $this->translator->trans('status.' . $absence['status'])]
+            );
             return $response->withHeader('Location', '/')->withStatus(302);
         }
 
@@ -254,11 +258,12 @@ final class AntragController
         $result = $this->editService->editUrlaub($absenceId, $userId, $body);
 
         if (!$result['ok']) {
-            $_SESSION['flash_error'] = $result['error'] ?? 'Bearbeitung fehlgeschlagen.';
+            // editService produces already-translated messages (it injects Translator).
+            $_SESSION['flash_error'] = $result['error'] ?? $this->translator->trans('flash.edit.failed');
             return $response->withHeader('Location', '/antrag/' . $absenceId . '/edit')->withStatus(302);
         }
 
-        $_SESSION['flash_success'] = $result['success'] ?? 'Antrag aktualisiert.';
+        $_SESSION['flash_success'] = $result['success'] ?? $this->translator->trans('flash.antrag.updated');
         return $response->withHeader('Location', '/')->withStatus(302);
     }
 

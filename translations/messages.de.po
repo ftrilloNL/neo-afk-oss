@@ -913,3 +913,72 @@ msgstr "Antrag genehmigt. Antragsteller:in wurde per Mail informiert."
 
 msgid "flash.genehmigungen.rejected"
 msgstr "Antrag abgelehnt. Antragsteller:in wurde per Mail informiert."
+
+# ---- Common form / validation flash ----
+msgid "flash.common.invalid_date"
+msgstr "Ungültiges Datum."
+
+msgid "flash.common.end_before_start"
+msgstr "Enddatum darf nicht vor Startdatum liegen."
+
+msgid "flash.common.no_workdays"
+msgstr "Der Zeitraum enthält keine Werktage."
+
+msgid "flash.edit.failed"
+msgstr "Bearbeitung fehlgeschlagen."
+
+# Status-Value als interpolierbarer String fuer "%s and cannot be edited"
+msgid "flash.edit.terminal_status_antrag"
+msgstr "Antrag ist %status% und kann nicht bearbeitet werden."
+
+msgid "flash.edit.terminal_status_krank"
+msgstr "Krankmeldung ist %status% und kann nicht bearbeitet werden."
+
+# ---- Antrag ----
+msgid "flash.antrag.required_fields"
+msgstr "Bitte alle Pflichtfelder ausfüllen."
+
+msgid "flash.antrag.self_approver"
+msgstr "Du kannst dich nicht selbst als Genehmiger:in eintragen."
+
+msgid "flash.antrag.auto_rejected"
+msgstr "Antrag automatisch abgelehnt: %tage% Tage beantragt, nur %verfuegbar% verfügbar."
+
+msgid "flash.antrag.auto_rejected.reason_stored"
+msgstr "Automatische Ablehnung: Resturlaub nicht ausreichend (%tage% Tage beantragt, %verfuegbar% Tage verfügbar)."
+
+msgid "flash.antrag.submitted"
+msgstr "Urlaubsantrag eingereicht. Genehmiger:in wird per Mail informiert."
+
+msgid "flash.antrag.edit.not_authorized"
+msgstr "Du darfst diesen Antrag nicht bearbeiten."
+
+msgid "flash.antrag.updated"
+msgstr "Antrag aktualisiert."
+
+# ---- Krank ----
+msgid "flash.krank.required_dates"
+msgstr "Bitte Datums-Felder ausfüllen."
+
+msgid "flash.krank.submitted"
+msgstr "Krankmeldung erfasst. HR wurde benachrichtigt. Gute Besserung!"
+
+msgid "flash.krank.edit.not_authorized"
+msgstr "Du darfst diese Krankmeldung nicht bearbeiten."
+
+msgid "flash.krank.updated"
+msgstr "Krankmeldung aktualisiert."
+
+# Kalender-Event-Subject (DSGVO: nur "Abwesend", nicht "Krank")
+msgid "calendar.subject.absent"
+msgstr "Abwesend – %name%"
+
+# ---- Storno ----
+msgid "flash.storno.not_authorized"
+msgstr "Du darfst diesen Antrag nicht stornieren."
+
+msgid "flash.storno.already_terminal"
+msgstr "Antrag ist bereits %status%."
+
+msgid "flash.storno.success"
+msgstr "Antrag storniert."

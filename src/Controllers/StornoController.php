@@ -12,6 +12,7 @@ use App\Services\MailService;
 use App\Services\ResturlaubService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Symfony\Component\Translation\Translator;
 
 final class StornoController
 {
@@ -24,6 +25,7 @@ final class StornoController
         private readonly MailService $mail,
         private readonly AuditLogRepository $audit,
         private readonly Connection $db,
+        private readonly Translator $translator,
     ) {
     }
 
@@ -41,11 +43,14 @@ final class StornoController
         $isOwner = (int) $absence['user_id'] === $userId;
         $isHr = (bool) $currentUser['ist_hr'];
         if (!$isOwner && !$isHr) {
-            $_SESSION['flash_error'] = 'Du darfst diesen Antrag nicht stornieren.';
+            $_SESSION['flash_error'] = $this->translator->trans('flash.storno.not_authorized');
             return $response->withHeader('Location', '/')->withStatus(302);
         }
         if (in_array($absence['status'], ['storniert', 'abgelehnt'], true)) {
-            $_SESSION['flash_error'] = 'Antrag ist bereits ' . $absence['status'] . '.';
+            $_SESSION['flash_error'] = $this->translator->trans(
+                'flash.storno.already_terminal',
+                ['%status%' => $this->translator->trans('status.' . $absence['status'])]
+            );
             return $response->withHeader('Location', '/')->withStatus(302);
         }
 
@@ -172,7 +177,7 @@ final class StornoController
             }
         }
 
-        $_SESSION['flash_success'] = 'Antrag storniert.';
+        $_SESSION['flash_success'] = $this->translator->trans('flash.storno.success');
         return $response->withHeader('Location', '/')->withStatus(302);
     }
 }

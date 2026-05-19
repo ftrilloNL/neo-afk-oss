@@ -913,3 +913,70 @@ msgstr "Request approved. The applicant has been notified by email."
 
 msgid "flash.genehmigungen.rejected"
 msgstr "Request rejected. The applicant has been notified by email."
+
+# ---- Common form / validation flash ----
+msgid "flash.common.invalid_date"
+msgstr "Invalid date."
+
+msgid "flash.common.end_before_start"
+msgstr "End date must not be before start date."
+
+msgid "flash.common.no_workdays"
+msgstr "The selected period contains no workdays."
+
+msgid "flash.edit.failed"
+msgstr "Editing failed."
+
+msgid "flash.edit.terminal_status_antrag"
+msgstr "Request is %status% and cannot be edited."
+
+msgid "flash.edit.terminal_status_krank"
+msgstr "Sick leave is %status% and cannot be edited."
+
+# ---- Antrag ----
+msgid "flash.antrag.required_fields"
+msgstr "Please fill in all required fields."
+
+msgid "flash.antrag.self_approver"
+msgstr "You cannot set yourself as approver."
+
+msgid "flash.antrag.auto_rejected"
+msgstr "Request rejected automatically: %tage% days requested, only %verfuegbar% available."
+
+msgid "flash.antrag.auto_rejected.reason_stored"
+msgstr "Automatic rejection: remaining vacation insufficient (%tage% days requested, %verfuegbar% days available)."
+
+msgid "flash.antrag.submitted"
+msgstr "Vacation request submitted. The approver will be notified by email."
+
+msgid "flash.antrag.edit.not_authorized"
+msgstr "You are not allowed to edit this request."
+
+msgid "flash.antrag.updated"
+msgstr "Request updated."
+
+# ---- Krank ----
+msgid "flash.krank.required_dates"
+msgstr "Please fill in the date fields."
+
+msgid "flash.krank.submitted"
+msgstr "Sick leave recorded. HR has been notified. Get well soon!"
+
+msgid "flash.krank.edit.not_authorized"
+msgstr "You are not allowed to edit this sick leave."
+
+msgid "flash.krank.updated"
+msgstr "Sick leave updated."
+
+msgid "calendar.subject.absent"
+msgstr "Out of office – %name%"
+
+# ---- Storno ----
+msgid "flash.storno.not_authorized"
+msgstr "You are not allowed to cancel this request."
+
+msgid "flash.storno.already_terminal"
+msgstr "Request is already %status%."
+
+msgid "flash.storno.success"
+msgstr "Request cancelled."
