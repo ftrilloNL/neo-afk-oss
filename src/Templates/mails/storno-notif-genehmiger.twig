@@ -16,8 +16,8 @@
                 {% endif %}
                 {% if canceller.id == applicant.id %}seine{% else %}dessen{% endif %}
                 {{ absence.art == 'urlaub' ? 'Urlaubs-Anfrage' : 'Krankmeldung' }}
-                vom <strong>{{ absence.startdatum|date('d.m.Y') }}</strong>
-                bis <strong>{{ absence.enddatum|date('d.m.Y') }}</strong>
+                vom <strong>{{ absence.startdatum|localized_date }}</strong>
+                bis <strong>{{ absence.enddatum|localized_date }}</strong>
                 ({{ absence.tage_gezaehlt|number_format(1, ',', '.') }} Tage) storniert.
             </p>
             <p style="margin:0 0 16px 0;font-size:15px;line-height:1.6;">

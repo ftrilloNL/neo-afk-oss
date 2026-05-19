@@ -9,6 +9,7 @@ use App\Models\ApprovalTokenRepository;
 use App\Models\AuditLogRepository;
 use App\Models\UserRepository;
 use App\Providers\Contracts\CalendarProvider;
+use App\I18n\LocalizedDate;
 use App\Providers\Contracts\OooProvider;
 use Symfony\Component\Translation\Translator;
 
@@ -47,6 +48,7 @@ final class AbsenceEditService
         private readonly Config $config,
         private readonly Connection $db,
         private readonly Translator $translator,
+        private readonly LocalizedDate $dates,
     ) {
     }
 
@@ -675,8 +677,8 @@ final class AbsenceEditService
                 sprintf(
                     'Krankmeldung aktualisiert: %s (%s–%s)',
                     $applicant['display_name'],
-                    $parsed['start']->format('d.m.'),
-                    $parsed['end']->format('d.m.Y'),
+                    $this->dates->monthDay($parsed['start']),
+                    $this->dates->short($parsed['end']),
                 ),
                 'mails/krank-edited-hr.twig',
                 [

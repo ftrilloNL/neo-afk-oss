@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Config;
+use App\I18n\LocalizedDate;
 use App\Models\AbsenceRepository;
 use App\Models\AuditLogRepository;
 use App\Models\UserRepository;
@@ -30,6 +31,7 @@ final class KrankController
         private readonly AbsenceEditService $editService,
         private readonly Twig $view,
         private readonly Translator $translator,
+        private readonly LocalizedDate $dates,
     ) {
     }
 
@@ -161,8 +163,8 @@ final class KrankController
             sprintf(
                 'Krankmeldung: %s (%s–%s)',
                 $user['display_name'],
-                $start->format('d.m.'),
-                $end->format('d.m.Y')
+                $this->dates->monthDay($start),
+                $this->dates->short($end),
             ),
             'mails/krank-notif.twig',
             [

@@ -1090,3 +1090,52 @@ msgstr "Not registered as approver for this request."
 
 msgid "service.approval.already_processed"
 msgstr "Request has already been processed (status: %status%)."
+
+# ---- Date/number formatting ----
+msgid "month.1"
+msgstr "January"
+
+msgid "month.2"
+msgstr "February"
+
+msgid "month.3"
+msgstr "March"
+
+msgid "month.4"
+msgstr "April"
+
+msgid "month.5"
+msgstr "May"
+
+msgid "month.6"
+msgstr "June"
+
+msgid "month.7"
+msgstr "July"
+
+msgid "month.8"
+msgstr "August"
+
+msgid "month.9"
+msgstr "September"
+
+msgid "month.10"
+msgstr "October"
+
+msgid "month.11"
+msgstr "November"
+
+msgid "month.12"
+msgstr "December"
+
+msgid "date.format.short"
+msgstr "m/d/Y"
+
+msgid "date.format.month_day"
+msgstr "m/d"
+
+msgid "date.format.short_with_time"
+msgstr "m/d/Y H:i"
+
+msgid "date.format.month_year"
+msgstr "%month% %year%"

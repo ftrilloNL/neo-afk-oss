@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Config;
+use App\I18n\LocalizedDate;
 use App\Models\AbsenceRepository;
 use App\Models\AuditLogRepository;
 use App\Models\UserRepository;
@@ -28,6 +29,7 @@ final class HrKrankController
         private readonly Config $config,
         private readonly Twig $view,
         private readonly Translator $translator,
+        private readonly LocalizedDate $dates,
     ) {
     }
 
@@ -167,8 +169,8 @@ final class HrKrankController
                 sprintf(
                     '[HR erfasst] Krankmeldung: %s (%s–%s)',
                     $targetUser['display_name'],
-                    $start->format('d.m.'),
-                    $end->format('d.m.Y')
+                    $this->dates->monthDay($start),
+                    $this->dates->short($end),
                 ),
                 'mails/krank-notif.twig',
                 [
@@ -193,8 +195,8 @@ final class HrKrankController
                     (string) $targetUser['email'],
                     sprintf(
                         'Krankmeldung von HR erfasst — %s bis %s',
-                        $start->format('d.m.'),
-                        $end->format('d.m.Y')
+                        $this->dates->monthDay($start),
+                        $this->dates->short($end),
                     ),
                     'mails/hr-erfassung-notif.twig',
                     [
@@ -219,8 +221,8 @@ final class HrKrankController
             'flash.hr.krank.created',
             [
                 '%name%' => $targetUser['display_name'],
-                '%start%' => $start->format('d.m.'),
-                '%end%' => $end->format('d.m.Y'),
+                '%start%' => $this->dates->monthDay($start),
+                '%end%' => $this->dates->short($end),
             ]
         );
         return $response->withHeader('Location', '/hr')->withStatus(302);

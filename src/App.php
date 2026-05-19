@@ -20,6 +20,7 @@ use App\Controllers\StornoController;
 use App\Controllers\TeamController;
 use App\Database\Connection;
 use App\I18n\LocaleResolver;
+use App\I18n\LocalizedDate;
 use App\Middleware\AuthMiddleware;
 use App\Middleware\CsrfMiddleware;
 use App\Middleware\HrMiddleware;
@@ -240,6 +241,21 @@ final class App
         return $response->withHeader('Location', '/')->withStatus(302);
     }
 
+    /**
+     * Coerce values commonly passed to Twig date filters
+     * (DateTime, "Y-m-d" strings from DBAL) into DateTimeImmutable.
+     */
+    private static function toDateTime(\DateTimeInterface|string $value): \DateTimeImmutable
+    {
+        if ($value instanceof \DateTimeImmutable) {
+            return $value;
+        }
+        if ($value instanceof \DateTimeInterface) {
+            return \DateTimeImmutable::createFromInterface($value);
+        }
+        return new \DateTimeImmutable($value);
+    }
+
     public static function buildContainer(string $rootPath): Container
     {
         $c = new Container();
@@ -297,14 +313,24 @@ final class App
                 ),
                 ['is_safe' => ['html']],
             ));
+            // Locale-aware date helpers — catalog-based (`month.1..12`,
+            // `date.format.*`) since ext-intl is not available on Hetzner.
+            $dates = new LocalizedDate($translator);
             $twig->getEnvironment()->addFunction(new \Twig\TwigFunction(
-                'monat_jahr_de',
-                function (?\DateTimeInterface $when = null): string {
-                    $when ??= new \DateTimeImmutable();
-                    $months = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
-                               'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
-                    return $months[(int) $when->format('n') - 1] . ' ' . $when->format('Y');
-                },
+                'localized_month_year',
+                fn (?\DateTimeInterface $when = null): string => $dates->monthYear($when ?? new \DateTimeImmutable()),
+            ));
+            $twig->getEnvironment()->addFilter(new \Twig\TwigFilter(
+                'localized_date',
+                fn (\DateTimeInterface|string $value): string => $dates->short(self::toDateTime($value)),
+            ));
+            $twig->getEnvironment()->addFilter(new \Twig\TwigFilter(
+                'localized_month_day',
+                fn (\DateTimeInterface|string $value): string => $dates->monthDay(self::toDateTime($value)),
+            ));
+            $twig->getEnvironment()->addFilter(new \Twig\TwigFilter(
+                'localized_date_time',
+                fn (\DateTimeInterface|string $value): string => $dates->shortWithTime(self::toDateTime($value)),
             ));
             return $twig;
         });
@@ -405,6 +431,7 @@ final class App
             $c->get(Config::class),
             $c->get(Connection::class),
             $c->get(Translator::class),
+            $c->get(LocalizedDate::class),
         ));
         $c->set(AbsenceEditService::class, fn (Container $c) => new AbsenceEditService(
             $c->get(UserRepository::class),
@@ -420,12 +447,14 @@ final class App
             $c->get(Config::class),
             $c->get(Connection::class),
             $c->get(Translator::class),
+            $c->get(LocalizedDate::class),
         ));
 
         // Middleware needs DI for repos
         $c->set(HrMiddleware::class, fn (Container $c) => new HrMiddleware($c->get(UserRepository::class)));
         $c->set(CsrfMiddleware::class, fn (Container $c) => new CsrfMiddleware($c->get(Csrf::class)));
         $c->set(LocaleResolver::class, fn () => new LocaleResolver());
+        $c->set(LocalizedDate::class, fn (Container $c) => new LocalizedDate($c->get(Translator::class)));
         $c->set(LocaleMiddleware::class, fn (Container $c) => new LocaleMiddleware(
             $c->get(Translator::class),
             $c->get(LocaleResolver::class),

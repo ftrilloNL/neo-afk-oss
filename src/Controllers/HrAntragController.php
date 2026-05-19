@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Database\Connection;
+use App\I18n\LocalizedDate;
 use App\Models\AbsenceRepository;
 use App\Models\AuditLogRepository;
 use App\Models\UserRepository;
@@ -30,6 +31,7 @@ final class HrAntragController
         private readonly Connection $db,
         private readonly Twig $view,
         private readonly Translator $translator,
+        private readonly LocalizedDate $dates,
     ) {
     }
 
@@ -259,8 +261,8 @@ final class HrAntragController
                     (string) $targetUser['email'],
                     sprintf(
                         'Urlaub von HR erfasst — %s bis %s',
-                        $start->format('d.m.'),
-                        $end->format('d.m.Y')
+                        $this->dates->monthDay($start),
+                        $this->dates->short($end),
                     ),
                     'mails/hr-erfassung-notif.twig',
                     [
@@ -285,8 +287,8 @@ final class HrAntragController
             'flash.hr.antrag.created',
             [
                 '%name%' => $targetUser['display_name'],
-                '%start%' => $start->format('d.m.'),
-                '%end%' => $end->format('d.m.Y'),
+                '%start%' => $this->dates->monthDay($start),
+                '%end%' => $this->dates->short($end),
                 '%tage%' => number_format($tageGezaehlt, 1, ',', '.'),
             ]
         );

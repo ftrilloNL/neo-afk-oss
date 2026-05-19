@@ -52,7 +52,7 @@
                     <div class="text-xs text-gray-500">{{ u.email }}</div>
                 </td>
                 <td class="px-5 py-3.5 tabular text-xs">
-                    {% if u.eintrittsdatum %}{{ u.eintrittsdatum|date('d.m.Y') }}{% else %}<span class="text-gray-400">—</span>{% endif %}
+                    {% if u.eintrittsdatum %}{{ u.eintrittsdatum|localized_date }}{% else %}<span class="text-gray-400">—</span>{% endif %}
                 </td>
                 <td class="px-5 py-3.5 tabular">{{ u.jahresanspruch }}</td>
                 <td class="px-5 py-3.5 tabular">{{ u.resturlaub_aktuell|number_format(1, ',', '.') }}</td>

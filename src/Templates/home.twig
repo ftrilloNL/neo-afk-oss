@@ -9,7 +9,7 @@
 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-6 md:mb-8">
     <h1 class="text-2xl font-bold tracking-tight">{{ 'home.greeting'|trans({'%name%': user.display_name|split(' ')|first}) }}</h1>
     <div class="text-sm text-gray-500 px-3 py-1.5 border border-card-border rounded-full self-start sm:self-auto">
-        {{ monat_jahr_de() }}
+        {{ localized_month_year() }}
     </div>
 </div>
 
@@ -69,7 +69,7 @@
         <div class="text-3xl font-bold tabular">{{ user.jahresanspruch }},0 <span class="text-base font-normal text-gray-500">{{ 'common.days'|trans }}</span></div>
         <div class="text-xs text-gray-500 mt-1">
             {% if user.eintrittsdatum %}
-                {{ 'home.metric.jahresanspruch.since'|trans({'%date%': user.eintrittsdatum|date('d.m.Y')}) }}
+                {{ 'home.metric.jahresanspruch.since'|trans({'%date%': user.eintrittsdatum|localized_date}) }}
             {% else %}
                 {{ 'home.metric.jahresanspruch.no_date'|trans }}
             {% endif %}
@@ -122,7 +122,7 @@
                         <span class="inline-flex items-center gap-2"><span class="text-base">🤒</span> {{ 'common.art.krank'|trans }}</span>
                     {% endif %}
                 </td>
-                <td class="px-5 py-3.5 tabular">{{ a.startdatum|date('d.m.') }}–{{ a.enddatum|date('d.m.Y') }}</td>
+                <td class="px-5 py-3.5 tabular">{{ a.startdatum|localized_month_day }}–{{ a.enddatum|localized_date }}</td>
                 <td class="px-5 py-3.5 tabular font-medium">{{ a.tage_gezaehlt|number_format(1, ',', '.') }}</td>
                 <td class="px-5 py-3.5">
                     {{ status.pill(a.art, a.status) }}

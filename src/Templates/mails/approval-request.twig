@@ -18,7 +18,7 @@
                     <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                         <tr>
                             <td style="font-size:12px;color:#6B6B6B;text-transform:uppercase;letter-spacing:0.05em;padding:6px 0;width:120px;">Zeitraum</td>
-                            <td style="font-size:14px;color:#1A1A1A;font-weight:500;padding:6px 0;">{{ absence.startdatum|date('d.m.Y') }} – {{ absence.enddatum|date('d.m.Y') }}</td>
+                            <td style="font-size:14px;color:#1A1A1A;font-weight:500;padding:6px 0;">{{ absence.startdatum|localized_date }} – {{ absence.enddatum|localized_date }}</td>
                         </tr>
                         <tr>
                             <td style="font-size:12px;color:#6B6B6B;text-transform:uppercase;letter-spacing:0.05em;padding:6px 0;">Tage</td>
@@ -50,7 +50,7 @@
             </table>
 
             <p style="margin:24px 0 0 0;font-size:12px;color:#6B6B6B;line-height:1.5;text-align:center;">
-                Die Links sind 7 Tage gültig (bis {{ expires_at|date('d.m.Y H:i') }}). Jeder Link nur einmal verwendbar.
+                Die Links sind 7 Tage gültig (bis {{ expires_at|localized_date_time }}). Jeder Link nur einmal verwendbar.
             </p>
         </td></tr>
 

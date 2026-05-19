@@ -45,14 +45,14 @@
             </div>
             <div class="text-right">
                 <div class="text-xs text-gray-500 uppercase tracking-wider mb-1">{{ 'genehmigungen.col.requested_at'|trans }}</div>
-                <div class="text-sm tabular">{{ a.created_at|date('d.m.Y') }}</div>
+                <div class="text-sm tabular">{{ a.created_at|localized_date }}</div>
             </div>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 py-4 border-t border-card-border">
             <div>
                 <div class="text-[10px] font-semibold uppercase tracking-wider text-gray-500 mb-1">{{ 'antrag.form.zeitraum'|trans }}</div>
-                <div class="text-sm tabular font-medium">{{ a.startdatum|date('d.m.') }}–{{ a.enddatum|date('d.m.Y') }}</div>
+                <div class="text-sm tabular font-medium">{{ a.startdatum|localized_month_day }}–{{ a.enddatum|localized_date }}</div>
                 <div class="text-xs text-gray-500 mt-0.5">
                     {% if a.halbtag_start != 'ganztag' %}{{ 'genehmigungen.halbtag.afternoon_prefix'|trans }} {% endif %}
                     {% if a.halbtag_ende != 'ganztag' %}{{ 'genehmigungen.halbtag.until_noon'|trans }}{% endif %}

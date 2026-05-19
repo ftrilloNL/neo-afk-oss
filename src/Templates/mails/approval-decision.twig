@@ -17,12 +17,12 @@
 
             {% if decision == 'approved' %}
             <p style="margin:0 0 24px 0;font-size:15px;line-height:1.6;">
-                Dein Urlaubsantrag von <strong>{{ absence.startdatum|date('d.m.Y') }}</strong> bis <strong>{{ absence.enddatum|date('d.m.Y') }}</strong> ({{ absence.tage_gezaehlt|number_format(1, ',', '.') }} Tage) wurde genehmigt. Der Eintrag erscheint im Gruppenkalender, dein Resturlaub wurde abgebucht.
+                Dein Urlaubsantrag von <strong>{{ absence.startdatum|localized_date }}</strong> bis <strong>{{ absence.enddatum|localized_date }}</strong> ({{ absence.tage_gezaehlt|number_format(1, ',', '.') }} Tage) wurde genehmigt. Der Eintrag erscheint im Gruppenkalender, dein Resturlaub wurde abgebucht.
             </p>
             <p style="margin:0 0 24px 0;font-size:15px;line-height:1.6;">Schöne Zeit!</p>
             {% else %}
             <p style="margin:0 0 16px 0;font-size:15px;line-height:1.6;">
-                Dein Urlaubsantrag von <strong>{{ absence.startdatum|date('d.m.Y') }}</strong> bis <strong>{{ absence.enddatum|date('d.m.Y') }}</strong> ({{ absence.tage_gezaehlt|number_format(1, ',', '.') }} Tage) wurde leider abgelehnt.
+                Dein Urlaubsantrag von <strong>{{ absence.startdatum|localized_date }}</strong> bis <strong>{{ absence.enddatum|localized_date }}</strong> ({{ absence.tage_gezaehlt|number_format(1, ',', '.') }} Tage) wurde leider abgelehnt.
             </p>
             {% if comment %}
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#FAFAF9;border-left:3px solid #7B9468;margin-bottom:24px;">

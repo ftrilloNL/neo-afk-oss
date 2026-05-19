@@ -14,7 +14,7 @@
     {%- elseif value is iterable -%}
         <code class="text-[10px] text-gray-600">{{ value|json_encode }}</code>
     {%- elseif value matches '/^\\d{4}-\\d{2}-\\d{2}$/' -%}
-        {{ value|date('d.m.Y') }}
+        {{ value|localized_date }}
     {%- else -%}
         {{ value }}
     {%- endif -%}
@@ -86,7 +86,7 @@
             {% for e in entries %}
             <tr class="border-b border-card-border last:border-0 hover:bg-gray-50 align-top">
                 <td class="px-5 py-3 tabular text-xs whitespace-nowrap">
-                    {{ e.created_at|date('d.m.Y') }}<br>
+                    {{ e.created_at|localized_date }}<br>
                     <span class="text-gray-500">{{ e.created_at|date('H:i:s') }}</span>
                 </td>
                 <td class="px-5 py-3 text-xs">

@@ -16,7 +16,7 @@
                 <tr><td style="padding:14px 18px;">
                     <div style="font-size:12px;color:#6B6B6B;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px;">Vorher</div>
                     <div style="font-size:14px;color:#1A1A1A;line-height:1.5;">
-                        {{ absence_old.startdatum|date('d.m.Y') }} bis {{ absence_old.enddatum|date('d.m.Y') }}
+                        {{ absence_old.startdatum|localized_date }} bis {{ absence_old.enddatum|localized_date }}
                         ({{ absence_old.tage_gezaehlt|number_format(1, ',', '.') }} Tage)
                     </div>
                 </td></tr>
@@ -26,7 +26,7 @@
                 <tr><td style="padding:14px 18px;">
                     <div style="font-size:12px;color:#5D7A4C;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px;">Jetzt</div>
                     <div style="font-size:14px;color:#1A1A1A;line-height:1.5;">
-                        {{ absence_new.startdatum|date('d.m.Y') }} bis {{ absence_new.enddatum|date('d.m.Y') }}
+                        {{ absence_new.startdatum|localized_date }} bis {{ absence_new.enddatum|localized_date }}
                         ({{ absence_new.tage_gezaehlt|number_format(1, ',', '.') }} Tage)
                     </div>
                 </td></tr>

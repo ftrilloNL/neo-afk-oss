@@ -28,7 +28,7 @@
             </div>
             <div>
                 <div class="text-xs text-gray-500">{{ 'profil.field.eintrittsdatum'|trans }}</div>
-                <div class="font-medium">{% if user.eintrittsdatum %}{{ user.eintrittsdatum|date('d.m.Y') }}{% else %}<span class="text-gray-400">—</span>{% endif %}</div>
+                <div class="font-medium">{% if user.eintrittsdatum %}{{ user.eintrittsdatum|localized_date }}{% else %}<span class="text-gray-400">—</span>{% endif %}</div>
             </div>
             <div>
                 <div class="text-xs text-gray-500">{{ 'profil.field.roles'|trans }}</div>
@@ -67,7 +67,7 @@
         <div class="space-y-3 text-sm">
             <div class="flex justify-between">
                 <span class="text-gray-500">{{ 'profil.field.geburtsdatum'|trans }}</span>
-                <span class="font-medium">{% if master.geburtsdatum %}{{ master.geburtsdatum|date('d.m.Y') }}{% else %}<span class="text-gray-400">—</span>{% endif %}</span>
+                <span class="font-medium">{% if master.geburtsdatum %}{{ master.geburtsdatum|localized_date }}{% else %}<span class="text-gray-400">—</span>{% endif %}</span>
             </div>
             <div class="flex justify-between">
                 <span class="text-gray-500">{{ 'profil.field.telefon'|trans }}</span>

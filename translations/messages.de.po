@@ -1092,3 +1092,54 @@ msgstr "Nicht als Genehmiger:in für diesen Antrag eingetragen."
 
 msgid "service.approval.already_processed"
 msgstr "Antrag wurde bereits bearbeitet (Status: %status%)."
+
+# ---- Date/number formatting (AFK-6) ----
+msgid "month.1"
+msgstr "Januar"
+
+msgid "month.2"
+msgstr "Februar"
+
+msgid "month.3"
+msgstr "März"
+
+msgid "month.4"
+msgstr "April"
+
+msgid "month.5"
+msgstr "Mai"
+
+msgid "month.6"
+msgstr "Juni"
+
+msgid "month.7"
+msgstr "Juli"
+
+msgid "month.8"
+msgstr "August"
+
+msgid "month.9"
+msgstr "September"
+
+msgid "month.10"
+msgstr "Oktober"
+
+msgid "month.11"
+msgstr "November"
+
+msgid "month.12"
+msgstr "Dezember"
+
+# `\DateTime::format()` pattern strings. Same syntax as PHP's DateTime::format().
+msgid "date.format.short"
+msgstr "d.m.Y"
+
+msgid "date.format.month_day"
+msgstr "d.m."
+
+msgid "date.format.short_with_time"
+msgstr "d.m.Y H:i"
+
+# `localized_month_year`-Template — gets %month% (translated name) and %year% (numeric).
+msgid "date.format.month_year"
+msgstr "%month% %year%"

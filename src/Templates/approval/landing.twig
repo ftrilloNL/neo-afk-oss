@@ -18,7 +18,7 @@
 
             <dt class="text-gray-500">{{ 'antrag.form.zeitraum'|trans }}</dt>
             <dd class="col-span-2 font-medium tabular">
-                {{ absence.startdatum|date('d.m.Y') }} – {{ absence.enddatum|date('d.m.Y') }}
+                {{ absence.startdatum|localized_date }} – {{ absence.enddatum|localized_date }}
             </dd>
 
             <dt class="text-gray-500">{{ 'common.days'|trans }}</dt>

@@ -128,7 +128,7 @@
                         <span class="inline-flex items-center gap-1.5"><span>🤒</span> {{ 'common.art.krank'|trans }}</span>
                     {% endif %}
                 </td>
-                <td class="px-5 py-3.5 tabular">{{ a.startdatum|date('d.m.') }}–{{ a.enddatum|date('d.m.Y') }}</td>
+                <td class="px-5 py-3.5 tabular">{{ a.startdatum|localized_month_day }}–{{ a.enddatum|localized_date }}</td>
                 <td class="px-5 py-3.5 tabular font-medium">{{ a.tage_gezaehlt|number_format(1, ',', '.') }}</td>
                 <td class="px-5 py-3.5">{{ status.pill(a.art, a.status) }}</td>
                 <td class="px-5 py-3.5 text-xs text-gray-500">
