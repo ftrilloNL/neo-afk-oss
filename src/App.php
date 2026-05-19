@@ -469,6 +469,7 @@ final class App
             $c->get(Twig::class),
             $c->get(EnvWriter::class),
             $rootPath,
+            $c->get(Translator::class),
         ));
 
         return $c;

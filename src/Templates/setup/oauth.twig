@@ -2,112 +2,107 @@
 
 {% block content %}
 {% if provider == 'microsoft' %}
-<h1 class="text-2xl font-bold mb-2">Microsoft 365 OAuth + Graph</h1>
+<h1 class="text-2xl font-bold mb-2">{{ 'setup.oauth.ms.heading'|trans }}</h1>
 <p class="text-gray-600 mb-6 leading-relaxed">
-    Werte aus eurer Entra-ID-App-Registrierung. Falls noch nicht angelegt:
-    <a href="https://github.com/ftrilloNL/neo-afk-oss/blob/main/docs/entra-id-setup.md"
-       target="_blank" class="underline">docs/entra-id-setup.md</a>.
+    {{ 'setup.oauth.ms.body'|trans|raw }}
 </p>
 
 <div class="bg-blue-50 border border-blue-200 rounded-md px-4 py-3 mb-6 text-sm">
-    <strong>Eure Redirect-URI für die Web-Plattform:</strong>
-    <code class="block mt-1 break-all">{{ env.APP_URL ?? 'https://afk.eure-firma.de' }}/auth/callback</code>
+    <strong>{{ 'setup.oauth.redirect_label'|trans }}</strong>
+    <code class="block mt-1 break-all">{{ env.APP_URL ?? 'https://afk.your-company.com' }}/auth/callback</code>
 </div>
 
 <form method="post" action="/setup/oauth" class="space-y-5">
     <div>
-        <label class="label"><span class="label-text">Tenant-ID (GUID)</span></label>
+        <label class="label"><span class="label-text">{{ 'setup.oauth.ms.field.tenant'|trans }}</span></label>
         <input type="text" name="oauth_tenant_id" required class="input input-bordered w-full"
                placeholder="00000000-0000-0000-0000-000000000000"
                value="{{ env.OAUTH_TENANT_ID ?? '' }}">
     </div>
 
     <div>
-        <label class="label"><span class="label-text">Client-ID (GUID)</span></label>
+        <label class="label"><span class="label-text">{{ 'setup.oauth.ms.field.client_id'|trans }}</span></label>
         <input type="text" name="oauth_client_id" required class="input input-bordered w-full"
                placeholder="00000000-0000-0000-0000-000000000000"
                value="{{ env.OAUTH_CLIENT_ID ?? '' }}">
     </div>
 
     <div>
-        <label class="label"><span class="label-text">Client-Secret</span></label>
+        <label class="label"><span class="label-text">{{ 'setup.oauth.ms.field.client_secret'|trans }}</span></label>
         <input type="password" name="oauth_client_secret" required class="input input-bordered w-full"
                value="{{ env.OAUTH_CLIENT_SECRET ?? '' }}">
         <p class="text-xs text-gray-500 mt-1">
-            Aus „Zertifikate &amp; Geheimnisse → Wert" (nicht Geheimnis-ID).
+            {{ 'setup.oauth.ms.field.client_secret.hint'|trans|raw }}
         </p>
     </div>
 
     <hr class="my-2 border-gray-200">
 
     <div>
-        <label class="label"><span class="label-text">Shared Mailbox für geteilten Kalender</span></label>
+        <label class="label"><span class="label-text">{{ 'setup.oauth.field.shared_mailbox'|trans }}</span></label>
         <input type="email" name="graph_calendar_user" required class="input input-bordered w-full"
-               placeholder="urlaub@eure-firma.de"
+               placeholder="vacation@your-company.com"
                value="{{ env.GRAPH_CALENDAR_USER ?? '' }}">
         <p class="text-xs text-gray-500 mt-1">
-            Mailbox mit dem geteilten Abwesenheits-Kalender.
+            {{ 'setup.oauth.field.shared_mailbox.hint'|trans }}
         </p>
     </div>
 
     <div>
-        <label class="label"><span class="label-text">HR-Verteiler-Mail (Krankmeldungen)</span></label>
+        <label class="label"><span class="label-text">{{ 'setup.oauth.field.hr_email'|trans }}</span></label>
         <input type="text" name="hr_notification_email" required class="input input-bordered w-full"
-               placeholder="hr@eure-firma.de"
+               placeholder="hr@your-company.com"
                value="{{ env.HR_NOTIFICATION_EMAIL ?? '' }}">
         <p class="text-xs text-gray-500 mt-1">
-            Mehrere Adressen erlaubt — komma- oder semikolon-separiert.
+            {{ 'setup.oauth.field.hr_email.hint'|trans }}
         </p>
     </div>
 
     <div class="flex justify-between pt-3">
-        <a href="/setup/org" class="btn btn-ghost">← Zurück</a>
-        <button type="submit" class="btn btn-primary">Weiter →</button>
+        <a href="/setup/org" class="btn btn-ghost">{{ 'setup.action.back'|trans }}</a>
+        <button type="submit" class="btn btn-primary">{{ 'setup.action.next'|trans }}</button>
     </div>
 </form>
 
 {% else %}
-<h1 class="text-2xl font-bold mb-2">Google Workspace</h1>
+<h1 class="text-2xl font-bold mb-2">{{ 'setup.oauth.google.heading'|trans }}</h1>
 <p class="text-gray-600 mb-6 leading-relaxed">
-    OAuth-Client (Browser-SSO) plus Service-Account (Calendar + Gmail).
-    Anleitung:
-    <a href="https://github.com/ftrilloNL/neo-afk-oss/blob/main/docs/google-workspace-setup.md"
-       target="_blank" class="underline">docs/google-workspace-setup.md</a>.
+    {{ 'setup.oauth.google.body'|trans|raw }}
 </p>
 
 <div class="bg-blue-50 border border-blue-200 rounded-md px-4 py-3 mb-6 text-sm">
-    <strong>Eure Redirect-URI in der GCP-Console (Web-OAuth-Client):</strong>
-    <code class="block mt-1 break-all">{{ env.APP_URL ?? 'https://afk.eure-firma.de' }}/auth/callback</code>
+    <strong>{{ 'setup.oauth.google.redirect_label'|trans }}</strong>
+    <code class="block mt-1 break-all">{{ env.APP_URL ?? 'https://afk.your-company.com' }}/auth/callback</code>
 </div>
 
 <form method="post" action="/setup/oauth" enctype="multipart/form-data" class="space-y-5">
 
-    <h2 class="text-base font-semibold border-b pb-2">OAuth-Client (Browser-SSO)</h2>
+    <h2 class="text-base font-semibold border-b pb-2">{{ 'setup.oauth.google.section.oauth'|trans }}</h2>
 
     <div>
-        <label class="label"><span class="label-text">OAuth Client-ID</span></label>
+        <label class="label"><span class="label-text">{{ 'setup.oauth.google.field.client_id'|trans }}</span></label>
         <input type="text" name="oauth_client_id" required class="input input-bordered w-full"
                placeholder="000000000000-xxxxxxxxxxxx.apps.googleusercontent.com"
                value="{{ env.OAUTH_CLIENT_ID ?? '' }}">
     </div>
 
     <div>
-        <label class="label"><span class="label-text">OAuth Client-Secret</span></label>
+        <label class="label"><span class="label-text">{{ 'setup.oauth.google.field.client_secret'|trans }}</span></label>
         <input type="password" name="oauth_client_secret" required class="input input-bordered w-full"
                value="{{ env.OAUTH_CLIENT_SECRET ?? '' }}">
         <p class="text-xs text-gray-500 mt-1">
-            Aus dem Web-OAuth-Client in der GCP-Console.
+            {{ 'setup.oauth.google.field.client_secret.hint'|trans }}
         </p>
     </div>
 
-    <h2 class="text-base font-semibold border-b pb-2 pt-4">Service-Account (Calendar + Gmail)</h2>
+    <h2 class="text-base font-semibold border-b pb-2 pt-4">{{ 'setup.oauth.google.section.service_account'|trans }}</h2>
 
     <div>
         <label class="label">
             <span class="label-text">
-                Service-Account-JSON-Key
+                {{ 'setup.oauth.google.field.service_account_json'|trans }}
                 {% if service_account_present %}
-                    <span class="text-xs text-green-700 font-normal">(bereits hochgeladen, leer lassen falls unveraendert)</span>
+                    <span class="text-xs text-green-700 font-normal">{{ 'setup.oauth.google.field.service_account_json.already_uploaded'|trans }}</span>
                 {% endif %}
             </span>
         </label>
@@ -115,54 +110,52 @@
                class="file-input file-input-bordered w-full"
                {% if not service_account_present %}required{% endif %}>
         <p class="text-xs text-gray-500 mt-1">
-            JSON-Key aus der GCP-Console (IAM &amp; Admin → Service Accounts → Keys).
-            Wird unter <code>var/secrets/google-service-account.json</code> (chmod 0600) abgelegt.
+            {{ 'setup.oauth.google.field.service_account_json.hint'|trans|raw }}
         </p>
     </div>
 
     <div>
-        <label class="label"><span class="label-text">Workspace-Domain</span></label>
+        <label class="label"><span class="label-text">{{ 'setup.oauth.google.field.workspace_domain'|trans }}</span></label>
         <input type="text" name="google_workspace_domain" required class="input input-bordered w-full"
-               placeholder="eure-firma.de"
+               placeholder="your-company.com"
                value="{{ env.GOOGLE_WORKSPACE_DOMAIN ?? '' }}">
         <p class="text-xs text-gray-500 mt-1">
-            Erlaubt nur Logins von Accounts dieser Workspace-Domain (hd-Check).
+            {{ 'setup.oauth.google.field.workspace_domain.hint'|trans }}
         </p>
     </div>
 
     <div>
-        <label class="label"><span class="label-text">Kalender-ID</span></label>
+        <label class="label"><span class="label-text">{{ 'setup.oauth.google.field.calendar_id'|trans }}</span></label>
         <input type="text" name="google_calendar_id" required class="input input-bordered w-full"
-               placeholder="abwesenheit@eure-firma.de  oder  xyz@group.calendar.google.com"
+               placeholder="vacation@your-company.com  or  xyz@group.calendar.google.com"
                value="{{ env.GOOGLE_CALENDAR_ID ?? '' }}">
     </div>
 
     <div>
-        <label class="label"><span class="label-text">Kalender-Owner (Impersonation-Target)</span></label>
+        <label class="label"><span class="label-text">{{ 'setup.oauth.google.field.calendar_owner'|trans }}</span></label>
         <input type="email" name="google_calendar_owner" required class="input input-bordered w-full"
-               placeholder="abwesenheit@eure-firma.de"
+               placeholder="vacation@your-company.com"
                value="{{ env.GOOGLE_CALENDAR_OWNER ?? '' }}">
         <p class="text-xs text-gray-500 mt-1">
-            User, dessen Account der Service-Account impersoniert um den Kalender zu schreiben.
-            Muss Schreibrechte auf den Kalender haben.
+            {{ 'setup.oauth.google.field.calendar_owner.hint'|trans }}
         </p>
     </div>
 
     <hr class="my-2 border-gray-200">
 
     <div>
-        <label class="label"><span class="label-text">HR-Verteiler-Mail (Krankmeldungen)</span></label>
+        <label class="label"><span class="label-text">{{ 'setup.oauth.field.hr_email'|trans }}</span></label>
         <input type="text" name="hr_notification_email" required class="input input-bordered w-full"
-               placeholder="hr@eure-firma.de"
+               placeholder="hr@your-company.com"
                value="{{ env.HR_NOTIFICATION_EMAIL ?? '' }}">
         <p class="text-xs text-gray-500 mt-1">
-            Mehrere Adressen erlaubt — komma- oder semikolon-separiert.
+            {{ 'setup.oauth.field.hr_email.hint'|trans }}
         </p>
     </div>
 
     <div class="flex justify-between pt-3">
-        <a href="/setup/org" class="btn btn-ghost">← Zurück</a>
-        <button type="submit" class="btn btn-primary">Weiter →</button>
+        <a href="/setup/org" class="btn btn-ghost">{{ 'setup.action.back'|trans }}</a>
+        <button type="submit" class="btn btn-primary">{{ 'setup.action.next'|trans }}</button>
     </div>
 </form>
 {% endif %}

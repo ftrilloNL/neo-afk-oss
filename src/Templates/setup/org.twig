@@ -1,32 +1,31 @@
 {% extends 'setup/layout.twig' %}
 
 {% block content %}
-<h1 class="text-2xl font-bold mb-2">Organisation</h1>
+<h1 class="text-2xl font-bold mb-2">{{ 'setup.org.heading'|trans }}</h1>
 <p class="text-gray-600 mb-6 leading-relaxed">
-    Branding und Default-Werte für eure Instanz.
+    {{ 'setup.org.body'|trans }}
 </p>
 
 <form method="post" action="/setup/org" class="space-y-5">
     <div>
-        <label class="label"><span class="label-text">APP_URL — öffentliche Adresse der App</span></label>
+        <label class="label"><span class="label-text">{{ 'setup.org.field.app_url'|trans }}</span></label>
         <input type="url" name="app_url" required class="input input-bordered w-full"
-               placeholder="https://afk.eure-firma.de"
+               placeholder="https://afk.your-company.com"
                value="{{ env.APP_URL ?? '' }}">
         <p class="text-xs text-gray-500 mt-1">
-            Wird als Redirect-URI für M365-OAuth verwendet
-            (<code>APP_URL/auth/callback</code>) und in Mails verlinkt.
+            {{ 'setup.org.field.app_url.hint'|trans|raw }}
         </p>
     </div>
 
     <div class="grid grid-cols-2 gap-3">
         <div>
-            <label class="label"><span class="label-text">ORG_NAME (Anzeigename)</span></label>
+            <label class="label"><span class="label-text">{{ 'setup.org.field.name'|trans }}</span></label>
             <input type="text" name="org_name" required class="input input-bordered w-full"
                    placeholder="afk"
                    value="{{ env.ORG_NAME ?? '' }}">
         </div>
         <div>
-            <label class="label"><span class="label-text">ORG_SHORT_NAME (Tab / Mobile)</span></label>
+            <label class="label"><span class="label-text">{{ 'setup.org.field.short_name'|trans }}</span></label>
             <input type="text" name="org_short_name" required class="input input-bordered w-full"
                    placeholder="afk"
                    value="{{ env.ORG_SHORT_NAME ?? '' }}">
@@ -34,21 +33,21 @@
     </div>
 
     <div>
-        <label class="label"><span class="label-text">ORG_LEGAL_NAME (im Footer)</span></label>
+        <label class="label"><span class="label-text">{{ 'setup.org.field.legal_name'|trans }}</span></label>
         <input type="text" name="org_legal_name" required class="input input-bordered w-full"
-               placeholder="Eure Firma GmbH"
+               placeholder="Your Company Inc."
                value="{{ env.ORG_LEGAL_NAME ?? '' }}">
     </div>
 
     <div class="grid grid-cols-2 gap-3">
         <div>
-            <label class="label"><span class="label-text">Support-Email</span></label>
+            <label class="label"><span class="label-text">{{ 'setup.org.field.support_email'|trans }}</span></label>
             <input type="email" name="org_support_email" required class="input input-bordered w-full"
-                   placeholder="it@eure-firma.de"
+                   placeholder="it@your-company.com"
                    value="{{ env.ORG_SUPPORT_EMAIL ?? '' }}">
         </div>
         <div>
-            <label class="label"><span class="label-text">Akzentfarbe (HEX)</span></label>
+            <label class="label"><span class="label-text">{{ 'setup.org.field.accent_color'|trans }}</span></label>
             <input type="text" name="org_accent_color" required class="input input-bordered w-full"
                    placeholder="#3b82f6"
                    pattern="^#[0-9a-fA-F]{6}$"
@@ -57,18 +56,18 @@
     </div>
 
     <div>
-        <label class="label"><span class="label-text">Default-Urlaubsanspruch (Tage/Jahr)</span></label>
+        <label class="label"><span class="label-text">{{ 'setup.org.field.default_jahresanspruch'|trans }}</span></label>
         <input type="number" name="default_jahresanspruch" required min="1" max="50"
                class="input input-bordered w-full"
                value="{{ env.ORG_DEFAULT_JAHRESANSPRUCH ?? '30' }}">
         <p class="text-xs text-gray-500 mt-1">
-            Wird beim Anlegen neuer MA als Vorschlag genutzt — pro User in HR anpassbar.
+            {{ 'setup.org.field.default_jahresanspruch.hint'|trans }}
         </p>
     </div>
 
     <div class="flex justify-between pt-3">
-        <a href="/setup/db" class="btn btn-ghost">← Zurück</a>
-        <button type="submit" class="btn btn-primary">Weiter →</button>
+        <a href="/setup/db" class="btn btn-ghost">{{ 'setup.action.back'|trans }}</a>
+        <button type="submit" class="btn btn-primary">{{ 'setup.action.next'|trans }}</button>
     </div>
 </form>
 {% endblock %}

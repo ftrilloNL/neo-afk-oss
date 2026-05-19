@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
-    <title>Setup · {{ org.short_name }}</title>
+    <title>{{ 'setup.title'|trans }} · {{ org.short_name }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
@@ -17,9 +17,9 @@
     <header class="bg-white border-b border-gray-200">
         <div class="max-w-3xl mx-auto px-6 py-5 flex items-center gap-3">
             <img src="{{ org.logo_url }}" alt="" class="w-8 h-8">
-            <span class="font-bold text-lg tracking-tight">Setup-Assistent</span>
+            <span class="font-bold text-lg tracking-tight">{{ 'setup.title'|trans }}</span>
             <span class="ml-auto text-sm text-gray-500">
-                Schritt {{ current.nr }} von {{ steps|length }}: {{ current.label }}
+                {{ 'setup.step_indicator'|trans({'%nr%': current.nr, '%total%': steps|length, '%label%': ('setup.step.' ~ current.key)|trans}) }}
             </span>
         </div>
         <div class="max-w-3xl mx-auto px-6 pb-4">
@@ -35,7 +35,7 @@
         <div class="max-w-3xl mx-auto">
             {% if error is defined and error %}
                 <div class="mb-5 px-4 py-3 rounded-md bg-red-50 border border-red-200 text-sm text-red-800">
-                    <strong>Problem:</strong> {{ error }}
+                    <strong>{{ 'setup.error_prefix'|trans }}</strong> {{ error }}
                 </div>
             {% endif %}
             <div class="bg-white border border-card-border rounded-xl p-8">
@@ -45,7 +45,7 @@
     </main>
 
     <footer class="py-6 text-center text-xs text-gray-500">
-        neo-afk Setup · <a href="https://github.com/ftrilloNL/neo-afk-oss" class="underline">Doku</a>
+        {{ 'setup.footer_doc_link'|trans|raw }}
     </footer>
 </div>
 

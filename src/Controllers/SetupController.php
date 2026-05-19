@@ -8,6 +8,7 @@ use GuzzleHttp\Client as HttpClient;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Views\Twig;
+use Symfony\Component\Translation\Translator;
 
 /**
  * Setup-Wizard. Sammelt DB-Credentials, Schema/Seeds, Org-Branding,
@@ -24,15 +25,17 @@ use Slim\Views\Twig;
  */
 final class SetupController
 {
+    // Step labels are looked up via translation key `setup.step.<slug>` --
+    // see template setup/layout.twig. Only the numeric order is fixed here.
     private const STEPS = [
-        'intro'    => ['nr' => 1, 'label' => 'Voraussetzungen'],
-        'provider' => ['nr' => 2, 'label' => 'Provider'],
-        'db'       => ['nr' => 3, 'label' => 'Datenbank'],
-        'org'      => ['nr' => 4, 'label' => 'Organisation'],
-        'oauth'    => ['nr' => 5, 'label' => 'SSO + Integration'],
-        'smtp'     => ['nr' => 6, 'label' => 'E-Mail-Versand'],
-        'admin'    => ['nr' => 7, 'label' => 'Admin-Konto'],
-        'finish'   => ['nr' => 8, 'label' => 'Fertig'],
+        'intro'    => ['nr' => 1],
+        'provider' => ['nr' => 2],
+        'db'       => ['nr' => 3],
+        'org'      => ['nr' => 4],
+        'oauth'    => ['nr' => 5],
+        'smtp'     => ['nr' => 6],
+        'admin'    => ['nr' => 7],
+        'finish'   => ['nr' => 8],
     ];
 
     public function __construct(
@@ -40,6 +43,7 @@ final class SetupController
         private readonly Twig $view,
         private readonly EnvWriter $env,
         private readonly string $rootPath,
+        private readonly Translator $translator,
     ) {
     }
 
@@ -47,7 +51,7 @@ final class SetupController
     {
         $marker = $this->rootPath . '/var/secrets/setup-completed';
         if (is_file($marker)) {
-            $response->getBody()->write('Setup bereits abgeschlossen.');
+            $response->getBody()->write($this->translator->trans('setup.completed_message'));
             return $response->withStatus(410);
         }
         $setupMode = $_ENV['SETUP_MODE'] ?? 'false';
@@ -83,7 +87,7 @@ final class SetupController
         }
         $choice = (string) (($request->getParsedBody() ?? [])['identity_provider'] ?? '');
         if (!in_array($choice, ['microsoft', 'google'], true)) {
-            $_SESSION['setup_error'] = 'Bitte einen Provider waehlen.';
+            $_SESSION['setup_error'] = $this->translator->trans('setup.error.choose_provider');
             return $response->withHeader('Location', '/setup/provider')->withStatus(302);
         }
         $this->env->update(['IDENTITY_PROVIDER' => $choice]);
@@ -129,13 +133,13 @@ final class SetupController
 
         try {
             if ($host === '' || $name === '' || $user === '' || $bundesland === '') {
-                throw new \RuntimeException('Bitte alle Pflichtfelder ausfuellen.');
+                throw new \RuntimeException($this->translator->trans('setup.error.required_fields'));
             }
             $pdo = $this->connectPdo($host, $port, $name, $user, $pass);
             $this->applySql($pdo, $this->rootPath . '/migrations/schema.sql');
             $seedFile = $this->rootPath . '/migrations/seeds/feiertage-' . $bundesland . '.sql';
             if (!is_file($seedFile)) {
-                throw new \RuntimeException("Seed-File fehlt: migrations/seeds/feiertage-{$bundesland}.sql");
+                throw new \RuntimeException($this->translator->trans('setup.error.seed_missing', ['%bundesland%' => $bundesland]));
             }
             $this->applySql($pdo, $seedFile);
 
@@ -175,11 +179,11 @@ final class SetupController
         $appUrl = rtrim(trim((string) ($data['app_url'] ?? '')), '/');
         $errors = [];
         if (!preg_match('~^https?://[^\s/]+~', $appUrl)) {
-            $errors[] = 'APP_URL muss mit http(s):// beginnen.';
+            $errors[] = $this->translator->trans('setup.error.app_url_format');
         }
         $jahresanspruch = (int) ($data['default_jahresanspruch'] ?? 30);
         if ($jahresanspruch < 1 || $jahresanspruch > 50) {
-            $errors[] = 'Jahresanspruch muss zwischen 1 und 50 liegen.';
+            $errors[] = $this->translator->trans('setup.error.jahresanspruch_range');
         }
         if ($errors) {
             $_SESSION['setup_error'] = implode(' ', $errors);
@@ -225,13 +229,13 @@ final class SetupController
 
         $errors = [];
         if ($clientId === '') {
-            $errors[] = 'OAuth Client-ID darf nicht leer sein.';
+            $errors[] = $this->translator->trans('setup.error.oauth.client_id_required');
         }
         if ($clientSecret === '') {
-            $errors[] = 'OAuth Client-Secret darf nicht leer sein.';
+            $errors[] = $this->translator->trans('setup.error.oauth.client_secret_required');
         }
         if ($hrMail === '') {
-            $errors[] = 'HR-Verteiler-Mail darf nicht leer sein.';
+            $errors[] = $this->translator->trans('setup.error.oauth.hr_email_required');
         }
 
         $updates = [
@@ -244,13 +248,13 @@ final class SetupController
             $tenant = trim((string) ($data['oauth_tenant_id'] ?? ''));
             $graphUser = trim((string) ($data['graph_calendar_user'] ?? ''));
             if (!preg_match('/^[0-9a-f-]{36}$/i', $tenant)) {
-                $errors[] = 'Tenant-ID muss eine GUID sein.';
+                $errors[] = $this->translator->trans('setup.error.oauth.tenant_guid');
             }
             if (!preg_match('/^[0-9a-f-]{36}$/i', $clientId)) {
-                $errors[] = 'Client-ID muss eine GUID sein.';
+                $errors[] = $this->translator->trans('setup.error.oauth.client_id_guid');
             }
             if (!filter_var($graphUser, FILTER_VALIDATE_EMAIL)) {
-                $errors[] = 'Shared-Mailbox-Email ungueltig.';
+                $errors[] = $this->translator->trans('setup.error.oauth.shared_mailbox_invalid');
             }
             $updates['OAUTH_TENANT_ID'] = $tenant;
             $updates['GRAPH_CALENDAR_USER'] = $graphUser;
@@ -259,13 +263,13 @@ final class SetupController
             $calendarId = trim((string) ($data['google_calendar_id'] ?? ''));
             $calendarOwner = trim((string) ($data['google_calendar_owner'] ?? ''));
             if ($workspaceDomain === '') {
-                $errors[] = 'Workspace-Domain darf nicht leer sein.';
+                $errors[] = $this->translator->trans('setup.error.oauth.workspace_domain_required');
             }
             if ($calendarId === '') {
-                $errors[] = 'Kalender-ID darf nicht leer sein.';
+                $errors[] = $this->translator->trans('setup.error.oauth.calendar_id_required');
             }
             if (!filter_var($calendarOwner, FILTER_VALIDATE_EMAIL)) {
-                $errors[] = 'Kalender-Owner-Email ungueltig.';
+                $errors[] = $this->translator->trans('setup.error.oauth.calendar_owner_invalid');
             }
 
             // Service-Account-JSON-Upload entgegennehmen und persistieren.
@@ -275,12 +279,12 @@ final class SetupController
                 $contents = (string) $keyFile->getStream()->getContents();
                 $decoded = json_decode($contents, true);
                 if (!is_array($decoded) || !isset($decoded['client_email'], $decoded['private_key'])) {
-                    $errors[] = 'Service-Account-JSON ungueltig (client_email + private_key erwartet).';
+                    $errors[] = $this->translator->trans('setup.error.oauth.service_account_invalid');
                 } else {
                     $this->saveServiceAccountKey($contents);
                 }
             } elseif (!is_file($this->rootPath . '/var/secrets/google-service-account.json')) {
-                $errors[] = 'Service-Account-JSON-Datei fehlt — bitte hochladen.';
+                $errors[] = $this->translator->trans('setup.error.oauth.service_account_missing');
             }
 
             $updates['GOOGLE_WORKSPACE_DOMAIN'] = $workspaceDomain;
@@ -338,7 +342,7 @@ final class SetupController
         $from = trim((string) ($data['smtp_from_email'] ?? ''));
         $name = trim((string) ($data['smtp_from_name'] ?? ''));
         if (!filter_var($from, FILTER_VALIDATE_EMAIL)) {
-            $_SESSION['setup_error'] = 'From-Email ungueltig.';
+            $_SESSION['setup_error'] = $this->translator->trans('setup.error.from_email_invalid');
             return $response->withHeader('Location', '/setup/smtp')->withStatus(302);
         }
         $this->env->update([
@@ -361,7 +365,7 @@ final class SetupController
         $name = trim((string) ($data['smtp_from_name'] ?? ''));
 
         if (!filter_var($from, FILTER_VALIDATE_EMAIL)) {
-            $_SESSION['setup_error'] = 'SMTP-From-Email ungueltig.';
+            $_SESSION['setup_error'] = $this->translator->trans('setup.error.smtp.from_email_invalid');
             return $response->withHeader('Location', '/setup/smtp')->withStatus(302);
         }
         $this->env->update([
@@ -375,7 +379,7 @@ final class SetupController
         $tenant = $_ENV['OAUTH_TENANT_ID'] ?? '';
         $clientId = $_ENV['OAUTH_CLIENT_ID'] ?? '';
         if ($tenant === '' || $clientId === '') {
-            $_SESSION['setup_error'] = 'OAuth-Werte fehlen — bitte Step 4 abschliessen.';
+            $_SESSION['setup_error'] = $this->translator->trans('setup.error.smtp.oauth_incomplete');
             return $response->withHeader('Location', '/setup/oauth')->withStatus(302);
         }
 
@@ -398,7 +402,7 @@ final class SetupController
             ];
             unset($_SESSION['setup_error']);
         } catch (\Throwable $e) {
-            $_SESSION['setup_error'] = 'Device-Code konnte nicht geholt werden: ' . $e->getMessage();
+            $_SESSION['setup_error'] = $this->translator->trans('setup.error.smtp.device_code_failed', ['%detail%' => $e->getMessage()]);
         }
         return $response->withHeader('Location', '/setup/smtp')->withStatus(302);
     }
@@ -462,7 +466,7 @@ final class SetupController
             return $gate;
         }
         if (($_SESSION['setup_device_flow']['status'] ?? '') !== 'success') {
-            $_SESSION['setup_error'] = 'SMTP-Token noch nicht autorisiert.';
+            $_SESSION['setup_error'] = $this->translator->trans('setup.error.smtp.token_pending');
             return $response->withHeader('Location', '/setup/smtp')->withStatus(302);
         }
         unset($_SESSION['setup_device_flow'], $_SESSION['setup_error']);
@@ -490,7 +494,7 @@ final class SetupController
         $jobTitle = trim((string) ($data['job_title'] ?? ''));
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL) || $displayName === '') {
-            $_SESSION['setup_error'] = 'Email und Anzeigename sind erforderlich.';
+            $_SESSION['setup_error'] = $this->translator->trans('setup.error.admin.required');
             return $response->withHeader('Location', '/setup/admin')->withStatus(302);
         }
         try {
@@ -505,7 +509,7 @@ final class SetupController
             $stmt = $pdo->prepare('SELECT id FROM users WHERE email = ?');
             $stmt->execute([$email]);
             if ($stmt->fetchColumn()) {
-                $_SESSION['setup_error'] = 'User mit dieser Email existiert bereits.';
+                $_SESSION['setup_error'] = $this->translator->trans('setup.error.admin.duplicate');
                 return $response->withHeader('Location', '/setup/admin')->withStatus(302);
             }
             $jahresanspruch = (int) ($envValues['ORG_DEFAULT_JAHRESANSPRUCH'] ?? 30);
@@ -518,7 +522,7 @@ final class SetupController
             unset($_SESSION['setup_error']);
             return $response->withHeader('Location', '/setup/finish')->withStatus(302);
         } catch (\Throwable $e) {
-            $_SESSION['setup_error'] = 'DB-Fehler: ' . $e->getMessage();
+            $_SESSION['setup_error'] = $this->translator->trans('setup.error.db_error', ['%detail%' => $e->getMessage()]);
             return $response->withHeader('Location', '/setup/admin')->withStatus(302);
         }
     }
@@ -555,7 +559,9 @@ final class SetupController
     {
         $vars['step'] = $step;
         $vars['steps'] = self::STEPS;
-        $vars['current'] = self::STEPS[$step];
+        // Inject the slug as `key` so the template can resolve the label via
+        // `('setup.step.' ~ current.key)|trans`.
+        $vars['current'] = self::STEPS[$step] + ['key' => $step];
         return $this->view->render($response, 'setup/' . $step . '.twig', $vars);
     }
 
@@ -594,7 +600,7 @@ final class SetupController
     {
         $sql = file_get_contents($sqlFile);
         if ($sql === false) {
-            throw new \RuntimeException("Kann SQL-File nicht lesen: {$sqlFile}");
+            throw new \RuntimeException($this->translator->trans('setup.error.sql_unreadable', ['%file%' => $sqlFile]));
         }
         // Einfache Statement-Trennung — funktioniert fuer schema.sql und seeds,
         // die keine procedural code blocks enthalten.

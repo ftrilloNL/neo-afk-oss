@@ -1,67 +1,30 @@
 {% extends 'setup/layout.twig' %}
 
 {% block content %}
-<h1 class="text-2xl font-bold mb-2">Willkommen beim neo-afk Setup</h1>
+<h1 class="text-2xl font-bold mb-2">{{ 'setup.intro.heading'|trans }}</h1>
 <p class="text-gray-600 mb-6 leading-relaxed">
-    Der Assistent richtet eine frische Installation ein. Du brauchst:
+    {{ 'setup.intro.body'|trans }}
 </p>
 
 <ul class="space-y-3 mb-8">
+    {% for i in [1, 2, 3, 4] %}
     <li class="flex gap-3">
-        <span class="mt-0.5 w-5 h-5 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center shrink-0">1</span>
+        <span class="mt-0.5 w-5 h-5 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center shrink-0">{{ i }}</span>
         <div>
-            <strong class="block">Microsoft 365 Tenant mit Admin-Zugriff</strong>
+            <strong class="block">{{ ('setup.intro.req' ~ i ~ '.title')|trans|raw }}</strong>
             <span class="text-sm text-gray-600">
-                Du musst eine App-Registrierung in Entra ID anlegen. Anleitung:
-                <a href="https://github.com/ftrilloNL/neo-afk-oss/blob/main/docs/entra-id-setup.md"
-                   target="_blank" class="underline">docs/entra-id-setup.md</a>.
-                Notiere Client-ID, Tenant-ID, Client-Secret.
+                {{ ('setup.intro.req' ~ i ~ '.body')|trans|raw }}
             </span>
         </div>
     </li>
-    <li class="flex gap-3">
-        <span class="mt-0.5 w-5 h-5 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center shrink-0">2</span>
-        <div>
-            <strong class="block">Shared Mailbox + lizenziertes „noreply"-Postfach</strong>
-            <span class="text-sm text-gray-600">
-                Geteilter Kalender = Shared Mailbox (z.B. <code>urlaub@…</code>).
-                Mail-Versand = lizenziertes Postfach (z.B. <code>noreply@…</code>) mit
-                Auth-SMTP aktiviert. Details in
-                <a href="https://github.com/ftrilloNL/neo-afk-oss/blob/main/docs/smtp-setup.md"
-                   target="_blank" class="underline">docs/smtp-setup.md</a>.
-            </span>
-        </div>
-    </li>
-    <li class="flex gap-3">
-        <span class="mt-0.5 w-5 h-5 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center shrink-0">3</span>
-        <div>
-            <strong class="block">DB-Zugang (MySQL/MariaDB)</strong>
-            <span class="text-sm text-gray-600">
-                Leere Datenbank, ein User mit Schreibrechten. Schema legt der
-                Wizard im nächsten Schritt selbst an.
-            </span>
-        </div>
-    </li>
-    <li class="flex gap-3">
-        <span class="mt-0.5 w-5 h-5 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center shrink-0">4</span>
-        <div>
-            <strong class="block">Schreibrechte auf <code>.env</code> + <code>var/secrets/</code></strong>
-            <span class="text-sm text-gray-600">
-                Der Webserver-User muss in diese Pfade schreiben können —
-                sonst kann der Wizard keine Werte persistieren.
-            </span>
-        </div>
-    </li>
+    {% endfor %}
 </ul>
 
 <div class="bg-yellow-50 border border-yellow-200 rounded-md px-4 py-3 mb-6 text-sm">
-    <strong>Sicherheitshinweis:</strong> dieser Setup ist <em>nicht</em>
-    authentifiziert. Nach Abschluss schaltet der Wizard sich selbst ab
-    (<code>SETUP_MODE=false</code> + Lock-Datei). Bis dahin: nicht öffentlich
-    erreichbar lassen.
+    {{ 'setup.intro.security_warning'|trans|raw }}
 </div>
 
 <div class="flex justify-end">
-    <a href="/setup/provider" class="btn btn-primary">Setup starten →</a>
+    <a href="/setup/provider" class="btn btn-primary">{{ 'setup.intro.start_btn'|trans }}</a>
 </div>
 {% endblock %}

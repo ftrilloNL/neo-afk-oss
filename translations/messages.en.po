@@ -1394,3 +1394,448 @@ msgstr "Note: %notiz%"
 
 msgid "mail.hr_erfassung.closing"
 msgstr "If you have questions, contact your HR team directly."
+
+# ---- Setup Wizard (chrome) ----
+msgid "setup.title"
+msgstr "Setup wizard"
+
+msgid "setup.step_indicator"
+msgstr "Step %nr% of %total%: %label%"
+
+msgid "setup.error_prefix"
+msgstr "Issue:"
+
+msgid "setup.footer_doc_link"
+msgstr "neo-afk Setup · <a href=\"https://github.com/ftrilloNL/neo-afk-oss\" class=\"underline\">Docs</a>"
+
+msgid "setup.action.back"
+msgstr "← Back"
+
+msgid "setup.action.next"
+msgstr "Next →"
+
+# ---- Setup step labels ----
+msgid "setup.step.intro"
+msgstr "Prerequisites"
+
+msgid "setup.step.provider"
+msgstr "Provider"
+
+msgid "setup.step.db"
+msgstr "Database"
+
+msgid "setup.step.org"
+msgstr "Organization"
+
+msgid "setup.step.oauth"
+msgstr "SSO + Integration"
+
+msgid "setup.step.smtp"
+msgstr "Email delivery"
+
+msgid "setup.step.admin"
+msgstr "Admin account"
+
+msgid "setup.step.finish"
+msgstr "Done"
+
+# ---- Setup: intro ----
+msgid "setup.intro.heading"
+msgstr "Welcome to neo-afk setup"
+
+msgid "setup.intro.body"
+msgstr "The wizard sets up a fresh installation. You'll need:"
+
+msgid "setup.intro.req1.title"
+msgstr "Microsoft 365 tenant with admin access"
+
+msgid "setup.intro.req1.body"
+msgstr "You'll need to create an app registration in Entra ID. Guide: <a href=\"https://github.com/ftrilloNL/neo-afk-oss/blob/main/docs/entra-id-setup.md\" target=\"_blank\" class=\"underline\">docs/entra-id-setup.md</a>. Note the Client ID, Tenant ID, and Client Secret."
+
+msgid "setup.intro.req2.title"
+msgstr "Shared mailbox + licensed \"noreply\" mailbox"
+
+msgid "setup.intro.req2.body"
+msgstr "Shared calendar = shared mailbox (e.g. <code>vacation@…</code>). Mail sending = licensed mailbox (e.g. <code>noreply@…</code>) with auth-SMTP enabled. Details in <a href=\"https://github.com/ftrilloNL/neo-afk-oss/blob/main/docs/smtp-setup.md\" target=\"_blank\" class=\"underline\">docs/smtp-setup.md</a>."
+
+msgid "setup.intro.req3.title"
+msgstr "Database access (MySQL/MariaDB)"
+
+msgid "setup.intro.req3.body"
+msgstr "Empty database, one user with write access. The wizard will create the schema in the next step."
+
+msgid "setup.intro.req4.title"
+msgstr "Write access to <code>.env</code> + <code>var/secrets/</code>"
+
+msgid "setup.intro.req4.body"
+msgstr "The webserver user must be able to write to these paths — otherwise the wizard cannot persist any values."
+
+msgid "setup.intro.security_warning"
+msgstr "<strong>Security note:</strong> this setup is <em>not</em> authenticated. After completion the wizard locks itself (<code>SETUP_MODE=false</code> + lock file). Until then: do not leave it publicly reachable."
+
+msgid "setup.intro.start_btn"
+msgstr "Start setup →"
+
+# ---- Setup: provider ----
+msgid "setup.provider.heading"
+msgstr "Identity provider"
+
+msgid "setup.provider.body"
+msgstr "Which SSO + which cloud suite does your org use? This choice drives login, the shared calendar, auto-out-of-office and mail delivery."
+
+msgid "setup.provider.microsoft.label"
+msgstr "Microsoft 365 / Entra ID"
+
+msgid "setup.provider.microsoft.body"
+msgstr "SSO via Entra ID OAuth, shared-mailbox calendar via Microsoft Graph, out-of-office via MailboxSettings, mail sending via Office365 SMTP with XOAUTH2. Refresh token is obtained in the next step via device-code flow."
+
+msgid "setup.provider.google.label"
+msgstr "Google Workspace"
+
+msgid "setup.provider.google.body"
+msgstr "SSO via Google Identity, shared Workspace calendar via the Calendar API, out-of-office via Gmail Vacation Settings, mail sending via the Gmail API. Setup runs through a service account with Domain-Wide Delegation (you upload the JSON key file in the next step)."
+
+# ---- Setup: db ----
+msgid "setup.db.heading"
+msgstr "Database"
+
+msgid "setup.db.body"
+msgstr "We test the connection, apply <code>schema.sql</code>, and load public holidays for your region."
+
+msgid "setup.db.field.host"
+msgstr "DB host"
+
+msgid "setup.db.field.port"
+msgstr "Port"
+
+msgid "setup.db.field.name"
+msgstr "Database name"
+
+msgid "setup.db.field.user"
+msgstr "DB user"
+
+msgid "setup.db.field.pass"
+msgstr "DB password"
+
+msgid "setup.db.field.bundesland"
+msgstr "Region for public holidays"
+
+msgid "setup.db.bundesland.placeholder"
+msgstr "— please select —"
+
+msgid "setup.db.bundesland.hint"
+msgstr "List is based on existing <code>migrations/seeds/feiertage-*.sql</code>. Missing yours? Create a file following the same pattern and reload the page."
+
+msgid "setup.db.submit"
+msgstr "Apply schema + continue →"
+
+# ---- Setup: org ----
+msgid "setup.org.heading"
+msgstr "Organization"
+
+msgid "setup.org.body"
+msgstr "Branding and default values for your instance."
+
+msgid "setup.org.field.app_url"
+msgstr "APP_URL — public address of the app"
+
+msgid "setup.org.field.app_url.hint"
+msgstr "Used as redirect URI for M365 OAuth (<code>APP_URL/auth/callback</code>) and linked in emails."
+
+msgid "setup.org.field.name"
+msgstr "ORG_NAME (display name)"
+
+msgid "setup.org.field.short_name"
+msgstr "ORG_SHORT_NAME (tab / mobile)"
+
+msgid "setup.org.field.legal_name"
+msgstr "ORG_LEGAL_NAME (in the footer)"
+
+msgid "setup.org.field.support_email"
+msgstr "Support email"
+
+msgid "setup.org.field.accent_color"
+msgstr "Accent color (HEX)"
+
+msgid "setup.org.field.default_jahresanspruch"
+msgstr "Default vacation allowance (days/year)"
+
+msgid "setup.org.field.default_jahresanspruch.hint"
+msgstr "Used as a default when adding new employees — adjustable per user in HR."
+
+# ---- Setup: oauth (microsoft) ----
+msgid "setup.oauth.ms.heading"
+msgstr "Microsoft 365 OAuth + Graph"
+
+msgid "setup.oauth.ms.body"
+msgstr "Values from your Entra ID app registration. If not yet created: <a href=\"https://github.com/ftrilloNL/neo-afk-oss/blob/main/docs/entra-id-setup.md\" target=\"_blank\" class=\"underline\">docs/entra-id-setup.md</a>."
+
+msgid "setup.oauth.redirect_label"
+msgstr "Your redirect URI for the Web platform:"
+
+msgid "setup.oauth.ms.field.tenant"
+msgstr "Tenant ID (GUID)"
+
+msgid "setup.oauth.ms.field.client_id"
+msgstr "Client ID (GUID)"
+
+msgid "setup.oauth.ms.field.client_secret"
+msgstr "Client Secret"
+
+msgid "setup.oauth.ms.field.client_secret.hint"
+msgstr "From \"Certificates &amp; secrets → Value\" (not Secret ID)."
+
+msgid "setup.oauth.field.shared_mailbox"
+msgstr "Shared mailbox for the shared calendar"
+
+msgid "setup.oauth.field.shared_mailbox.hint"
+msgstr "Mailbox that hosts the shared absences calendar."
+
+msgid "setup.oauth.field.hr_email"
+msgstr "HR distribution email (sick leave)"
+
+msgid "setup.oauth.field.hr_email.hint"
+msgstr "Multiple addresses allowed — comma or semicolon separated."
+
+# ---- Setup: oauth (google) ----
+msgid "setup.oauth.google.heading"
+msgstr "Google Workspace"
+
+msgid "setup.oauth.google.body"
+msgstr "OAuth client (browser SSO) plus service account (Calendar + Gmail). Guide: <a href=\"https://github.com/ftrilloNL/neo-afk-oss/blob/main/docs/google-workspace-setup.md\" target=\"_blank\" class=\"underline\">docs/google-workspace-setup.md</a>."
+
+msgid "setup.oauth.google.redirect_label"
+msgstr "Your redirect URI in the GCP console (Web OAuth client):"
+
+msgid "setup.oauth.google.section.oauth"
+msgstr "OAuth client (browser SSO)"
+
+msgid "setup.oauth.google.field.client_id"
+msgstr "OAuth Client ID"
+
+msgid "setup.oauth.google.field.client_secret"
+msgstr "OAuth Client Secret"
+
+msgid "setup.oauth.google.field.client_secret.hint"
+msgstr "From the Web OAuth client in the GCP console."
+
+msgid "setup.oauth.google.section.service_account"
+msgstr "Service account (Calendar + Gmail)"
+
+msgid "setup.oauth.google.field.service_account_json"
+msgstr "Service-account JSON key"
+
+msgid "setup.oauth.google.field.service_account_json.already_uploaded"
+msgstr "(already uploaded, leave empty if unchanged)"
+
+msgid "setup.oauth.google.field.service_account_json.hint"
+msgstr "JSON key from the GCP console (IAM &amp; Admin → Service Accounts → Keys). Stored at <code>var/secrets/google-service-account.json</code> (chmod 0600)."
+
+msgid "setup.oauth.google.field.workspace_domain"
+msgstr "Workspace domain"
+
+msgid "setup.oauth.google.field.workspace_domain.hint"
+msgstr "Restricts logins to accounts from this Workspace domain (hd check)."
+
+msgid "setup.oauth.google.field.calendar_id"
+msgstr "Calendar ID"
+
+msgid "setup.oauth.google.field.calendar_owner"
+msgstr "Calendar owner (impersonation target)"
+
+msgid "setup.oauth.google.field.calendar_owner.hint"
+msgstr "User the service account impersonates when writing to the calendar. Must have write access to the calendar."
+
+# ---- Setup: smtp (google) ----
+msgid "setup.smtp.google.heading"
+msgstr "Mail delivery (Gmail API)"
+
+msgid "setup.smtp.google.body"
+msgstr "With Google Workspace we reuse the already-configured service account for mail delivery via the Gmail API — no extra credentials needed. Just set the FROM address + display name."
+
+msgid "setup.smtp.field.from_email"
+msgstr "From email"
+
+msgid "setup.smtp.google.from_email.hint"
+msgstr "The service account must be allowed to impersonate this mailbox via Domain-Wide Delegation. Guide in <a href=\"https://github.com/ftrilloNL/neo-afk-oss/blob/main/docs/google-workspace-setup.md\" target=\"_blank\" class=\"underline\">docs/google-workspace-setup.md</a>."
+
+msgid "setup.smtp.field.from_name"
+msgstr "From name (display name)"
+
+# ---- Setup: smtp (microsoft) ----
+msgid "setup.smtp.ms.heading"
+msgstr "Mail delivery"
+
+msgid "setup.smtp.ms.body"
+msgstr "SMTP via XOAUTH2 against the \"noreply\" mailbox. We obtain a refresh token via device-code flow — you log in briefly in a new tab, come back, done."
+
+msgid "setup.smtp.field.host"
+msgstr "SMTP host"
+
+msgid "setup.smtp.field.port"
+msgstr "Port"
+
+msgid "setup.smtp.field.from_email.licensed"
+msgstr "From email (licensed mailbox)"
+
+msgid "setup.smtp.field.from_email.licensed.hint"
+msgstr "Must be a <strong>licensed user mailbox</strong> (shared mailboxes can't do SMTP auth). Authenticated SMTP must be enabled for this mailbox in the admin center."
+
+msgid "setup.smtp.field.from_name.sender"
+msgstr "From name (sender display)"
+
+msgid "setup.smtp.device_code_btn"
+msgstr "Get device code →"
+
+msgid "setup.smtp.device.step1"
+msgstr "1. Open this link in a new tab:"
+
+msgid "setup.smtp.device.step2"
+msgstr "2. Enter this code:"
+
+msgid "setup.smtp.device.step3"
+msgstr "3. Log in as <code>%email%</code> and approve the SMTP.Send permission."
+
+msgid "setup.smtp.device.waiting"
+msgstr "Waiting for authorization…"
+
+msgid "setup.smtp.device.success"
+msgstr "<strong>✓ Successfully authorized.</strong> Refresh token stored."
+
+msgid "setup.smtp.device.restart_btn"
+msgstr "Get a new code"
+
+# ---- Setup: admin ----
+msgid "setup.admin.heading"
+msgstr "Admin account"
+
+msgid "setup.admin.body"
+msgstr "Create the first HR + approver account. The <code>entra_oid</code> stays empty initially and is automatically matched to the user on the first SSO login via the email."
+
+msgid "setup.admin.field.email"
+msgstr "Email (M365 login)"
+
+msgid "setup.admin.field.email.hint"
+msgstr "Exactly the email the person will later sign in with via SSO."
+
+msgid "setup.admin.field.display_name"
+msgstr "Display name"
+
+msgid "setup.admin.field.job_title"
+msgstr "Job title (optional)"
+
+msgid "setup.admin.field.job_title.placeholder"
+msgstr "e.g. Head of People"
+
+msgid "setup.admin.info"
+msgstr "The created user is immediately <strong>HR</strong> and <strong>Approver</strong>. Additional employees can then be added in the app under <code>/hr/users</code>."
+
+msgid "setup.admin.submit"
+msgstr "Create account + continue →"
+
+# ---- Setup: finish ----
+msgid "setup.finish.heading"
+msgstr "Almost done 🎉"
+
+msgid "setup.finish.body"
+msgstr "Database, configuration, mail delivery, and admin account are in place. Two things you still need to do outside the browser — then you can close the setup."
+
+msgid "setup.finish.cron.heading"
+msgstr "Add cron jobs"
+
+msgid "setup.finish.cron.body"
+msgstr "In your host's cron configuration (KonsoleH, crontab, Plesk, …):"
+
+msgid "setup.finish.logo.heading"
+msgstr "Replace the logo (optional)"
+
+msgid "setup.finish.logo.body"
+msgstr "<code>public/assets/logo.svg</code> is a placeholder (4 black squares). Overwrite with your own SVG and regenerate the PNG icons (180/192/512 px) — command in the <a href=\"https://github.com/ftrilloNL/neo-afk-oss#readme\" target=\"_blank\" class=\"underline\">README</a>."
+
+msgid "setup.finish.lock.heading"
+msgstr "Complete setup"
+
+msgid "setup.finish.lock.body"
+msgstr "Set <code>SETUP_MODE=false</code> in <code>.env</code> and create a lock file at <code>var/secrets/setup-completed</code>. After that <code>/setup</code> is closed."
+
+msgid "setup.finish.submit"
+msgstr "Complete setup + to login →"
+
+# ---- Setup: controller flash + validation ----
+msgid "setup.completed_message"
+msgstr "Setup already completed."
+
+msgid "setup.error.choose_provider"
+msgstr "Please choose a provider."
+
+msgid "setup.error.required_fields"
+msgstr "Please fill in all required fields."
+
+msgid "setup.error.seed_missing"
+msgstr "Seed file missing: migrations/seeds/feiertage-%bundesland%.sql"
+
+msgid "setup.error.app_url_format"
+msgstr "APP_URL must start with http(s)://."
+
+msgid "setup.error.jahresanspruch_range"
+msgstr "Yearly allowance must be between 1 and 50."
+
+msgid "setup.error.oauth.client_id_required"
+msgstr "OAuth Client ID cannot be empty."
+
+msgid "setup.error.oauth.client_secret_required"
+msgstr "OAuth Client Secret cannot be empty."
+
+msgid "setup.error.oauth.hr_email_required"
+msgstr "HR distribution email cannot be empty."
+
+msgid "setup.error.oauth.tenant_guid"
+msgstr "Tenant ID must be a GUID."
+
+msgid "setup.error.oauth.client_id_guid"
+msgstr "Client ID must be a GUID."
+
+msgid "setup.error.oauth.shared_mailbox_invalid"
+msgstr "Shared mailbox email invalid."
+
+msgid "setup.error.oauth.workspace_domain_required"
+msgstr "Workspace domain cannot be empty."
+
+msgid "setup.error.oauth.calendar_id_required"
+msgstr "Calendar ID cannot be empty."
+
+msgid "setup.error.oauth.calendar_owner_invalid"
+msgstr "Calendar owner email invalid."
+
+msgid "setup.error.oauth.service_account_invalid"
+msgstr "Service-account JSON invalid (client_email + private_key expected)."
+
+msgid "setup.error.oauth.service_account_missing"
+msgstr "Service-account JSON file missing — please upload."
+
+msgid "setup.error.from_email_invalid"
+msgstr "From email invalid."
+
+msgid "setup.error.smtp.from_email_invalid"
+msgstr "SMTP From email invalid."
+
+msgid "setup.error.smtp.oauth_incomplete"
+msgstr "OAuth values missing — please complete step 4 first."
+
+msgid "setup.error.smtp.device_code_failed"
+msgstr "Failed to obtain device code: %detail%"
+
+msgid "setup.error.smtp.token_pending"
+msgstr "SMTP token not yet authorized."
+
+msgid "setup.error.admin.required"
+msgstr "Email and display name are required."
+
+msgid "setup.error.admin.duplicate"
+msgstr "A user with this email already exists."
+
+msgid "setup.error.db_error"
+msgstr "DB error: %detail%"
+
+msgid "setup.error.sql_unreadable"
+msgstr "Cannot read SQL file: %file%"

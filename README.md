@@ -1,52 +1,68 @@
 # neo:afk
 
-Open-Source-Web-App für Abwesenheits-Tracking (Urlaub, Krankmeldung, HR-Auswertung)
-mit Microsoft-365-SSO-Integration. Gebaut für kleine Unternehmen (~10–50 MAs),
-die ihren M365-Tenant bereits nutzen und ein leichtgewichtiges,
-self-hostbares Tool wollen.
+Open-source web app for absence tracking (vacation, sick leave, HR analytics)
+with Microsoft 365 or Google Workspace SSO. Built for small companies
+(~10–50 employees) that already run M365 or Google Workspace and want a
+lightweight, self-hostable tool.
 
-## Was es kann
+## Features
 
-- **Urlaubs- und Krankmeldungs-Workflow** mit Werktage-Berechnung inkl. Feiertage und Halbtages-Korrektur
-- **Microsoft 365 SSO** via Entra ID — Login mit dem Firmen-Account
-- **Auto-Calendar-Events** im Outlook-Kalender einer Shared Mailbox (genehmigte Urlaube + Krankmeldungen, DSGVO-konform „Abwesend"-Label)
-- **Auto-Out-of-Office** beim Urlaubsstart (Texte pro Antrag editierbar, Cron-Sync zwischen mehreren zukünftigen Urlauben)
-- **HR-Stammdaten-Pflege** + Mitarbeiter-Pre-Create vor erstem SSO + anteilige Berechnung des Jahresanspruchs
-- **Audit-Log** für alle Schreib-Operationen
-- **Mobile-optimiert + PWA** (Home-Screen-Icon, Standalone-Mode)
+- **Vacation and sick-leave workflow** with workday calculation including
+  public holidays and half-day adjustments
+- **SSO** via Entra ID (Microsoft 365) or Google Identity (Workspace) —
+  log in with the corporate account
+- **Auto calendar events** in the Outlook/Workspace shared calendar
+  (approved vacations + sick leaves, privacy-compliant "Out of office"
+  label only)
+- **Auto out-of-office** at vacation start (per-request text editable;
+  cron syncs across multiple future vacations)
+- **HR master-data management** + employee pre-create before first SSO +
+  pro-rated yearly allowance calculation
+- **Audit log** for every write operation
+- **Mobile-optimized + PWA** (home-screen icon, standalone mode)
+- **Bilingual UI** out of the box (English + German). Adding more
+  languages = drop in a `messages.<locale>.po` file, see
+  [`docs/translations.md`](docs/translations.md).
 
 ## Privacy by default
 
-Interne HR-App — die Instanz soll **nicht** in Suchmaschinen auftauchen.
-Drei Layers sind ab Werk aktiv:
+Internal HR app — the instance should **not** appear in search engines.
+Three layers are active out of the box:
 
-- `public/robots.txt` mit `Disallow: /` (für brave Crawler)
-- `X-Robots-Tag: noindex, nofollow, noarchive, nosnippet` Header in
-  `public/.htaccess` (gilt auch für Bots, die `robots.txt` ignorieren —
-  Google respektiert den Header)
+- `public/robots.txt` with `Disallow: /` (for well-behaved crawlers)
+- `X-Robots-Tag: noindex, nofollow, noarchive, nosnippet` header in
+  `public/.htaccess` (covers bots that ignore `robots.txt` — Google
+  respects the header)
 - `<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">`
-  in allen Layouts (Fallback wenn der Header weggestrippt wird)
+  in every layout (fallback if the header gets stripped)
 
-Wenn ihr die Instanz absichtlich öffentlich indexieren wollt: alle drei
-ausschalten.
+If you intentionally want the instance to be indexed, disable all three.
 
 ## Stack
 
-PHP 8.2 / Slim 4 / MySQL / HTMX / Tailwind / Twig / Microsoft Graph + SMTP-OAuth2.
-~3000 LOC, keine schwergewichtigen Dependencies. Lauffähig auf Shared-Webhosting
-mit SSH + Cron-Support.
+PHP 8.2 / Slim 4 / MySQL / HTMX / Tailwind / Twig / Microsoft Graph or
+Google Calendar+Gmail APIs / `symfony/translation` for i18n.
+~3000 LOC, no heavyweight dependencies. Runs on shared web hosting with
+SSH + cron support. No `ext-intl` required.
 
-## Self-Host für eure Org
+## Self-host for your org
 
-### 1. Voraussetzungen
+### 1. Prerequisites
 
-- M365-Tenant mit Admin-Zugriff (für die App-Registrierung) — die App nutzt M365 als IdP, ohne M365 funktioniert nichts
-- Eine Domain + Subdomain mit HTTPS (z.B. `afk.eure-firma.de`)
-- Shared Webhosting mit PHP 8.2+, MySQL/MariaDB, SSH-Zugang, Cron-Support — oder vergleichbares
-- Eine Shared Mailbox in M365 für den geteilten Abwesenheits-Kalender (z.B. `urlaub@eure-firma.de`)
-- Ein lizenziertes Postfach für den Mail-Versand (z.B. `noreply@eure-firma.de`)
+- M365 tenant **or** Google Workspace tenant with admin access (for the
+  app registration / service account) — the app uses one of them as IdP;
+  pick one in the setup wizard
+- A domain + subdomain with HTTPS (e.g. `afk.your-company.com`)
+- Shared web hosting with PHP 8.2+, MySQL/MariaDB, SSH access, cron
+  support — or equivalent
+- For **Microsoft 365**: a shared mailbox for the shared absence
+  calendar (e.g. `vacation@your-company.com`) + a licensed mailbox for
+  mail delivery (e.g. `noreply@your-company.com`)
+- For **Google Workspace**: a shared Workspace calendar + an account
+  the service account can impersonate for calendar writes and mail
+  delivery
 
-### 2. Repo aufsetzen
+### 2. Set up the repo
 
 ```bash
 git clone https://github.com/ftrilloNL/neo-afk-oss.git
@@ -56,75 +72,94 @@ npm install
 npm run build:css
 ```
 
-### 3. Microsoft-Setup
+### 3. Provider setup
 
-Detaillierte Schritte in [`docs/entra-id-setup.md`](docs/entra-id-setup.md). Knapp:
+Pick **one** of:
 
-1. App-Registrierung in Entra ID anlegen
-2. Web-Plattform: Redirect-URI `https://eure-subdomain/auth/callback`
-3. Delegated Permissions: `openid profile email offline_access User.Read`
-4. Application Permissions (Admin-Konsens): `Calendars.ReadWrite` + `MailboxSettings.ReadWrite`
-5. Office 365 Exchange Online → Delegated: `SMTP.Send`
-6. Authentifizierung → „Öffentliche Clientflüsse zulassen" auf **Ja**
-7. Notiere `Client-ID`, `Tenant-ID`, `Client-Secret`
+- **Microsoft 365**: see [`docs/entra-id-setup.md`](docs/entra-id-setup.md)
+  for the Entra ID app registration. Short version: web platform with
+  redirect URI `https://<your-subdomain>/auth/callback`; delegated
+  `openid profile email offline_access User.Read`; application (admin
+  consent) `Calendars.ReadWrite` + `MailboxSettings.ReadWrite`; Office
+  365 Exchange Online delegated `SMTP.Send`; "Allow public client flows"
+  set to **Yes**. Note Client ID, Tenant ID, Client Secret.
+- **Google Workspace**: see
+  [`docs/google-workspace-setup.md`](docs/google-workspace-setup.md) for
+  the OAuth client + service account + Domain-Wide Delegation flow.
+  You'll need the OAuth Client ID/Secret, a service-account JSON key,
+  the Workspace domain, the calendar ID and an account the service
+  account can impersonate.
 
-### 4. SMTP-OAuth-Token holen
+### 4. SMTP OAuth token (Microsoft 365 only)
 
-Detaillierte Schritte in [`docs/smtp-setup.md`](docs/smtp-setup.md). Knapp:
+For the Microsoft path, fetch the SMTP refresh token. Details in
+[`docs/smtp-setup.md`](docs/smtp-setup.md):
 
 ```bash
-# Lokal oder direkt auf dem Server, mit korrekter .env:
+# Locally or directly on the server, with a working .env:
 php bin/setup-smtp-oauth.php
 ```
 
-Skript führt durch den Device-Code-Flow: Code im Browser eingeben → als
-`noreply@…` einloggen → Refresh-Token landet in `var/secrets/smtp-refresh-token`.
+The script walks you through the device-code flow: enter the code in
+your browser → log in as `noreply@…` → refresh token lands in
+`var/secrets/smtp-refresh-token`.
 
-### 5. Minimal-`.env` für den Wizard-Start
+For the Google path, mail delivery reuses the service account — no
+extra token needed.
 
-`.env.example` nach `.env` kopieren. Nur drei Werte müssen vor dem Wizard-Start
-gesetzt sein:
+### 5. Minimal `.env` for the wizard
+
+Copy `.env.example` to `.env`. Only three values must be set before the
+wizard starts:
 
 ```dotenv
 APP_ENV=production
-APP_URL=https://afk.eure-firma.de
-APP_SECRET=<32 zufaellige Bytes, z.B. `openssl rand -hex 32`>
+APP_URL=https://afk.your-company.com
+APP_SECRET=<32 random bytes, e.g. `openssl rand -hex 32`>
 SETUP_MODE=true
 ```
 
-Alles weitere (DB-Credentials, Org-Branding, M365-Werte, SMTP, HR-Verteiler,
-Feiertage-Bundesland) sammelt der Browser-Wizard im nächsten Schritt ein.
+Everything else (DB credentials, org branding, M365/Google values, SMTP,
+HR distribution email, public-holidays region) is collected by the
+browser wizard in the next step.
 
-**Schreibrechte:** der Webserver-User braucht Schreibrechte auf `.env` und
-auf `var/secrets/`, damit der Wizard Werte persistieren kann:
+**Write access:** the webserver user needs write access to `.env` and
+`var/secrets/` so the wizard can persist values:
 
 ```bash
 chmod 660 .env
 chown www-data:www-data .env var/secrets/
 ```
 
-### 6. Browser-Wizard
+### 6. Browser wizard
 
-Öffne `https://afk.eure-firma.de/setup` und folge dem Wizard. Er erledigt:
+Open `https://afk.your-company.com/setup` and follow the wizard. It
+handles:
 
-- DB-Connection-Test + `migrations/schema.sql` einspielen
-- Feiertage-Seed für euer Bundesland laden
-- Org-Branding, M365-OAuth-Werte, SMTP-Setup (inkl. Refresh-Token via
-  Device-Code-Flow im Browser) und HR-Verteiler-Mail einsammeln
-- Erste:n HR-Admin pre-createn
-- `.env` schreiben und `SETUP_MODE` auf `false` setzen
+- DB connection test + applying `migrations/schema.sql`
+- Loading the public-holidays seed for your region
+- Org branding, SSO + integration values, SMTP setup (incl. refresh
+  token via device-code flow in the browser for Microsoft) and the HR
+  distribution email
+- Pre-creating the first HR admin
+- Writing `.env` and flipping `SETUP_MODE` to `false`
 
-Der Wizard ist nur erreichbar wenn `SETUP_MODE=true` in der `.env` ist
-(default in `.env.example`) und noch kein Setup gelaufen ist
-(`var/secrets/setup-completed` existiert nicht).
+The wizard is only reachable while `SETUP_MODE=true` in `.env`
+(default in `.env.example`) and the setup-completed marker file doesn't
+exist yet (`var/secrets/setup-completed`).
 
-**Alternativer Pfad (CLI):** SQL-Files manuell einspielen + `.env` manuell
-pflegen. Siehe [`migrations/README.md`](migrations/README.md).
+**Wizard locale:** the wizard picks up the browser `Accept-Language`
+header (English or German out of the box). If you want a specific
+locale forced regardless of browser, set `DEFAULT_LOCALE=de` or `en` in
+`.env`.
+
+**Alternative CLI path:** apply the SQL files manually + edit `.env`
+manually. See [`migrations/README.md`](migrations/README.md).
 
 ### 7. Deploy
 
-Kein vorgefertigter Deploy-Workflow im Repo — Hosting-Setups variieren stark.
-Pattern für Shared-Hosting mit SSH:
+There's no pre-built deploy workflow in the repo — hosting setups vary
+too much. Pattern for shared hosting with SSH:
 
 ```bash
 rsync -avz --delete \
@@ -133,28 +168,29 @@ rsync -avz --delete \
   ./ user@host:/path/to/app/
 ```
 
-Web-Root muss auf `/public/` zeigen (nicht auf das Repo-Root — Slim-Standard).
+The web root must point at `/public/` (not the repo root — standard
+Slim layout).
 
-### 8. Cron-Jobs
+### 8. Cron jobs
 
 ```
-0 2 * * *   php /pfad/zur/app/cron/cleanup-tokens.php
-0 6 * * *   php /pfad/zur/app/cron/ooo-sync.php
-0 9 * * *   php /pfad/zur/app/cron/reminders.php
-0 2 1 1 *   php /pfad/zur/app/cron/jahreswechsel.php
-0 2 1 4 *   php /pfad/zur/app/cron/verfall.php
+0 2 * * *   php /path/to/app/cron/cleanup-tokens.php
+0 6 * * *   php /path/to/app/cron/ooo-sync.php
+0 9 * * *   php /path/to/app/cron/reminders.php
+0 2 1 1 *   php /path/to/app/cron/jahreswechsel.php
+0 2 1 4 *   php /path/to/app/cron/verfall.php
 ```
 
-### 9. Erster Login
+### 9. First login
 
-Nach dem Wizard auf `/login` → mit dem im Wizard angelegten HR-Account
-einloggen. Beim ersten SSO-Roundtrip wird die `entra_oid` via Email-Match
-ergänzt.
+After the wizard, go to `/login` and sign in with the HR account you
+created. On the first SSO round-trip the `entra_oid` (Microsoft) or
+`google_sub` (Google) is matched in via email.
 
-**Logo ersetzen (optional):** das mitgelieferte `public/assets/logo.svg` ist
-ein Platzhalter (4 schwarze Quadrate). Mit eigenem Logo überschreiben oder
-`ORG_LOGO_URL` auf einen anderen Pfad zeigen lassen. PNG-Icons regenerieren
-mit ImageMagick:
+**Replace the logo (optional):** the bundled `public/assets/logo.svg`
+is a placeholder (4 black squares). Overwrite with your own logo or
+point `ORG_LOGO_URL` at a different path. Regenerate the PNG icons
+with ImageMagick:
 
 ```bash
 for size in 180 192 512; do
@@ -166,37 +202,48 @@ for size in 180 192 512; do
 done
 ```
 
-## Architektur-Dokumentation
+## Architecture documentation
 
-Per-Subsystem in `docs/architecture/`:
+Per subsystem under `docs/architecture/`:
 
-- `overview.md` — Stack, Komponenten, externe Integrationen
-- `auth-and-integrations.md` — SSO, JWKS, CSRF, SMTP-OAuth, Microsoft Graph
-- `absence-workflow.md` — Antrag/Krank-Lifecycle, transaktionaler Approve, Storno
-- `hr-and-audit.md` — Stammdaten-Pflege, Audit-Log
-- `data-model.md` — Schema + Migrations
-- `tensions.md` — bekannte Inkonsistenzen und bewusste Vereinfachungen
+- `overview.md` — stack, components, external integrations
+- `auth-and-integrations.md` — SSO, JWKS, CSRF, SMTP OAuth, Microsoft
+  Graph, Google APIs
+- `absence-workflow.md` — vacation/sick-leave lifecycle, transactional
+  approve, cancellation
+- `hr-and-audit.md` — master-data management, audit log
+- `data-model.md` — schema + migrations
+- `tensions.md` — known inconsistencies and deliberate simplifications
 
-## Lokales Setup (Development)
+Translation workflow + how to add a new language:
+[`docs/translations.md`](docs/translations.md).
 
-1. **Voraussetzungen:** PHP 8.2+, Composer, Node.js, MySQL/MariaDB
-2. **DB lokal:** Docker-Container oder lokale MariaDB, `migrations/schema.sql` + Feiertage-Seed einspielen
-3. **Dependencies:** `composer install && npm install && npm run build:css`
-4. **`.env`** mit `APP_ENV=development` — Mails landen als HTML-File in `var/mails/`, Graph-Calls in `var/logs/graph.log` (Dev-Fallbacks)
+## Local development
+
+1. **Requirements:** PHP 8.2+, Composer, Node.js, MySQL/MariaDB
+2. **Local DB:** Docker container or local MariaDB; apply
+   `migrations/schema.sql` + a public-holidays seed
+3. **Dependencies:**
+   `composer install && npm install && npm run build:css`
+4. **`.env`** with `APP_ENV=development` — emails land as HTML files in
+   `var/mails/`, calendar/Graph calls in `var/logs/calendar.log` (dev
+   fallbacks)
 5. **Start:** `php -S localhost:8080 -t public/`
 
-## Lizenz
+## License
 
-MIT (siehe [`LICENSE`](LICENSE)).
+MIT (see [`LICENSE`](LICENSE)).
 
 ## Contributing
 
-Pull-Requests willkommen für:
+Pull requests welcome for:
 
-- Zusätzliche Bundesländer-Feiertage (Seed-Files in `migrations/seeds/`)
-- Weitere Sprachen (aktuell hardcoded deutsch — i18n nicht eingeführt)
-- Andere Country-Anpassungen (Datums-Formate, Werktage-Konventionen)
-- Bug-Fixes + Test-Coverage
+- Additional regional public-holiday seeds (files in
+  `migrations/seeds/`)
+- Additional UI languages — drop in a `translations/messages.<locale>.po`
+  file, run `composer i18n:extract` to find missing keys (see
+  [`docs/translations.md`](docs/translations.md))
+- Other country-specific conventions (date formats, workday rules)
+- Bug fixes + test coverage
 
-Größere Architektur-Änderungen vorher als Issue diskutieren.
-
+Discuss bigger architecture changes via an issue first.

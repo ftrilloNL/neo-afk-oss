@@ -1,167 +1,174 @@
 # Google Workspace Setup
 
-Anleitung fuer den Workspace-Admin. Einmalig vor dem Setup-Wizard durchzufuehren.
-Ergebnis: ein OAuth-Client (Browser-SSO), ein Service-Account (Calendar + Gmail
-via Domain-Wide Delegation) und ein JSON-Key, den ihr im Wizard hochladet.
+Guide for the Workspace admin. Run once before the setup wizard. The end
+result: an OAuth client (browser SSO), a service account (Calendar +
+Gmail via Domain-Wide Delegation) and a JSON key that you upload in the
+wizard.
 
-> Beispiele nutzen Platzhalter wie `afk.eure-firma.de` und `eure-firma.de` —
-> durch eure echten Werte ersetzen.
+> Examples use placeholders like `afk.your-company.com` and
+> `your-company.com` — replace with your real values.
 
-## Warum zwei Auth-Typen?
+## Why two auth types?
 
-Die App nutzt zwei voneinander getrennte Google-Identity-Flows:
+The app uses two independent Google identity flows:
 
-1. **SSO-Login (OAuth-Client)** — User loggt sich mit seinem Workspace-Account ein.
-   Browser-Redirect zu Google, Google liefert ein ID-Token zurueck. Damit weiss
-   die App, wer der User ist.
-2. **Calendar + Gmail (Service-Account mit DWD)** — Die App authentifiziert sich
-   selbst (ohne User) als Service-Account, impersoniert das Kalender-Owner-
-   bzw. das `noreply`-Postfach via Domain-Wide-Delegation und schreibt
-   Events / OOO-Settings / Mails.
+1. **SSO login (OAuth client)** — the user signs in with their
+   Workspace account. Browser redirects to Google, Google returns an
+   ID token. That's how the app knows who the user is.
+2. **Calendar + Gmail (service account with DWD)** — the app
+   authenticates itself (no user) as a service account, impersonates
+   the calendar-owner / the `noreply` mailbox via Domain-Wide
+   Delegation, and writes events / OOO settings / mail.
 
-Beides laeuft im selben GCP-Projekt.
+Both live in the same GCP project.
 
-## Schritt 1 — GCP-Projekt anlegen
+## Step 1 — create a GCP project
 
-1. https://console.cloud.google.com → **Neues Projekt**
-2. Name: `neo-afk` (oder frei waehlbar). Notiere die Project-ID.
+1. https://console.cloud.google.com → **New project**
+2. Name: `neo-afk` (or your choice). Note the project ID.
 
-## Schritt 2 — APIs aktivieren
+## Step 2 — enable APIs
 
-In **APIs &amp; Services → Bibliothek** folgende APIs aktivieren:
+In **APIs &amp; Services → Library** enable:
 
 - **Google Calendar API**
 - **Gmail API**
-- **People API** (fuer Avatar-Fetch beim Login)
+- **People API** (for avatar fetch on login)
 
-## Schritt 3 — OAuth-Consent-Screen
+## Step 3 — OAuth consent screen
 
 In **APIs &amp; Services → OAuth consent screen**:
 
-1. **User Type:** Internal (nur eure Workspace-Org)
-2. **App-Name:** `neo-afk` (oder frei waehlbar)
-3. **User-Support-Email:** eure Support-Email
-4. **Authorized domains:** `eure-firma.de`
+1. **User type:** Internal (your Workspace org only)
+2. **App name:** `neo-afk` (or your choice)
+3. **User support email:** your support email
+4. **Authorized domains:** `your-company.com`
 5. **Developer contact email**
 
-**Scopes (nicht-sensitive):**
+**Scopes (non-sensitive):**
 - `.../auth/userinfo.email`
 - `.../auth/userinfo.profile`
 - `openid`
 
-Sensitive Scopes brauchst du fuer den OAuth-Client **nicht** — Calendar/Mail
-laufen alle ueber den Service-Account.
+You do **not** need sensitive scopes for the OAuth client — Calendar
+and Mail run through the service account.
 
-## Schritt 4 — OAuth-Client (fuer Browser-SSO)
+## Step 4 — OAuth client (for browser SSO)
 
 In **APIs &amp; Services → Credentials → Create Credentials → OAuth client ID**:
 
 1. **Application type:** Web application
 2. **Name:** `neo-afk-web`
-3. **Authorized redirect URIs:** `https://afk.eure-firma.de/auth/callback`
-4. **Create** klicken — notiere **Client-ID** und **Client-Secret** (im Wizard
-   einzugeben)
+3. **Authorized redirect URIs:** `https://afk.your-company.com/auth/callback`
+4. Click **Create** — note the **Client ID** and **Client Secret**
+   (you enter both in the wizard)
 
-## Schritt 5 — Service-Account (fuer Calendar + Gmail)
+## Step 5 — service account (for Calendar + Gmail)
 
 In **IAM &amp; Admin → Service Accounts → Create Service Account**:
 
 1. **Name:** `neo-afk-server`
-2. **Service Account ID:** `neo-afk-server` → wird zu
-   `neo-afk-server@<projekt-id>.iam.gserviceaccount.com`
-3. Keine Projekt-Rollen noetig (Service-Account nutzt nur Workspace-DWD, nicht GCP)
-4. **Create** → fertig
+2. **Service Account ID:** `neo-afk-server` → becomes
+   `neo-afk-server@<project-id>.iam.gserviceaccount.com`
+3. No project roles needed (the service account only uses Workspace
+   DWD, not GCP IAM)
+4. **Create** → done
 
-### Service-Account-Key erzeugen
+### Generate the service-account key
 
-1. Auf den angelegten Service-Account klicken → Tab **Keys** → **Add Key →
+1. Click the new service account → tab **Keys** → **Add Key →
    Create new key**
 2. **Key type:** JSON
-3. **Create** — Browser laedt automatisch die `.json`-Datei runter. Diese laedst
-   du im Setup-Wizard hoch.
-4. **Wichtig — Client-ID notieren:** die Unique-ID im Detail-View (numerischer
-   String, z.B. `100123456789012345678`). Brauchst du fuer Schritt 6.
+3. **Create** — the browser downloads the `.json` file automatically.
+   You upload it in the setup wizard.
+4. **Important — note the Client ID:** the unique ID in the detail
+   view (numeric string, e.g. `100123456789012345678`). You'll need it
+   in step 6.
 
-## Schritt 6 — Domain-Wide Delegation aktivieren
+## Step 6 — enable Domain-Wide Delegation
 
-**Im Workspace-Admin-Center** (admin.google.com, nicht GCP):
+**In the Workspace Admin Console** (admin.google.com, not GCP):
 
-1. Navigation: **Security → Access and data control → API controls →
+1. Navigate to: **Security → Access and data control → API controls →
    Domain-wide delegation → Add new**
-2. **Client ID:** die numerische ID aus Schritt 5 (Service-Account-Unique-ID)
-3. **OAuth scopes** (komma-separiert):
+2. **Client ID:** the numeric ID from step 5 (the service-account
+   unique ID)
+3. **OAuth scopes** (comma-separated):
    ```
    https://www.googleapis.com/auth/calendar,
    https://www.googleapis.com/auth/gmail.settings.basic,
    https://www.googleapis.com/auth/gmail.send
    ```
-4. **Authorize** klicken
+4. Click **Authorize**
 
-> **Wichtig:** Workspace-Admin-Center, nicht GCP. Ohne diesen Schritt scheitert
-> jeder API-Call mit `unauthorized_client` oder `Not authorized to access this
-> resource`.
+> **Important:** Workspace Admin Console, not GCP. Without this step
+> every API call fails with `unauthorized_client` or `Not authorized to
+> access this resource`.
 
-## Schritt 7 — Geteilter Kalender + Kalender-Owner
+## Step 7 — shared calendar + calendar owner
 
-Die App schreibt Events in einen geteilten Kalender. Zwei Optionen:
+The app writes events into a shared calendar. Two options:
 
-**Variante A: Workspace-Resource-Kalender** (empfohlen)
+**Option A: Workspace resource calendar** (recommended)
 
-1. Admin-Center → **Buildings &amp; Resources → Resources**
-2. Resource anlegen, z.B. `Abwesenheiten`
-3. Kalender-Adresse notieren (sieht aus wie `eure-firma.de_xxxxxxxxxx@resource.calendar.google.com`)
+1. Admin console → **Buildings &amp; Resources → Resources**
+2. Create a resource, e.g. `Absences`
+3. Note the calendar address (looks like
+   `your-company.com_xxxxxxxxxx@resource.calendar.google.com`)
 
-**Variante B: User-Kalender als Resource**
+**Option B: user calendar as a resource**
 
-1. Workspace-User anlegen, z.B. `abwesenheit@eure-firma.de`
-2. Aus dessen Konto Kalender mit allen MA teilen (oder via Group-Permission)
-3. Die User-Email = Kalender-ID
+1. Create a Workspace user, e.g. `vacation@your-company.com`
+2. From that account, share the calendar with all employees (or via
+   group permission)
+3. The user email = the calendar ID
 
-**Kalender-Owner** (Impersonation-Target): ein Workspace-User, dessen Account
-der Service-Account impersoniert um den Kalender zu schreiben. Bei Variante A
-ein beliebiger Admin-User mit Calendar-Resource-Schreibrechten; bei Variante B
-der Resource-User selbst (`abwesenheit@eure-firma.de`).
+**Calendar owner** (impersonation target): a Workspace user whose
+account the service account impersonates to write to the calendar. For
+option A, any admin user with write access to the resource calendar;
+for option B, the resource user itself (`vacation@your-company.com`).
 
-## Schritt 8 — Mail-From-Postfach
+## Step 8 — mail-from mailbox
 
-Workspace-User anlegen, z.B. `noreply@eure-firma.de`. Muss ein lizenziertes
-User-Postfach sein (Aliase / Groups funktionieren nicht fuer Gmail-API-Send).
-Keine zusaetzliche Konfiguration noetig — der Service-Account impersoniert
-diesen User dank DWD und `gmail.send`-Scope automatisch.
+Create a Workspace user, e.g. `noreply@your-company.com`. Must be a
+licensed user mailbox (aliases / groups do not work for Gmail-API send).
+No extra configuration needed — the service account impersonates this
+user thanks to DWD + the `gmail.send` scope automatically.
 
-## Schritt 9 — Werte im Setup-Wizard eintragen
+## Step 9 — enter values in the setup wizard
 
-| Feld im Wizard | Wert |
+| Field in the wizard | Value |
 |---|---|
-| Identity-Provider | `google` |
-| OAuth Client-ID | aus Schritt 4 |
-| OAuth Client-Secret | aus Schritt 4 |
-| Service-Account-JSON | JSON-Datei aus Schritt 5 hochladen |
-| Workspace-Domain | `eure-firma.de` |
-| Kalender-ID | aus Schritt 7 |
-| Kalender-Owner | aus Schritt 7 |
-| HR-Verteiler-Mail | `hr@eure-firma.de` |
-| SMTP From-Email | `noreply@eure-firma.de` (aus Schritt 8) |
+| Identity provider | `google` |
+| OAuth Client ID | from step 4 |
+| OAuth Client Secret | from step 4 |
+| Service-account JSON | JSON file from step 5 (upload) |
+| Workspace domain | `your-company.com` |
+| Calendar ID | from step 7 |
+| Calendar owner | from step 7 |
+| HR distribution email | `hr@your-company.com` |
+| SMTP From email | `noreply@your-company.com` (from step 8) |
 
-## Verifikation
+## Verification
 
-Nach Setup:
+After setup:
 
-1. `https://afk.eure-firma.de/login` → Klick → Google-Login → einloggen mit
-   Workspace-Account → Redirect auf `/` mit aktivem User-Session.
-   **SSO funktioniert.**
-2. Antrag stellen → Approval-Mail kommt an → Magic-Link klicken → Approve →
-   Geteilten Kalender oeffnen → Event sichtbar. **Service-Account-Calendar
-   funktioniert.**
-3. Bei `unauthorized_client` oder `403 Forbidden`: DWD-Setup in Schritt 6
-   nochmal checken. Client-ID muss die **Unique-ID** des Service-Accounts sein,
-   nicht die OAuth-Client-ID.
+1. `https://afk.your-company.com/login` → click → Google login → sign
+   in with a Workspace account → redirect to `/` with an active user
+   session. **SSO works.**
+2. Submit a request → approval email arrives → click the magic link →
+   approve → open the shared calendar → event visible. **Service-
+   account calendar works.**
+3. On `unauthorized_client` or `403 Forbidden`: double-check the DWD
+   setup in step 6. The client ID must be the **unique ID** of the
+   service account, not the OAuth client ID.
 
-## Service-Account-Key rotieren
+## Rotating the service-account key
 
-Empfehlung: alle 12 Monate.
+Recommended: every 12 months.
 
-1. Neuen JSON-Key in der GCP-Console anlegen (Schritt 5)
-2. Im Setup-Wizard erneut durchlaufen ODER `var/secrets/google-service-account.json`
-   direkt mit dem neuen JSON ueberschreiben (chmod 0600)
-3. Alten Key in der GCP-Console loeschen
+1. Create a new JSON key in the GCP console (step 5)
+2. Run through the setup wizard again OR overwrite
+   `var/secrets/google-service-account.json` directly with the new
+   JSON (chmod 0600)
+3. Delete the old key in the GCP console

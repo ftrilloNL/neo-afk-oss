@@ -2,85 +2,76 @@
 
 {% block content %}
 {% if provider == 'google' %}
-<h1 class="text-2xl font-bold mb-2">E-Mail-Versand (Gmail API)</h1>
+<h1 class="text-2xl font-bold mb-2">{{ 'setup.smtp.google.heading'|trans }}</h1>
 <p class="text-gray-600 mb-6 leading-relaxed">
-    Mit Google Workspace nutzen wir den bereits konfigurierten Service-Account
-    auch fuer Mail-Versand via Gmail API — keine zusaetzlichen Credentials noetig.
-    Bitte FROM-Adresse + Anzeigename setzen.
+    {{ 'setup.smtp.google.body'|trans }}
 </p>
 
 <form method="post" action="/setup/smtp/google" class="space-y-5">
     <div>
-        <label class="label"><span class="label-text">From-Email (z.B. noreply@eure-firma.de)</span></label>
+        <label class="label"><span class="label-text">{{ 'setup.smtp.field.from_email'|trans }}</span></label>
         <input type="email" name="smtp_from_email" required class="input input-bordered w-full"
-               placeholder="noreply@eure-firma.de"
+               placeholder="noreply@your-company.com"
                value="{{ env.SMTP_FROM_EMAIL ?? '' }}">
         <p class="text-xs text-gray-500 mt-1">
-            Der Service-Account muss dieses Postfach via Domain-Wide-Delegation
-            impersonieren duerfen. Anleitung in
-            <a href="https://github.com/ftrilloNL/neo-afk-oss/blob/main/docs/google-workspace-setup.md"
-               target="_blank" class="underline">docs/google-workspace-setup.md</a>.
+            {{ 'setup.smtp.google.from_email.hint'|trans|raw }}
         </p>
     </div>
 
     <div>
-        <label class="label"><span class="label-text">From-Name (Anzeigename)</span></label>
+        <label class="label"><span class="label-text">{{ 'setup.smtp.field.from_name'|trans }}</span></label>
         <input type="text" name="smtp_from_name" required class="input input-bordered w-full"
                placeholder="afk"
                value="{{ env.SMTP_FROM_NAME ?? env.ORG_NAME ?? '' }}">
     </div>
 
     <div class="flex justify-between pt-3">
-        <a href="/setup/oauth" class="btn btn-ghost">← Zurück</a>
-        <button type="submit" class="btn btn-primary">Weiter →</button>
+        <a href="/setup/oauth" class="btn btn-ghost">{{ 'setup.action.back'|trans }}</a>
+        <button type="submit" class="btn btn-primary">{{ 'setup.action.next'|trans }}</button>
     </div>
 </form>
 
 {% else %}
-<h1 class="text-2xl font-bold mb-2">E-Mail-Versand</h1>
+<h1 class="text-2xl font-bold mb-2">{{ 'setup.smtp.ms.heading'|trans }}</h1>
 <p class="text-gray-600 mb-6 leading-relaxed">
-    SMTP via XOAUTH2 gegen das „noreply"-Postfach. Wir holen einen
-    Refresh-Token via Device-Code-Flow — du loggst dich kurz in einem
-    neuen Tab ein, kommst zurück, fertig.
+    {{ 'setup.smtp.ms.body'|trans }}
 </p>
 
 {% if device_flow is null or device_flow.status == 'expired' or device_flow.status == 'error' %}
 <form method="post" action="/setup/smtp" class="space-y-5">
     <div class="grid grid-cols-3 gap-3">
         <div class="col-span-2">
-            <label class="label"><span class="label-text">SMTP-Host</span></label>
+            <label class="label"><span class="label-text">{{ 'setup.smtp.field.host'|trans }}</span></label>
             <input type="text" name="smtp_host" required class="input input-bordered w-full"
                    value="{{ env.SMTP_HOST ?? 'smtp.office365.com' }}">
         </div>
         <div>
-            <label class="label"><span class="label-text">Port</span></label>
+            <label class="label"><span class="label-text">{{ 'setup.smtp.field.port'|trans }}</span></label>
             <input type="text" name="smtp_port" required class="input input-bordered w-full"
                    value="{{ env.SMTP_PORT ?? '587' }}">
         </div>
     </div>
 
     <div>
-        <label class="label"><span class="label-text">From-Email (lizenziertes Postfach)</span></label>
+        <label class="label"><span class="label-text">{{ 'setup.smtp.field.from_email.licensed'|trans }}</span></label>
         <input type="email" name="smtp_from_email" required class="input input-bordered w-full"
-               placeholder="noreply@eure-firma.de"
+               placeholder="noreply@your-company.com"
                value="{{ env.SMTP_FROM_EMAIL ?? '' }}">
         <p class="text-xs text-gray-500 mt-1">
-            Muss ein <strong>lizenziertes User-Postfach</strong> sein
-            (Shared Mailboxes können kein SMTP-Auth). Authentifiziertes SMTP
-            muss für diese Mailbox im Admin-Center aktiviert sein.
+            {{ 'setup.smtp.field.from_email.licensed.hint'|trans|raw }}
         </p>
     </div>
 
     <div>
-        <label class="label"><span class="label-text">From-Name (Absender-Anzeige)</span></label>
+        <label class="label"><span class="label-text">{{ 'setup.smtp.field.from_name.sender'|trans }}</span></label>
         <input type="text" name="smtp_from_name" required class="input input-bordered w-full"
                placeholder="afk"
                value="{{ env.SMTP_FROM_NAME ?? env.ORG_NAME ?? '' }}">
     </div>
 
     <div class="flex justify-between pt-3">
-        <a href="/setup/oauth" class="btn btn-ghost">← Zurück</a>
-        <button type="submit" class="btn btn-primary">Device-Code holen →</button>
+        <a href="/setup/oauth" class="btn btn-ghost">{{ 'setup.action.back'|trans }}</a>
+        <button type="submit" class="btn btn-primary">{{ 'setup.smtp.device_code_btn'|trans }}</button>
     </div>
 </form>
 
@@ -88,36 +79,35 @@
     {# Device-Code-Flow aktiv #}
     <div id="device-pending" class="space-y-5" data-poll-interval="{{ device_flow.interval }}">
         <div class="bg-primary/10 border-2 border-primary rounded-lg p-5">
-            <p class="text-sm font-medium mb-2">1. Öffne diesen Link in einem neuen Tab:</p>
+            <p class="text-sm font-medium mb-2">{{ 'setup.smtp.device.step1'|trans }}</p>
             <a href="{{ device_flow.verification_uri }}" target="_blank"
                class="text-primary font-medium underline break-all">
                 {{ device_flow.verification_uri }}
             </a>
 
-            <p class="text-sm font-medium mt-4 mb-2">2. Gib diesen Code ein:</p>
+            <p class="text-sm font-medium mt-4 mb-2">{{ 'setup.smtp.device.step2'|trans }}</p>
             <div class="bg-white border border-primary rounded-md px-4 py-3 font-mono text-2xl tracking-widest text-center font-bold">
                 {{ device_flow.user_code }}
             </div>
 
             <p class="text-sm font-medium mt-4 mb-2">
-                3. Logge dich als <code>{{ env.SMTP_FROM_EMAIL }}</code> ein
-                und bestätige die SMTP.Send-Berechtigung.
+                {{ 'setup.smtp.device.step3'|trans({'%email%': env.SMTP_FROM_EMAIL})|raw }}
             </p>
         </div>
 
         <div id="poll-status" class="flex items-center gap-3 text-sm text-gray-600">
             <span class="inline-block w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></span>
-            <span>Warte auf Autorisierung…</span>
+            <span>{{ 'setup.smtp.device.waiting'|trans }}</span>
         </div>
 
         <div id="poll-error" class="hidden bg-red-50 border border-red-200 rounded-md px-4 py-3 text-sm text-red-800"></div>
 
         <form id="continue-form" method="post" action="/setup/smtp/continue" class="hidden">
             <div class="bg-green-50 border border-green-200 rounded-md px-4 py-3 text-sm text-green-800 mb-4">
-                <strong>✓ Erfolgreich autorisiert.</strong> Refresh-Token gespeichert.
+                {{ 'setup.smtp.device.success'|trans|raw }}
             </div>
             <div class="flex justify-end">
-                <button type="submit" class="btn btn-primary">Weiter →</button>
+                <button type="submit" class="btn btn-primary">{{ 'setup.action.next'|trans }}</button>
             </div>
         </form>
 
@@ -126,7 +116,7 @@
             <input type="hidden" name="smtp_port" value="{{ env.SMTP_PORT }}">
             <input type="hidden" name="smtp_from_email" value="{{ env.SMTP_FROM_EMAIL }}">
             <input type="hidden" name="smtp_from_name" value="{{ env.SMTP_FROM_NAME }}">
-            <button type="submit" class="btn btn-outline">Neuen Code holen</button>
+            <button type="submit" class="btn btn-outline">{{ 'setup.smtp.device.restart_btn'|trans }}</button>
         </form>
     </div>
 {% endif %}
