@@ -41,7 +41,7 @@ final class HrAntragController
 
         return $this->view->render($response, 'hr/antrag/neu.twig', [
             'user' => $hrUser,
-            'active_nav' => 'hr',
+            'active_nav' => 'hr-antrag',
             'all_users' => $this->users->listAllActive(),
             'today' => date('Y-m-d'),
             'flash_error' => $flashError,
