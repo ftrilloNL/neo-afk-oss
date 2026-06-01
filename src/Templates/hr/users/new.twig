@@ -28,7 +28,7 @@
             <span class="font-medium">{{ s.display_name }}</span>
             <span class="text-amber-700">·</span>
             <span class="font-mono text-xs">{{ s.email }}</span>
-            {% if s.entra_oid is null %}<span class="pill bg-amber-200 text-amber-900 text-[9px] px-1.5 py-0.5">Pending</span>{% endif %}
+            {% if s.external_oid is null %}<span class="pill bg-amber-200 text-amber-900 text-[9px] px-1.5 py-0.5">Pending</span>{% endif %}
         </li>
         {% endfor %}
     </ul>

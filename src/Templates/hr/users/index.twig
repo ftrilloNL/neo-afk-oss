@@ -45,7 +45,7 @@
                 <td class="px-5 py-3.5">
                     <div class="font-medium">
                         {{ u.display_name }}
-                        {% if u.entra_oid is null %}
+                        {% if u.external_oid is null %}
                         <span class="ml-1 pill bg-amber-100 text-amber-800 text-[9px] px-1.5 py-0.5">Pending Login</span>
                         {% endif %}
                     </div>

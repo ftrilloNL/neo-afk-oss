@@ -39,7 +39,7 @@ final class HrKrankController
 
         return $this->view->render($response, 'hr/krank/neu.twig', [
             'user' => $hrUser,
-            'active_nav' => 'hr',
+            'active_nav' => 'hr-krank',
             'all_users' => $this->users->listAllActive(),
             'today' => date('Y-m-d'),
             'flash_error' => $flashError,
